@@ -1,0 +1,249 @@
+/* Cinema Background Styles for Film Streaming App */
+
+@layer components {
+  /* Base cinema background with theater atmosphere */
+  .cinema-bg {
+    @apply relative min-h-screen w-full overflow-hidden;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a0f1f 50%, #0f0a1a 100%);
+  }
+
+  /* Film grain texture overlay for authentic cinema feel */
+  .film-grain {
+    @apply absolute inset-0 pointer-events-none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+    animation: film-grain-anim 0.5s steps(10) infinite;
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+  }
+
+  /* Projector spotlight effects */
+  .spotlight {
+    @apply absolute rounded-full blur-3xl opacity-20;
+    mix-blend-mode: screen;
+    animation: spotlight-pulse 8s ease-in-out infinite;
+  }
+
+  .spotlight-1 {
+    @apply absolute rounded-full blur-3xl opacity-20;
+    mix-blend-mode: screen;
+    animation: spotlight-pulse 8s ease-in-out infinite;
+    top: -10%;
+    left: -5%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+      circle,
+      rgba(147, 51, 234, 0.4) 0%,
+      transparent 70%
+    );
+    animation-delay: 0s;
+  }
+
+  .spotlight-2 {
+    @apply absolute rounded-full blur-3xl opacity-20;
+    mix-blend-mode: screen;
+    animation: spotlight-pulse 8s ease-in-out infinite;
+    top: -5%;
+    right: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(
+      circle,
+      rgba(251, 146, 60, 0.3) 0%,
+      transparent 70%
+    );
+    animation-delay: 2s;
+  }
+
+  .spotlight-3 {
+    @apply absolute rounded-full blur-3xl opacity-20;
+    mix-blend-mode: screen;
+    animation: spotlight-pulse 8s ease-in-out infinite;
+    bottom: -15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(
+      circle,
+      rgba(139, 92, 246, 0.35) 0%,
+      transparent 70%
+    );
+    animation-delay: 4s;
+  }
+
+  /* Projector light rays */
+  .light-rays {
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      -45deg,
+      transparent 0%,
+      rgba(147, 51, 234, 0.02) 45%,
+      rgba(251, 146, 60, 0.03) 50%,
+      rgba(147, 51, 234, 0.02) 55%,
+      transparent 100%
+    );
+    animation: light-rays-sweep 15s ease-in-out infinite;
+  }
+
+  /* Film strip decoration */
+  .film-strip-border {
+    @apply absolute pointer-events-none;
+    opacity: 0.08;
+  }
+
+  .film-strip-left {
+    @apply absolute pointer-events-none left-0 top-0 bottom-0 w-8;
+    opacity: 0.08;
+    background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        transparent 5%,
+        transparent 95%,
+        #ffffff 100%
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.3) 20px,
+        rgba(255, 255, 255, 0.3) 25px
+      );
+  }
+
+  .film-strip-right {
+    @apply absolute pointer-events-none right-0 top-0 bottom-0 w-8;
+    opacity: 0.08;
+    background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        transparent 5%,
+        transparent 95%,
+        #ffffff 100%
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.3) 20px,
+        rgba(255, 255, 255, 0.3) 25px
+      );
+  }
+
+  /* Vignette effect for depth */
+  .cinema-vignette {
+    @apply absolute inset-0 pointer-events-none;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+  }
+
+  /* Content overlay to ensure readability */
+  .cinema-content {
+    @apply relative z-10;
+  }
+
+  /* Ambient glow for auth cards on cinema background */
+  .cinema-card-glow {
+    @apply relative;
+  }
+
+  .cinema-card-glow::before {
+    content: "";
+    @apply absolute -inset-1 rounded-2xl opacity-30 blur-xl;
+    background: linear-gradient(
+      135deg,
+      rgba(147, 51, 234, 0.6),
+      rgba(251, 146, 60, 0.4)
+    );
+    z-index: -1;
+    animation: card-glow-pulse 3s ease-in-out infinite;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .spotlight-1,
+    .spotlight-2,
+    .spotlight-3 {
+      width: 400px;
+      height: 400px;
+    }
+
+    .film-strip-left,
+    .film-strip-right {
+      @apply w-4;
+    }
+  }
+}
+
+/* Keyframe animations */
+@keyframes film-grain-anim {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -5%);
+  }
+  20% {
+    transform: translate(-10%, 5%);
+  }
+  30% {
+    transform: translate(5%, -10%);
+  }
+  40% {
+    transform: translate(-5%, 15%);
+  }
+  50% {
+    transform: translate(-10%, 5%);
+  }
+  60% {
+    transform: translate(15%, 0);
+  }
+  70% {
+    transform: translate(0, 10%);
+  }
+  80% {
+    transform: translate(-15%, 0);
+  }
+  90% {
+    transform: translate(10%, 5%);
+  }
+}
+
+@keyframes spotlight-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes light-rays-sweep {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-2deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(50%) rotate(2deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes card-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

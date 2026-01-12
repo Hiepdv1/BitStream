@@ -1,0 +1,145 @@
+@layer components {
+  .error-backdrop {
+    @apply fixed inset-0 backdrop-blur-sm;
+    z-index: 40;
+  }
+
+  .error-default .error-backdrop {
+    @apply bg-gray-900/30 dark:bg-black/50;
+  }
+
+  .error-danger .error-backdrop {
+    @apply bg-red-950/20 dark:bg-red-950/40;
+  }
+
+  .error-warning .error-backdrop {
+    @apply bg-yellow-950/20 dark:bg-yellow-950/40;
+  }
+
+  .error-container {
+    @apply flex items-center justify-center p-6;
+  }
+
+  .error-container-fullscreen {
+    @apply fixed inset-0;
+    z-index: 50;
+  }
+
+  .error-content {
+    @apply max-w-2xl w-full flex flex-col items-center gap-8 px-4 relative;
+    animation: error-fade-in 0.5s ease-out;
+    z-index: 10;
+  }
+
+  .error-icon-wrapper {
+    @apply relative;
+  }
+
+  .error-icon {
+    @apply w-32 h-32 sm:w-40 sm:h-40;
+    filter: drop-shadow(0 20px 40px currentColor);
+    animation: error-float 3s ease-in-out infinite;
+  }
+
+  .error-default .error-icon {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .error-danger .error-icon {
+    @apply text-red-500 dark:text-red-400;
+  }
+
+  .error-warning .error-icon {
+    @apply text-yellow-500 dark:text-yellow-400;
+  }
+
+  .error-text-content {
+    @apply text-center space-y-4 max-w-xl;
+  }
+
+  .error-title {
+    @apply text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight;
+  }
+
+  .error-default .error-title {
+    @apply text-gray-900 dark:text-white;
+  }
+
+  .error-danger .error-title {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  .error-warning .error-title {
+    @apply text-yellow-600 dark:text-yellow-400;
+  }
+
+  .error-message {
+    @apply text-xl sm:text-2xl leading-relaxed;
+  }
+
+  .error-default .error-message {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .error-danger .error-message {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .error-warning .error-message {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .error-retry-button {
+    @apply px-10 py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-2xl border-2 relative;
+    z-index: 20;
+  }
+
+  .error-retry-button:active {
+    @apply transform scale-95;
+  }
+
+  .error-default .error-retry-button {
+    @apply bg-gray-800 dark:bg-gray-700 text-white border-gray-800 dark:border-gray-700;
+  }
+
+  .error-default .error-retry-button:hover {
+    @apply bg-gray-900 dark:bg-gray-600 shadow-gray-800/50 transform scale-110;
+  }
+
+  .error-danger .error-retry-button {
+    @apply bg-red-600 dark:bg-red-500 text-white border-red-600 dark:border-red-500;
+  }
+
+  .error-danger .error-retry-button:hover {
+    @apply bg-red-700 dark:bg-red-400 shadow-red-600/50 transform scale-110;
+  }
+
+  .error-warning .error-retry-button {
+    @apply bg-yellow-600 dark:bg-yellow-500 text-white border-yellow-600 dark:border-yellow-500;
+  }
+
+  .error-warning .error-retry-button:hover {
+    @apply bg-yellow-700 dark:bg-yellow-400 shadow-yellow-600/50 transform scale-110;
+  }
+}
+
+@keyframes error-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes error-float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}

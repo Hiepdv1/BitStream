@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@import "./base/variables.css";
+@import "./base/animations.css";
+
+@import "./components/button.css";
+@import "./components/input.css";
+@import "./components/loading.css";
+@import "./components/error.css";
+@import "./components/cinema-background.css";
+
+@import "../features/auth/styles/index.css";
+@import "./features/home.css";
+
+@layer base {
+  :root {
+    --font-sans: var(--font-roboto);
+    --font-display: var(--font-bebas);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    @apply bg-background text-text-main antialiased selection:bg-brand selection:text-white;
+  }
+}

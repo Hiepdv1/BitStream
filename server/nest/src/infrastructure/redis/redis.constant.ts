@@ -1,0 +1,11 @@
+export const DEFAULT_REDIS_TTL_SECONDS = 3600;
+
+export type REDIS_PREFIX = (typeof REDIS_PREFIX)[keyof typeof REDIS_PREFIX];
+
+export const REDIS_PREFIX = {
+  SIGNATURE: 'SIGN',
+  RATE_LIMIT: 'RATE',
+  CACHE: 'CACHE',
+  AUTH_SESSION: 'AUTH_SESSION',
+  BLACKLIST: 'BLACKLIST',
+} as const;

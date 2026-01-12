@@ -1,0 +1,60 @@
+@theme {
+  /* Brand Colors */
+  --color-brand: #7c3aed;
+  --color-brand-foreground: #ffffff;
+  --color-brand-hover: #6d28d9;
+
+  --color-accent: #db2777;
+  --color-accent-foreground: #ffffff;
+  --color-accent-hover: #be185d;
+
+  /* Base Colors - Light Mode Default */
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-hover: #f1f5f9;
+  --color-border: #e2e8f0;
+
+  --color-text-main: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-text-inverted: #ffffff;
+
+  /* Status Colors */
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Social Colors */
+  --color-discord: #5865f2;
+  --color-discord-hover: #4752c4;
+  --color-google: #ea4335;
+  --color-facebook: #1877f2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-hover: #334155;
+    --color-border: #334155;
+
+    --color-text-main: #f8fafc;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #94a3b8;
+    --color-text-inverted: #0f172a;
+  }
+}
+
+/* Explicit Dark Mode Override */
+.dark {
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+  --color-border: #334155;
+
+  --color-text-main: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-inverted: #0f172a;
+}

@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  STREAMER
+  VIEWER
+}
+
+enum StreamVisibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum StreamEventType {
+  STREAM_START
+  STREAM_STOP
+  OBS_CONNECT
+  OBS_DISCONNECT
+  INVALID_KEY
+}
+
+enum ProviderType {
+  CREDENTIALS
+  GOOGLE
+  DISCORD
+}
+
+model User {
+  id     String   @id @default(cuid())
+  avatar String?
+  name   String?  @default(dbgenerated("('user_' || substring(md5(random()::text), 1, 8))"))
+  email  String   @unique
+  role   UserRole @default(VIEWER)
+
+  accounts Account[]
+  streams  Stream[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String       @id @default(cuid())
+  userId            String
+  provider          ProviderType
+  providerAccountId String
+  isVerified        Boolean      @default(false)
+
+  password String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Stream {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  title       String
+  description String?
+  isLive      Boolean          @default(false)
+  visibility  StreamVisibility @default(PRIVATE)
+
+  ingestKey  StreamKey?
+  events     StreamEvent[]
+  recordings Recording[]
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  viewerSessions ViewerSession[]
+}
+
+model StreamKey {
+  id       String @id @default(cuid())
+  streamId String @unique
+  stream   Stream @relation(fields: [streamId], references: [id])
+
+  keyHash   String
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model StreamEvent {
+  id       String @id @default(cuid())
+  streamId String
+  stream   Stream @relation(fields: [streamId], references: [id])
+
+  type    StreamEventType
+  payload Json?
+
+  createdAt DateTime @default(now())
+}
+
+model Recording {
+  id       String @id @default(cuid())
+  streamId String
+  stream   Stream @relation(fields: [streamId], references: [id])
+
+  fileUrl  String
+  duration Int?
+  size     BigInt?
+
+  createdAt DateTime @default(now())
+}
+
+model ViewerSession {
+  id       String @id @default(cuid())
+  streamId String
+  stream   Stream @relation(fields: [streamId], references: [id])
+
+  ip        String
+  userAgent String?
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+}

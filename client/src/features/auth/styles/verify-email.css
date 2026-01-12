@@ -1,0 +1,108 @@
+@layer components {
+  .verify-email-container {
+    @apply min-h-[80vh] flex flex-col items-center justify-center gap-8 sm:gap-12 px-4;
+  }
+
+  .verify-email-icon-section {
+    @apply flex justify-center;
+  }
+
+  .verify-email-icon-wrapper {
+    @apply relative;
+  }
+
+  .verify-email-icon {
+    @apply w-24 h-24 sm:w-32 sm:h-32 text-brand dark:text-brand;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(124, 58, 237, 0.3));
+  }
+
+  .verify-email-icon-ping {
+    @apply absolute inset-0 rounded-full bg-brand/20 dark:bg-brand/20;
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .verify-email-content {
+    @apply text-center max-w-2xl space-y-6;
+  }
+
+  .verify-email-title {
+    @apply text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white;
+    background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+
+  .verify-email-message {
+    @apply space-y-4;
+  }
+
+  .verify-email-text {
+    @apply text-lg sm:text-xl text-gray-700 dark:text-gray-300;
+  }
+
+  .verify-email-email-display {
+    @apply text-xl sm:text-2xl font-semibold text-brand dark:text-brand break-all px-6 py-3;
+  }
+
+  .verify-email-hint {
+    @apply flex items-center justify-center gap-2 text-sm sm:text-base text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-white/5 rounded-full px-6 py-3 border border-gray-200 dark:border-white/10;
+  }
+
+  .verify-email-hint-icon {
+    @apply shrink-0 w-5 h-5 text-info dark:text-info;
+  }
+
+  .verify-email-hint-text {
+    @apply text-sm;
+  }
+
+  .verify-email-actions {
+    @apply flex flex-col sm:flex-row items-center gap-4 w-full max-w-md;
+  }
+
+  .verify-email-btn {
+    @apply flex-1 w-full sm:w-auto px-8 py-4 rounded-xl sm:rounded-full font-semibold text-base sm:text-lg text-center transition-all duration-300;
+  }
+
+  .verify-email-btn-primary {
+    @apply bg-linear-to-r from-brand to-accent text-white shadow-lg;
+  }
+
+  .verify-email-btn-primary:hover {
+    @apply shadow-xl transform scale-105;
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.4);
+  }
+
+  .verify-email-btn-secondary {
+    @apply bg-white/10 dark:bg-white/5 text-gray-800 dark:text-white border-2 border-gray-300 dark:border-white/20;
+  }
+
+  .verify-email-btn-secondary:hover {
+    @apply bg-white/20 dark:bg-white/10 border-brand dark:border-brand transform scale-105;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+}
+
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
