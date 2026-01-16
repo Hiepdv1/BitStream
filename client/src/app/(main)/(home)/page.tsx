@@ -128,7 +128,6 @@ export default function HomePage() {
         title="Welcome to BitStream"
         description="Experience the next generation of entertainment. From blockbuster movies to live esports and educational content, stream it all in one place."
         imageUrl="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop"
-        // videoUrl="/assets/videos/hero-demo.mp4" // Uncomment when video is available
         isLive={false}
       />
 

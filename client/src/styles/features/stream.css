@@ -1,0 +1,186 @@
+@layer components {
+  .video-player-container {
+    --progress-height: 4px;
+    --progress-hover-height: 8px;
+  }
+
+  .video-player-container:hover {
+    --progress-height: var(--progress-hover-height);
+  }
+
+  .video-controls-btn {
+    @apply w-10 h-10 flex items-center justify-center rounded-full;
+    @apply bg-white/10 hover:bg-white/20 text-white;
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .video-controls-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .video-controls-btn:active {
+    transform: scale(0.95);
+  }
+
+  .volume-slider {
+    @apply appearance-none bg-transparent cursor-pointer;
+    height: 4px;
+  }
+
+  .volume-slider::-webkit-slider-runnable-track {
+    @apply h-1 rounded-full;
+    background: linear-gradient(
+      to right,
+      var(--color-brand) 0%,
+      var(--color-brand) var(--volume-percent, 100%),
+      rgba(255, 255, 255, 0.3) var(--volume-percent, 100%),
+      rgba(255, 255, 255, 0.3) 100%
+    );
+  }
+
+  .volume-slider::-webkit-slider-thumb {
+    @apply appearance-none w-3 h-3 rounded-full bg-white shadow-lg;
+    margin-top: -4px;
+    cursor: pointer;
+  }
+
+  .volume-slider::-moz-range-track {
+    @apply h-1 rounded-full;
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .volume-slider::-moz-range-progress {
+    @apply h-1 rounded-full;
+    background: var(--color-brand);
+  }
+
+  .volume-slider::-moz-range-thumb {
+    @apply w-3 h-3 rounded-full bg-white border-0 shadow-lg;
+    cursor: pointer;
+  }
+
+  .progress-bar-container {
+    @apply relative h-1 bg-white/20 rounded-full cursor-pointer overflow-hidden;
+    transition: height 150ms ease;
+  }
+
+  .progress-bar-container:hover {
+    height: 10px;
+  }
+
+  .progress-bar-thumb {
+    @apply absolute top-1/2 -translate-y-1/2 w-4 h-4;
+    @apply bg-brand rounded-full shadow-lg;
+    @apply opacity-0 transition-opacity;
+  }
+
+  .progress-bar-container:hover .progress-bar-thumb {
+    @apply opacity-100;
+  }
+
+  .recommendation-card {
+    @apply flex gap-3 p-2 rounded-xl;
+    @apply hover:bg-surface-hover/50 transition-colors;
+  }
+
+  .recommendation-card-thumbnail {
+    @apply relative overflow-hidden rounded-xl bg-surface;
+    @apply transition-transform duration-300;
+  }
+
+  .recommendation-card:hover .recommendation-card-thumbnail img {
+    transform: scale(1.1);
+  }
+
+  .play-overlay {
+    @apply absolute inset-0 flex items-center justify-center;
+    @apply bg-black/0 transition-colors;
+  }
+
+  .play-overlay:hover {
+    @apply bg-black/30;
+  }
+
+  .play-overlay-btn {
+    @apply w-12 h-12 rounded-full bg-brand/90 flex items-center justify-center;
+    @apply opacity-0 transition-all duration-200;
+    transform: scale(0.75);
+  }
+
+  .play-overlay:hover .play-overlay-btn {
+    @apply opacity-100;
+    transform: scale(1);
+  }
+
+  .live-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1;
+    @apply bg-red-500 text-white text-xs font-bold rounded-md;
+  }
+
+  .live-badge-dot {
+    @apply w-1.5 h-1.5 bg-white rounded-full animate-pulse;
+  }
+
+  .skeleton {
+    @apply bg-surface animate-pulse rounded-lg;
+  }
+
+  .skeleton-video {
+    @apply aspect-video w-full rounded-2xl;
+  }
+
+  .skeleton-text {
+    @apply h-4 rounded;
+  }
+
+  .skeleton-text-lg {
+    @apply h-6 rounded;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cinema-glow {
+    @apply absolute pointer-events-none;
+    filter: blur(100px);
+    opacity: 0.3;
+  }
+
+  .cinema-glow-brand {
+    @apply bg-brand;
+  }
+
+  .cinema-glow-accent {
+    @apply bg-accent;
+  }
+
+  .dark .video-player-container {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  .dark .recommendation-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}

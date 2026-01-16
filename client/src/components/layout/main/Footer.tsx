@@ -1,6 +1,6 @@
-import { Facebook, Twitter, Instagram, Youtube } from "lucide-react"; // Removed Film
+import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import Link from "next/link";
-import { Logo } from "@/components/brand"; // Added Logo import
+import { Logo } from "@/components/brand";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -8,13 +8,11 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm mt-auto">
       <div className="mx-auto w-full px-6 py-12 lg:px-8">
-        {/* Top section with logo and social */}
         <div className="mb-8 flex flex-col items-center justify-between gap-6 border-b border-white/10 pb-8 md:flex-row">
           <div className="flex items-center gap-2">
             <Logo className="w-8 h-8" />
           </div>
 
-          {/* Social media links */}
           <div className="flex gap-4">
             <a
               href="#"
@@ -47,9 +45,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Links grid */}
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {/* Company */}
           <div>
             <h3 className="mb-4 text-sm font-semibold text-white">Company</h3>
             <ul className="space-y-3">
@@ -88,7 +84,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h3 className="mb-4 text-sm font-semibold text-white">Support</h3>
             <ul className="space-y-3">
@@ -127,7 +122,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h3 className="mb-4 text-sm font-semibold text-white">Legal</h3>
             <ul className="space-y-3">
@@ -166,7 +160,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Watch */}
           <div>
             <h3 className="mb-4 text-sm font-semibold text-white">Watch</h3>
             <ul className="space-y-3">
@@ -206,7 +199,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom section */}
         <div className="mt-8 border-t border-white/10 pt-8 text-center">
           <p className="text-sm text-gray-400">
             © {currentYear} BitStream. All rights reserved. Made with{" "}

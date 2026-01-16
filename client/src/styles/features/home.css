@@ -1,5 +1,4 @@
 @layer components {
-  /* Hero Section Styles */
   .hero-gradient-overlay {
     background: linear-gradient(
       to bottom,
@@ -13,7 +12,6 @@
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
-  /* Content Section Gradients */
   .section-mask-fade {
     mask-image: linear-gradient(
       to right,
@@ -24,7 +22,6 @@
     );
   }
 
-  /* Card Hover Effects */
   .media-card-hover {
     @apply transition-all duration-300 ease-out;
   }
@@ -34,7 +31,6 @@
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
   }
 
-  /* Live Indicator Pulse */
   .live-pulse {
     @apply relative flex;
   }

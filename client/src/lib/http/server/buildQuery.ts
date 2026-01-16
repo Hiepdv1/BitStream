@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export function buildQuery(params?: Record<string, any>): string {
   if (!params) return "";
 

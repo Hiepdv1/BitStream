@@ -1,7 +1,6 @@
 import { Logo } from "@/components/brand";
 import React from "react";
 import Link from "next/link";
-// Removed Film import
 
 export default function VerificationLayout({
   children,

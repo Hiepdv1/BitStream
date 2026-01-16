@@ -1,13 +1,9 @@
-/* Cinema Background Styles for Film Streaming App */
-
 @layer components {
-  /* Base cinema background with theater atmosphere */
   .cinema-bg {
     @apply relative min-h-screen w-full overflow-hidden;
     background: linear-gradient(135deg, #0a0a0f 0%, #1a0f1f 50%, #0f0a1a 100%);
   }
 
-  /* Film grain texture overlay for authentic cinema feel */
   .film-grain {
     @apply absolute inset-0 pointer-events-none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
@@ -16,7 +12,6 @@
     mix-blend-mode: overlay;
   }
 
-  /* Projector spotlight effects */
   .spotlight {
     @apply absolute rounded-full blur-3xl opacity-20;
     mix-blend-mode: screen;
@@ -72,7 +67,6 @@
     animation-delay: 4s;
   }
 
-  /* Projector light rays */
   .light-rays {
     @apply absolute inset-0 pointer-events-none;
     background: linear-gradient(
@@ -86,7 +80,6 @@
     animation: light-rays-sweep 15s ease-in-out infinite;
   }
 
-  /* Film strip decoration */
   .film-strip-border {
     @apply absolute pointer-events-none;
     opacity: 0.08;
@@ -130,7 +123,6 @@
       );
   }
 
-  /* Vignette effect for depth */
   .cinema-vignette {
     @apply absolute inset-0 pointer-events-none;
     background: radial-gradient(
@@ -141,12 +133,10 @@
     );
   }
 
-  /* Content overlay to ensure readability */
   .cinema-content {
     @apply relative z-10;
   }
 
-  /* Ambient glow for auth cards on cinema background */
   .cinema-card-glow {
     @apply relative;
   }
@@ -163,7 +153,6 @@
     animation: card-glow-pulse 3s ease-in-out infinite;
   }
 
-  /* Responsive adjustments */
   @media (max-width: 768px) {
     .spotlight-1,
     .spotlight-2,
@@ -179,7 +168,6 @@
   }
 }
 
-/* Keyframe animations */
 @keyframes film-grain-anim {
   0%,
   100% {
