@@ -6,6 +6,8 @@ import {
   InternalServerErrorException,
   Post,
   Req,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SkipAuth, SkipSignature } from 'src/common/decorators';
 import { Ok } from 'src/common/response/response.helper';

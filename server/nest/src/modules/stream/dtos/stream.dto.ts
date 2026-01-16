@@ -28,44 +28,32 @@ export class StreamDto {
 }
 
 export class StreamOnPublishDto {
-  @Expose({ name: 'name' })
   @IsString()
   @IsNotEmpty()
-  streamId: string;
+  name: string;
 
-  @IsNotEmpty()
+  get streamId(): string {
+    return this.name;
+  }
+
   @IsString()
+  @IsNotEmpty()
   token: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   app: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   addr: string;
 
-  @IsOptional()
-  @IsString()
-  clientid: string;
+  @IsOptional() @IsString() clientid?: string;
+  @IsOptional() @IsString() call?: string;
+  @IsOptional() @IsString() flashver?: string;
+  @IsOptional() @IsString() swfurl?: string;
+  @IsOptional() @IsString() tcurl?: string;
+  @IsOptional() @IsString() type?: string;
 
-  @IsOptional()
-  @IsString()
-  call: string;
-
-  @IsOptional()
-  @IsString()
-  flashver: string;
-
-  @IsOptional()
-  @IsString()
-  swfurl: string;
-
-  @IsOptional()
-  @IsString()
-  tcurl: string;
-
-  @IsOptional()
-  @IsString()
-  type: string;
+  @IsOptional() @IsString() pageurl?: string;
 }

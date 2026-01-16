@@ -15,6 +15,7 @@ import { plainToClass } from 'class-transformer';
 import { StreamStartedPayload } from 'src/common/kafka-payloads/stream';
 import { generateRandomString, validateKafkaPayload } from 'src/common/utils';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
+import { stream } from 'winston';
 
 @Injectable()
 export class StreamService {
@@ -76,6 +77,7 @@ export class StreamService {
       maxRetry: 3,
       eventId: generateRandomString(),
       occurredAt: new Date().toISOString(),
+      action: 'START',
     } as StreamStartedPayload);
 
     const { data: value, errors } = await validateKafkaPayload(
@@ -100,7 +102,7 @@ export class StreamService {
       throw new InternalServerErrorException('Internal Server Error');
     }
 
-    const updateStream = this.prisma.stream.update({
+    await this.prisma.stream.update({
       where: {
         id: data.streamId,
         isLive: false,
@@ -110,10 +112,11 @@ export class StreamService {
       },
     });
 
-    await Promise.all([
-      updateStream,
-      this.kafkaProducerService.publish(KafkaTopic.STREAM_ON_PUBLISH, value),
-    ]);
+    await this.kafkaProducerService.publish(
+      KafkaTopic.STREAM_ON_PUBLISH,
+      value,
+      data.streamId,
+    );
 
     return true;
   }

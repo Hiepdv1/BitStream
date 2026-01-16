@@ -20,4 +20,8 @@ export class StreamStartedPayload
   @IsNumber()
   @IsNotEmpty()
   maxRetry: number;
+
+  @IsString()
+  @IsNotEmpty()
+  action: 'START' | 'STOP';
 }
