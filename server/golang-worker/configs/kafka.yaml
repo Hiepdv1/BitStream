@@ -1,0 +1,21 @@
+kafka:
+  brokers:
+    - kafka:29092
+
+  clientId: go-stream-worker
+  version: "3.5.0"
+
+  consumer:
+    groupId: stream-worker-group
+    initialOffset: oldest
+    minBytes: 1024
+    maxBytes: 1048576
+    maxWaitTime: 2500
+    sessionTimeout: 10000
+    rebalanceTimeout: 60000
+
+  producer:
+    batchSize: 100
+    batchTimeoutMs: 100
+    requiredAcks: -1
+    retryMax: 5
