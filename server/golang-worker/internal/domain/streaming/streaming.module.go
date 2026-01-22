@@ -1,6 +1,7 @@
 package streaming
 
 import (
+	"github.com/bitstream/backend-go/internal/config"
 	"github.com/bitstream/backend-go/internal/domain/streaming/manager"
 	"github.com/bitstream/backend-go/internal/kafka/consumer"
 	"github.com/bitstream/backend-go/internal/kafka/topics"
@@ -8,8 +9,8 @@ import (
 
 var streamManager *manager.StreamManager
 
-func Register() {
-	streamManager = manager.NewStreamManager()
+func Register(env *config.AppConfig) {
+	streamManager = manager.NewStreamManager(env)
 	streamManager.Start(5)
 
 	consumer.Register(consumer.Registration{

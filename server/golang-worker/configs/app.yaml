@@ -1,6 +1,16 @@
+env: development
+
+log:
+  level: -4
+  file: ../logs/app.log
+
+ffmpeg:
+  outputDir: D:/CODE/System-streaming/server/hls
+
 kafka:
   brokers:
     - kafka:29092
+    - localhost:9092
 
   clientId: go-stream-worker
   version: "3.5.0"
@@ -10,12 +20,12 @@ kafka:
     initialOffset: oldest
     minBytes: 1024
     maxBytes: 1048576
-    maxWaitTime: 2500
-    sessionTimeout: 10000
-    rebalanceTimeout: 60000
+    maxWaitTime: 2500ms
+    sessionTimeout: 10000ms
+    rebalanceTimeout: 60000ms
 
   producer:
     batchSize: 100
-    batchTimeoutMs: 100
+    batchTimeoutMs: 100ms
     requiredAcks: -1
     retryMax: 5

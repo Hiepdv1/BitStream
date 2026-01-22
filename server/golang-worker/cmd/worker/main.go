@@ -2,41 +2,53 @@ package main
 
 import (
 	"context"
-	"log/slog"
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/bitstream/backend-go/internal/config"
 	"github.com/bitstream/backend-go/internal/domain"
 	"github.com/bitstream/backend-go/internal/kafka"
-	kafkaConfig "github.com/bitstream/backend-go/internal/kafka/config"
 	"github.com/bitstream/backend-go/internal/kafka/service"
 	"github.com/bitstream/backend-go/internal/logger"
 )
 
+func resolveConfigPath() string {
+	if path := flag.String("config", "", "config file path"); *path != "" {
+		return *path
+	}
+
+	if path := os.Getenv("APP_CONFIG"); path != "" {
+		return path
+	}
+
+	return "configs/app.yaml"
+}
+
 func main() {
-	env := os.Getenv("APP_ENV")
-	if env == "" {
-		env = "development"
+	cfgPath := resolveConfigPath()
+
+	env, err := config.Load(cfgPath)
+	if err != nil {
+		panic(err)
 	}
 
 	log := logger.New(logger.Options{
-		Env:      env,
-		Level:    slog.LevelDebug,
-		FilePath: "../../logs/app.log",
+		Env:      env.Env,
+		Level:    env.Log.Level,
+		FilePath: env.Log.File,
 		AppName:  "bitstream-worker",
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	cfg := kafkaConfig.LoadKafkaConfig()
+	saramaCfg := kafka.NewSaramaConfig(env.Kafka)
 
-	saramaCfg := kafka.NewSaramaConfig(cfg)
+	domain.RegisterAll(env)
 
-	domain.RegisterAll()
-
-	kafkaService := service.NewKafkaService(cfg, saramaCfg)
+	kafkaService := service.NewKafkaService(env.Kafka, saramaCfg)
 	if err := kafkaService.Start(ctx); err != nil {
 		log.Error("Kafka service failed", "error", err)
 		panic(err)

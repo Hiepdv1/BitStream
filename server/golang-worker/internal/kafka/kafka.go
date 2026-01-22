@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/IBM/sarama"
-	"github.com/bitstream/backend-go/internal/kafka/config"
+	"github.com/bitstream/backend-go/internal/config"
 )
 
 func NewSaramaConfig(cfg config.KafkaConfig) *sarama.Config {

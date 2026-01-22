@@ -19,7 +19,7 @@ func StreamHandler(ctx context.Context, msg *sarama.ConsumerMessage) error {
 	streamManager.Dispatch(payload)
 
 	slog.Info(
-		"Stream started",
+		"Stream "+string(payload.Action),
 		"streamId", payload.StreamID,
 		"eventId", payload.EventID,
 	)

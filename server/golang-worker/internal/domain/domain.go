@@ -1,9 +1,12 @@
 package domain
 
-import "github.com/bitstream/backend-go/internal/domain/streaming"
+import (
+	"github.com/bitstream/backend-go/internal/config"
+	"github.com/bitstream/backend-go/internal/domain/streaming"
+)
 
-func RegisterAll() {
-	streaming.Register()
+func RegisterAll(env *config.AppConfig) {
+	streaming.Register(env)
 }
 
 func Shutdown() {

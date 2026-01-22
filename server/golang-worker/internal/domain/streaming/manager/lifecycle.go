@@ -2,6 +2,7 @@ package manager
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -30,14 +31,22 @@ func (m *StreamManager) handlePayload(p model.StreamPayload) {
 
 func (m *StreamManager) startStream(p model.StreamPayload) error {
 	m.mu.Lock()
-	if _, exists := m.process[p.StreamID]; exists {
-		m.mu.Unlock()
-		slog.Info("Stream already running", "streamId", p.StreamID)
-		return nil
-	}
+	_, exists := m.process[p.StreamID]
 	m.mu.Unlock()
 
-	proc, err := ffmpeg.NewStreamProcess(p.StreamID, p.RTMPUrl)
+	if exists {
+		slog.Warn("Stream already running, force stopping to restart", "streamId", p.StreamID)
+		if err := m.cleanupProcess(p.StreamID); err != nil {
+			slog.Error("Failed to cleanup old stream", "streamId", p.StreamID, "error", err)
+		}
+	}
+
+	proc, err := ffmpeg.NewStreamProcess(
+		p.StreamID,
+		p.RTMPUrl,
+		m.env.FFmpeg.OutputDir,
+		m.env.Env,
+	)
 	if err != nil {
 		return err
 	}
@@ -46,7 +55,7 @@ func (m *StreamManager) startStream(p model.StreamPayload) error {
 	m.process[p.StreamID] = proc
 	m.mu.Unlock()
 
-	slog.Info("Stream process started", "streamId", p.StreamID)
+	slog.Info(fmt.Sprintf("Stream process %s", string(p.Action)), "streamId", p.StreamID)
 
 	m.wg.Add(1)
 	go m.monitorProcess(p, proc)
@@ -61,22 +70,18 @@ func (m *StreamManager) stopStream(p model.StreamPayload) error {
 func (m *StreamManager) monitorProcess(p model.StreamPayload, proc *ffmpeg.StreamProcess) {
 	defer m.wg.Done()
 
-	err := proc.Cmd.Wait()
+	<-proc.Done()
 
-	select {
-	case <-proc.Ctx.Done():
-		slog.Info("Stream stopped cleanly (context cancelled)", "streamId", p.StreamID)
+	if proc.IsManualStop() {
+		slog.Info("Stream stopped intentionally", "streamId", p.StreamID)
+		m.cleanupProcess(p.StreamID)
 		return
-	default:
 	}
 
-	if err != nil {
-		slog.Error("Stream process exited with error", "streamId", p.StreamID, "error", err)
-	} else {
-		slog.Info("Stream process exited unexpectedly (zero code)", "streamId", p.StreamID)
-	}
+	err := proc.Error()
+	slog.Error("Stream process exited unexpectedly", "streamId", p.StreamID, "error", err)
 
-	_ = m.cleanupProcess(p.StreamID)
+	m.cleanupProcess(p.StreamID)
 
 	m.attemptRetry(p, errors.New("process crashed"))
 }
@@ -93,10 +98,7 @@ func (m *StreamManager) attemptRetry(p model.StreamPayload, reason error) {
 	}
 
 	p.RetryCount++
-	delay := time.Duration(p.RetryCount) * 2 * time.Second
-	if delay > 30*time.Second {
-		delay = 30 * time.Second
-	}
+	delay := min(time.Duration(p.RetryCount)*2*time.Second, 30*time.Second)
 
 	slog.Info("Scheduling retry", "streamId", p.StreamID, "retryCount", p.RetryCount, "delay", delay)
 
@@ -117,5 +119,5 @@ func (m *StreamManager) cleanupProcess(streamID string) error {
 	}
 
 	slog.Info("Cleaning up stream process", "streamId", streamID)
-	return proc.Kill()
+	return proc.Stop()
 }

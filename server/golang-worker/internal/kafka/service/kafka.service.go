@@ -5,8 +5,8 @@ import (
 	"log/slog"
 
 	"github.com/IBM/sarama"
+	"github.com/bitstream/backend-go/internal/config"
 	"github.com/bitstream/backend-go/internal/kafka/admin"
-	"github.com/bitstream/backend-go/internal/kafka/config"
 	"github.com/bitstream/backend-go/internal/kafka/consumer"
 	"github.com/bitstream/backend-go/internal/kafka/runtime"
 )
