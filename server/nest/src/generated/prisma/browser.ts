@@ -33,6 +33,11 @@ export type Account = Prisma.AccountModel
  */
 export type Stream = Prisma.StreamModel
 /**
+ * Model StreamMeta
+ * 
+ */
+export type StreamMeta = Prisma.StreamMetaModel
+/**
  * Model StreamKey
  * 
  */

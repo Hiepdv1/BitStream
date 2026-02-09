@@ -388,10 +388,6 @@ export type StreamKeyUncheckedUpdateOneWithoutStreamNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StreamKeyUpdateToOneWithWhereWithoutStreamInput, Prisma.StreamKeyUpdateWithoutStreamInput>, Prisma.StreamKeyUncheckedUpdateWithoutStreamInput>
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type StreamKeyCreateWithoutStreamInput = {
   id?: string
   keyHash: string

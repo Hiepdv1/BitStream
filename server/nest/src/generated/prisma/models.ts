@@ -11,6 +11,7 @@
 export type * from './models/User.js'
 export type * from './models/Account.js'
 export type * from './models/Stream.js'
+export type * from './models/StreamMeta.js'
 export type * from './models/StreamKey.js'
 export type * from './models/StreamEvent.js'
 export type * from './models/Recording.js'

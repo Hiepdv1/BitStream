@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.2.0
- * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
+ * Prisma Client JS version: 7.3.0
+ * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.2.0",
-  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
+  client: "7.3.0",
+  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
 }
 
 /**
@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Account: 'Account',
   Stream: 'Stream',
+  StreamMeta: 'StreamMeta',
   StreamKey: 'StreamKey',
   StreamEvent: 'StreamEvent',
   Recording: 'Recording',
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "stream" | "streamKey" | "streamEvent" | "recording" | "viewerSession"
+    modelProps: "user" | "account" | "stream" | "streamMeta" | "streamKey" | "streamEvent" | "recording" | "viewerSession"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -629,6 +630,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.StreamCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.StreamCountAggregateOutputType> | number
+        }
+      }
+    }
+    StreamMeta: {
+      payload: Prisma.$StreamMetaPayload<ExtArgs>
+      fields: Prisma.StreamMetaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StreamMetaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StreamMetaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        findFirst: {
+          args: Prisma.StreamMetaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StreamMetaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        findMany: {
+          args: Prisma.StreamMetaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>[]
+        }
+        create: {
+          args: Prisma.StreamMetaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        createMany: {
+          args: Prisma.StreamMetaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StreamMetaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>[]
+        }
+        delete: {
+          args: Prisma.StreamMetaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        update: {
+          args: Prisma.StreamMetaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        deleteMany: {
+          args: Prisma.StreamMetaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StreamMetaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StreamMetaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>[]
+        }
+        upsert: {
+          args: Prisma.StreamMetaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StreamMetaPayload>
+        }
+        aggregate: {
+          args: Prisma.StreamMetaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStreamMeta>
+        }
+        groupBy: {
+          args: Prisma.StreamMetaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StreamMetaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StreamMetaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StreamMetaCountAggregateOutputType> | number
         }
       }
     }
@@ -999,11 +1074,31 @@ export const StreamScalarFieldEnum = {
   description: 'description',
   isLive: 'isLive',
   visibility: 'visibility',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type StreamScalarFieldEnum = (typeof StreamScalarFieldEnum)[keyof typeof StreamScalarFieldEnum]
+
+
+export const StreamMetaScalarFieldEnum = {
+  id: 'id',
+  streamId: 'streamId',
+  totalDuration: 'totalDuration',
+  segmentCount: 'segmentCount',
+  lastSegmentSeq: 'lastSegmentSeq',
+  segmentDuration: 'segmentDuration',
+  timescale: 'timescale',
+  videoRepId: 'videoRepId',
+  audioRepId: 'audioRepId',
+  basePath: 'basePath',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StreamMetaScalarFieldEnum = (typeof StreamMetaScalarFieldEnum)[keyof typeof StreamMetaScalarFieldEnum]
 
 
 export const StreamKeyScalarFieldEnum = {
@@ -1179,6 +1274,34 @@ export type ListEnumStreamVisibilityFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'StreamEventType'
  */
 export type EnumStreamEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StreamEventType'>
@@ -1207,20 +1330,6 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'BigInt'
  */
 export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
@@ -1231,20 +1340,6 @@ export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'BigInt[]'
  */
 export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1345,6 +1440,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   account?: Prisma.AccountOmit
   stream?: Prisma.StreamOmit
+  streamMeta?: Prisma.StreamMetaOmit
   streamKey?: Prisma.StreamKeyOmit
   streamEvent?: Prisma.StreamEventOmit
   recording?: Prisma.RecordingOmit

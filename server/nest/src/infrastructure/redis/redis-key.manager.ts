@@ -18,6 +18,10 @@ export class RedisKeyManager {
     return this.buildKey(REDIS_PREFIX.SIGNATURE, signature);
   }
 
+  static getAccessHlsKey(streamId: string) {
+    return this.buildKey(REDIS_PREFIX.ACCESS_HLS, streamId);
+  }
+
   private static buildKey(
     prefix: REDIS_PREFIX,
     ...parts: (string | number)[]

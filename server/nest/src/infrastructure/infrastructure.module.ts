@@ -5,6 +5,7 @@ import { CorsModule } from './cors/cors.module';
 import { DatabaseModule } from './database/database.module';
 import { CookieModule } from './cookie/cookie.module';
 import { KafkaModule } from './kafka/kafka.module';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { KafkaModule } from './kafka/kafka.module';
     CorsModule,
     DatabaseModule,
     KafkaModule,
+    MinioModule,
   ],
 })
 export class InfrastructureModule {}

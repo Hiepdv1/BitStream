@@ -30,8 +30,8 @@ export type StreamVisibility = (typeof StreamVisibility)[keyof typeof StreamVisi
 export const StreamEventType = {
   STREAM_START: 'STREAM_START',
   STREAM_STOP: 'STREAM_STOP',
-  OBS_CONNECT: 'OBS_CONNECT',
-  OBS_DISCONNECT: 'OBS_DISCONNECT',
+  STREAM_CONNECT: 'STREAM_CONNECT',
+  STREAM_DISCONNECT: 'STREAM_DISCONNECT',
   INVALID_KEY: 'INVALID_KEY'
 } as const
 

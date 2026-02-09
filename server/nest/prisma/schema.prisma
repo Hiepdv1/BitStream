@@ -29,8 +29,8 @@ enum StreamVisibility {
 enum StreamEventType {
   STREAM_START
   STREAM_STOP
-  OBS_CONNECT
-  OBS_DISCONNECT
+  STREAM_CONNECT
+  STREAM_DISCONNECT
   INVALID_KEY
 }
 
@@ -52,6 +52,8 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([role])
 }
 
 model Account {
@@ -66,6 +68,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Stream {
@@ -76,15 +79,48 @@ model Stream {
   title       String
   description String?
   isLive      Boolean          @default(false)
-  visibility  StreamVisibility @default(PRIVATE)
+  visibility  StreamVisibility @default(PUBLIC)
 
-  ingestKey  StreamKey?
-  events     StreamEvent[]
+  ingestKey StreamKey?
+  meta      StreamMeta?
+
+  events StreamEvent[]
+
   recordings Recording[]
+
+  startedAt DateTime?
+  endedAt   DateTime?
 
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   viewerSessions ViewerSession[]
+
+  @@index([userId])
+  @@index([isLive])
+  @@index([visibility])
+  @@index([createdAt])
+}
+
+model StreamMeta {
+  id       String @id @default(cuid())
+  streamId String @unique
+  stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  totalDuration  Float   @default(0)
+  segmentCount   Int     @default(0)
+  lastSegmentSeq Int     @default(0)
+
+  // DASH Mathematical Metadata
+  segmentDuration Int    @default(2)
+  timescale       Int    @default(1000)
+  videoRepId      String @default("0")
+  audioRepId      String @default("1")
+  basePath        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([streamId])
 }
 
 model StreamKey {
@@ -98,6 +134,9 @@ model StreamKey {
 
   lastUsedAt DateTime?
   createdAt  DateTime  @default(now())
+
+  @@index([streamId])
+  @@index([isActive])
 }
 
 model StreamEvent {
@@ -109,6 +148,11 @@ model StreamEvent {
   payload Json?
 
   createdAt DateTime @default(now())
+
+  @@index([streamId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([streamId, createdAt])
 }
 
 model Recording {
@@ -121,6 +165,9 @@ model Recording {
   size     BigInt?
 
   createdAt DateTime @default(now())
+
+  @@index([streamId])
+  @@index([createdAt])
 }
 
 model ViewerSession {
@@ -132,4 +179,7 @@ model ViewerSession {
   userAgent String?
   startedAt DateTime  @default(now())
   endedAt   DateTime?
+
+  @@index([streamId])
+  @@index([startedAt])
 }

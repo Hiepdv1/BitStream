@@ -8,4 +8,5 @@ export const REDIS_PREFIX = {
   CACHE: 'CACHE',
   AUTH_SESSION: 'AUTH_SESSION',
   BLACKLIST: 'BLACKLIST',
+  ACCESS_HLS: 'ACCESS_HLS',
 } as const;

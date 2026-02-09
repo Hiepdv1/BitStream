@@ -31,6 +31,8 @@ export type StreamMinAggregateOutputType = {
   description: string | null
   isLive: boolean | null
   visibility: $Enums.StreamVisibility | null
+  startedAt: Date | null
+  endedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +44,8 @@ export type StreamMaxAggregateOutputType = {
   description: string | null
   isLive: boolean | null
   visibility: $Enums.StreamVisibility | null
+  startedAt: Date | null
+  endedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,6 +57,8 @@ export type StreamCountAggregateOutputType = {
   description: number
   isLive: number
   visibility: number
+  startedAt: number
+  endedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,6 +72,8 @@ export type StreamMinAggregateInputType = {
   description?: true
   isLive?: true
   visibility?: true
+  startedAt?: true
+  endedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +85,8 @@ export type StreamMaxAggregateInputType = {
   description?: true
   isLive?: true
   visibility?: true
+  startedAt?: true
+  endedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +98,8 @@ export type StreamCountAggregateInputType = {
   description?: true
   isLive?: true
   visibility?: true
+  startedAt?: true
+  endedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -172,6 +184,8 @@ export type StreamGroupByOutputType = {
   description: string | null
   isLive: boolean
   visibility: $Enums.StreamVisibility
+  startedAt: Date | null
+  endedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: StreamCountAggregateOutputType | null
@@ -204,10 +218,13 @@ export type StreamWhereInput = {
   description?: Prisma.StringNullableFilter<"Stream"> | string | null
   isLive?: Prisma.BoolFilter<"Stream"> | boolean
   visibility?: Prisma.EnumStreamVisibilityFilter<"Stream"> | $Enums.StreamVisibility
+  startedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
+  endedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   ingestKey?: Prisma.XOR<Prisma.StreamKeyNullableScalarRelationFilter, Prisma.StreamKeyWhereInput> | null
+  meta?: Prisma.XOR<Prisma.StreamMetaNullableScalarRelationFilter, Prisma.StreamMetaWhereInput> | null
   events?: Prisma.StreamEventListRelationFilter
   recordings?: Prisma.RecordingListRelationFilter
   viewerSessions?: Prisma.ViewerSessionListRelationFilter
@@ -220,10 +237,13 @@ export type StreamOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   isLive?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
+  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   ingestKey?: Prisma.StreamKeyOrderByWithRelationInput
+  meta?: Prisma.StreamMetaOrderByWithRelationInput
   events?: Prisma.StreamEventOrderByRelationAggregateInput
   recordings?: Prisma.RecordingOrderByRelationAggregateInput
   viewerSessions?: Prisma.ViewerSessionOrderByRelationAggregateInput
@@ -239,10 +259,13 @@ export type StreamWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Stream"> | string | null
   isLive?: Prisma.BoolFilter<"Stream"> | boolean
   visibility?: Prisma.EnumStreamVisibilityFilter<"Stream"> | $Enums.StreamVisibility
+  startedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
+  endedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   ingestKey?: Prisma.XOR<Prisma.StreamKeyNullableScalarRelationFilter, Prisma.StreamKeyWhereInput> | null
+  meta?: Prisma.XOR<Prisma.StreamMetaNullableScalarRelationFilter, Prisma.StreamMetaWhereInput> | null
   events?: Prisma.StreamEventListRelationFilter
   recordings?: Prisma.RecordingListRelationFilter
   viewerSessions?: Prisma.ViewerSessionListRelationFilter
@@ -255,6 +278,8 @@ export type StreamOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   isLive?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
+  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.StreamCountOrderByAggregateInput
@@ -272,6 +297,8 @@ export type StreamScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Stream"> | string | null
   isLive?: Prisma.BoolWithAggregatesFilter<"Stream"> | boolean
   visibility?: Prisma.EnumStreamVisibilityWithAggregatesFilter<"Stream"> | $Enums.StreamVisibility
+  startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stream"> | Date | string | null
+  endedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Stream"> | Date | string
 }
@@ -282,10 +309,13 @@ export type StreamCreateInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
@@ -298,9 +328,12 @@ export type StreamUncheckedCreateInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
@@ -312,10 +345,13 @@ export type StreamUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
@@ -328,9 +364,12 @@ export type StreamUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
@@ -343,6 +382,8 @@ export type StreamCreateManyInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -353,6 +394,8 @@ export type StreamUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -364,6 +407,8 @@ export type StreamUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +430,8 @@ export type StreamCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   isLive?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
+  startedAt?: Prisma.SortOrder
+  endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -396,6 +443,8 @@ export type StreamMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   isLive?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
+  startedAt?: Prisma.SortOrder
+  endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -407,6 +456,8 @@ export type StreamMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   isLive?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
+  startedAt?: Prisma.SortOrder
+  endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -460,6 +511,24 @@ export type StreamUncheckedUpdateManyWithoutUserNestedInput = {
 
 export type EnumStreamVisibilityFieldUpdateOperationsInput = {
   set?: $Enums.StreamVisibility
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type StreamCreateNestedOneWithoutMetaInput = {
+  create?: Prisma.XOR<Prisma.StreamCreateWithoutMetaInput, Prisma.StreamUncheckedCreateWithoutMetaInput>
+  connectOrCreate?: Prisma.StreamCreateOrConnectWithoutMetaInput
+  connect?: Prisma.StreamWhereUniqueInput
+}
+
+export type StreamUpdateOneRequiredWithoutMetaNestedInput = {
+  create?: Prisma.XOR<Prisma.StreamCreateWithoutMetaInput, Prisma.StreamUncheckedCreateWithoutMetaInput>
+  connectOrCreate?: Prisma.StreamCreateOrConnectWithoutMetaInput
+  upsert?: Prisma.StreamUpsertWithoutMetaInput
+  connect?: Prisma.StreamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StreamUpdateToOneWithWhereWithoutMetaInput, Prisma.StreamUpdateWithoutMetaInput>, Prisma.StreamUncheckedUpdateWithoutMetaInput>
 }
 
 export type StreamCreateNestedOneWithoutIngestKeyInput = {
@@ -524,9 +593,12 @@ export type StreamCreateWithoutUserInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
@@ -538,9 +610,12 @@ export type StreamUncheckedCreateWithoutUserInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
@@ -582,8 +657,94 @@ export type StreamScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Stream"> | string | null
   isLive?: Prisma.BoolFilter<"Stream"> | boolean
   visibility?: Prisma.EnumStreamVisibilityFilter<"Stream"> | $Enums.StreamVisibility
+  startedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
+  endedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
+}
+
+export type StreamCreateWithoutMetaInput = {
+  id?: string
+  title: string
+  description?: string | null
+  isLive?: boolean
+  visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
+  viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
+}
+
+export type StreamUncheckedCreateWithoutMetaInput = {
+  id?: string
+  userId: string
+  title: string
+  description?: string | null
+  isLive?: boolean
+  visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
+}
+
+export type StreamCreateOrConnectWithoutMetaInput = {
+  where: Prisma.StreamWhereUniqueInput
+  create: Prisma.XOR<Prisma.StreamCreateWithoutMetaInput, Prisma.StreamUncheckedCreateWithoutMetaInput>
+}
+
+export type StreamUpsertWithoutMetaInput = {
+  update: Prisma.XOR<Prisma.StreamUpdateWithoutMetaInput, Prisma.StreamUncheckedUpdateWithoutMetaInput>
+  create: Prisma.XOR<Prisma.StreamCreateWithoutMetaInput, Prisma.StreamUncheckedCreateWithoutMetaInput>
+  where?: Prisma.StreamWhereInput
+}
+
+export type StreamUpdateToOneWithWhereWithoutMetaInput = {
+  where?: Prisma.StreamWhereInput
+  data: Prisma.XOR<Prisma.StreamUpdateWithoutMetaInput, Prisma.StreamUncheckedUpdateWithoutMetaInput>
+}
+
+export type StreamUpdateWithoutMetaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
+  viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
+}
+
+export type StreamUncheckedUpdateWithoutMetaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
 export type StreamCreateWithoutIngestKeyInput = {
@@ -592,9 +753,12 @@ export type StreamCreateWithoutIngestKeyInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
@@ -607,8 +771,11 @@ export type StreamUncheckedCreateWithoutIngestKeyInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
@@ -636,9 +803,12 @@ export type StreamUpdateWithoutIngestKeyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
@@ -651,8 +821,11 @@ export type StreamUncheckedUpdateWithoutIngestKeyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
@@ -664,10 +837,13 @@ export type StreamCreateWithoutEventsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
@@ -679,9 +855,12 @@ export type StreamUncheckedCreateWithoutEventsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
@@ -708,10 +887,13 @@ export type StreamUpdateWithoutEventsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
@@ -723,9 +905,12 @@ export type StreamUncheckedUpdateWithoutEventsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
@@ -736,10 +921,13 @@ export type StreamCreateWithoutRecordingsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
@@ -751,9 +939,12 @@ export type StreamUncheckedCreateWithoutRecordingsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
@@ -780,10 +971,13 @@ export type StreamUpdateWithoutRecordingsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
@@ -795,9 +989,12 @@ export type StreamUncheckedUpdateWithoutRecordingsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
@@ -808,10 +1005,13 @@ export type StreamCreateWithoutViewerSessionsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
 }
@@ -823,9 +1023,12 @@ export type StreamUncheckedCreateWithoutViewerSessionsInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
 }
@@ -852,10 +1055,13 @@ export type StreamUpdateWithoutViewerSessionsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
 }
@@ -867,9 +1073,12 @@ export type StreamUncheckedUpdateWithoutViewerSessionsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
 }
@@ -880,6 +1089,8 @@ export type StreamCreateManyUserInput = {
   description?: string | null
   isLive?: boolean
   visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -890,9 +1101,12 @@ export type StreamUpdateWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
@@ -904,9 +1118,12 @@ export type StreamUncheckedUpdateWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
@@ -918,6 +1135,8 @@ export type StreamUncheckedUpdateManyWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -978,10 +1197,13 @@ export type StreamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   isLive?: boolean
   visibility?: boolean
+  startedAt?: boolean
+  endedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   ingestKey?: boolean | Prisma.Stream$ingestKeyArgs<ExtArgs>
+  meta?: boolean | Prisma.Stream$metaArgs<ExtArgs>
   events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
   recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   viewerSessions?: boolean | Prisma.Stream$viewerSessionsArgs<ExtArgs>
@@ -995,6 +1217,8 @@ export type StreamSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   isLive?: boolean
   visibility?: boolean
+  startedAt?: boolean
+  endedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1007,6 +1231,8 @@ export type StreamSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   isLive?: boolean
   visibility?: boolean
+  startedAt?: boolean
+  endedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1019,14 +1245,17 @@ export type StreamSelectScalar = {
   description?: boolean
   isLive?: boolean
   visibility?: boolean
+  startedAt?: boolean
+  endedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StreamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "isLive" | "visibility" | "createdAt" | "updatedAt", ExtArgs["result"]["stream"]>
+export type StreamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "isLive" | "visibility" | "startedAt" | "endedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["stream"]>
 export type StreamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   ingestKey?: boolean | Prisma.Stream$ingestKeyArgs<ExtArgs>
+  meta?: boolean | Prisma.Stream$metaArgs<ExtArgs>
   events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
   recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   viewerSessions?: boolean | Prisma.Stream$viewerSessionsArgs<ExtArgs>
@@ -1044,6 +1273,7 @@ export type $StreamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     ingestKey: Prisma.$StreamKeyPayload<ExtArgs> | null
+    meta: Prisma.$StreamMetaPayload<ExtArgs> | null
     events: Prisma.$StreamEventPayload<ExtArgs>[]
     recordings: Prisma.$RecordingPayload<ExtArgs>[]
     viewerSessions: Prisma.$ViewerSessionPayload<ExtArgs>[]
@@ -1055,6 +1285,8 @@ export type $StreamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     description: string | null
     isLive: boolean
     visibility: $Enums.StreamVisibility
+    startedAt: Date | null
+    endedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["stream"]>
@@ -1453,6 +1685,7 @@ export interface Prisma__StreamClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   ingestKey<T extends Prisma.Stream$ingestKeyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$ingestKeyArgs<ExtArgs>>): Prisma.Prisma__StreamKeyClient<runtime.Types.Result.GetResult<Prisma.$StreamKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  meta<T extends Prisma.Stream$metaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$metaArgs<ExtArgs>>): Prisma.Prisma__StreamMetaClient<runtime.Types.Result.GetResult<Prisma.$StreamMetaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   events<T extends Prisma.Stream$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StreamEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recordings<T extends Prisma.Stream$recordingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$recordingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   viewerSessions<T extends Prisma.Stream$viewerSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$viewerSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ViewerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1491,6 +1724,8 @@ export interface StreamFieldRefs {
   readonly description: Prisma.FieldRef<"Stream", 'String'>
   readonly isLive: Prisma.FieldRef<"Stream", 'Boolean'>
   readonly visibility: Prisma.FieldRef<"Stream", 'StreamVisibility'>
+  readonly startedAt: Prisma.FieldRef<"Stream", 'DateTime'>
+  readonly endedAt: Prisma.FieldRef<"Stream", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Stream", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Stream", 'DateTime'>
 }
@@ -1905,6 +2140,25 @@ export type Stream$ingestKeyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.StreamKeyInclude<ExtArgs> | null
   where?: Prisma.StreamKeyWhereInput
+}
+
+/**
+ * Stream.meta
+ */
+export type Stream$metaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StreamMeta
+   */
+  select?: Prisma.StreamMetaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StreamMeta
+   */
+  omit?: Prisma.StreamMetaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StreamMetaInclude<ExtArgs> | null
+  where?: Prisma.StreamMetaWhereInput
 }
 
 /**
