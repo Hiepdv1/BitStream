@@ -38,11 +38,11 @@ export function VideoInfo({
 
   return (
     <div className="space-y-4 py-4">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-3">
             {isLive && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500 text-white text-xs font-bold rounded-md">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500 text-white text-xs font-bold rounded-md shrink-0">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
@@ -50,12 +50,12 @@ export function VideoInfo({
                 LIVE
               </span>
             )}
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main line-clamp-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-text-main line-clamp-2">
               {title}
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted">
+          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-text-muted">
             {viewCount !== undefined && (
               <span className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4" />
@@ -71,34 +71,34 @@ export function VideoInfo({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
           <Button
             variant="ghost"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105 shrink-0"
           >
-            <ThumbsUp className="w-5 h-5" />
-            <span className="hidden sm:inline">Like</span>
+            <ThumbsUp className="w-5 h-5 shrink-0" />
+            <span className="text-xs sm:text-sm">Like</span>
           </Button>
 
           <Button
             variant="ghost"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105 shrink-0"
           >
-            <Share2 className="w-5 h-5" />
-            <span className="hidden sm:inline">Share</span>
+            <Share2 className="w-5 h-5 shrink-0" />
+            <span className="text-xs sm:text-sm">Share</span>
           </Button>
 
           <Button
             variant="ghost"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border transition-all hover:scale-105 shrink-0"
           >
-            <Bookmark className="w-5 h-5" />
-            <span className="hidden sm:inline">Save</span>
+            <Bookmark className="w-5 h-5 shrink-0" />
+            <span className="text-xs sm:text-sm">Save</span>
           </Button>
 
           <Button
             variant="ghost"
-            className="w-10 h-10 p-0 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border"
+            className="w-9 h-9 sm:w-10 sm:h-10 p-0 rounded-xl bg-surface hover:bg-surface-hover text-text-main border border-border shrink-0"
           >
             <MoreHorizontal className="w-5 h-5" />
           </Button>

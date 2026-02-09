@@ -5,8 +5,10 @@ import {
   VideoInfo,
   VideoRecommendations,
   LiveChat,
-} from "@/features/stream";
-import { Loading } from "@/components/ui/Loading";
+} from "@/features/watch";
+import { StreamData } from "@/features/stream/types/stream";
+import { serverFetch } from "@/lib/http/server/serverFetch";
+import { notFound } from "next/navigation";
 
 const RECOMMENDED_VIDEOS = [
   {
@@ -39,160 +41,118 @@ const RECOMMENDED_VIDEOS = [
     viewCount: 234500,
     isLive: true,
   },
-  {
-    id: "r4",
-    streamId: "stream-demo-004",
-    title: "Lo-Fi Beats to Study and Relax",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2670&auto=format&fit=crop",
-    creatorName: "ChillBeats",
-    viewCount: 1250000,
-    isLive: true,
-  },
-  {
-    id: "r5",
-    streamId: "stream-demo-005",
-    title: "Machine Learning from Scratch - Episode 12",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop",
-    creatorName: "AI Academy",
-    viewCount: 67800,
-    duration: "2:15:00",
-  },
-  {
-    id: "r6",
-    streamId: "stream-demo-006",
-    title: "Cyberpunk 2077 Full Walkthrough",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=2578&auto=format&fit=crop",
-    creatorName: "GameZone",
-    viewCount: 156000,
-    duration: "8:45:30",
-  },
 ];
 
 interface PageProps {
   params: Promise<{
     streamId: string;
   }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { streamId } = await params;
-  return {
-    title: `Watching Stream - BitStream`,
-    description: `Watch live stream ${streamId} on BitStream`,
-  };
-}
-
-export default async function WatchPage({ params }: PageProps) {
+export default async function WatchPage({ params, searchParams }: PageProps) {
   const { streamId } = await params;
 
-  const streamData = {
-    title: "Live Coding Session - Building a Streaming Platform",
-    description:
-      "Join me as we build a complete video streaming platform from scratch! Today we're working on the HLS video player integration and creating a beautiful, responsive UI.\n\nTopics covered:\n• HLS.js integration\n• Custom video controls\n• React performance optimization\n• Dark/Light mode theming",
-    viewCount: 1234,
-    createdAt: "Streaming now",
-    creatorName: "BitStream Official",
-    isLive: true,
-  };
+  let streamData: StreamData;
+
+  try {
+    const res = await serverFetch<StreamData>(
+      `/stream/${streamId}/info`,
+      {},
+      {},
+      false,
+    );
+
+    if (!res.data) {
+      return notFound();
+    }
+
+    streamData = res.data;
+  } catch (err) {
+    console.log("Error: ", err);
+    return notFound();
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-linear-to-b from-brand/5 via-transparent to-accent/5 dark:from-brand/10 dark:to-accent/10" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl dark:bg-brand/20" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl dark:bg-accent/20" />
-      </div>
+    <div className="min-h-screen bg-background flex flex-col pt-16 lg:pt-0 custom-scrollbar">
+      {/* Scrollbar Customization for whole page */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        html {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+      `}</style>
 
-      <div className="relative z-10 container mx-auto px-4 py-6 lg:py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
-          <div className="xl:col-span-3 space-y-4">
-            <Suspense
-              fallback={
-                <div className="aspect-video bg-surface rounded-2xl animate-pulse flex items-center justify-center">
-                  <Loading size="lg" text="Loading player..." />
-                </div>
-              }
-            >
-              <VideoPlayer
-                streamId={streamId}
-                title={streamData.title}
-                autoPlay={true}
-                isLive={streamData.isLive}
+      <div className="container max-w-[1920px] mx-auto p-0 lg:p-4 lg:space-y-4">
+        {/* Main Interface: Video and Sticky Chat */}
+        <div className="flex flex-col lg:flex-row gap-4 h-auto lg:h-[65vh] xl:h-[75vh]">
+          {/* Player Column */}
+          <div className="flex-1 bg-black rounded-lg overflow-hidden shadow-2xl relative border border-white/5">
+            <VideoPlayer
+              streamId={streamId}
+              autoPlay={true}
+              isLive={streamData.isLive}
+              totalDuration={streamData.totalDuration}
+            />
+          </div>
+
+          {/* Sidebar Chat Column */}
+          <div className="hidden lg:block w-[340px] shrink-0 bg-background rounded-lg border border-white/5 overflow-hidden h-full">
+            <LiveChat
+              streamId={streamId}
+              isLive={streamData.isLive}
+              mode="sidebar"
+            />
+          </div>
+        </div>
+
+        {/* Supplementary Content Column */}
+        <div className="px-4 lg:px-0 flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 space-y-6 max-w-7xl">
+            <VideoInfo
+              title={streamData.title}
+              description={streamData.description || ""}
+              viewCount={0}
+              createdAt={streamData.createdAt}
+              creatorName="Unknown"
+              isLive={streamData.isLive}
+            />
+
+            <div className="border-t border-white/5 pt-6">
+              <h3 className="text-lg font-semibold mb-4">Recommended</h3>
+              <VideoRecommendations
+                videos={RECOMMENDED_VIDEOS}
+                currentStreamId={streamId}
+                layout="horizontal"
               />
-            </Suspense>
-
-            <Suspense
-              fallback={
-                <div className="space-y-4 animate-pulse">
-                  <div className="h-8 bg-surface rounded-lg w-3/4" />
-                  <div className="h-4 bg-surface rounded-lg w-1/2" />
-                </div>
-              }
-            >
-              <VideoInfo
-                title={streamData.title}
-                description={streamData.description}
-                viewCount={streamData.viewCount}
-                createdAt={streamData.createdAt}
-                creatorName={streamData.creatorName}
-                isLive={streamData.isLive}
-              />
-            </Suspense>
-
-            <div className="xl:hidden">
-              <Suspense
-                fallback={
-                  <div className="h-48 bg-surface rounded-2xl animate-pulse" />
-                }
-              >
-                <VideoRecommendations
-                  videos={RECOMMENDED_VIDEOS}
-                  currentStreamId={streamId}
-                  layout="horizontal"
-                />
-              </Suspense>
             </div>
           </div>
 
-          <aside className="hidden xl:flex xl:flex-col gap-6">
-            {streamData.isLive && (
-              <LiveChat streamId={streamId} isLive={streamData.isLive} />
-            )}
-
-            <div className="sticky top-24 space-y-4 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide p-2 -m-2">
-              <Suspense
-                fallback={
-                  <div className="space-y-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex gap-3 animate-pulse">
-                        <div className="w-40 aspect-video bg-surface rounded-xl" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-surface rounded w-full" />
-                          <div className="h-3 bg-surface rounded w-2/3" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                }
-              >
-                <VideoRecommendations
-                  videos={RECOMMENDED_VIDEOS}
-                  currentStreamId={streamId}
-                  layout="vertical"
-                />
-              </Suspense>
-            </div>
-          </aside>
+          {/* Alignment Spacer */}
+          <div className="hidden lg:block w-[340px] shrink-0" />
         </div>
       </div>
 
-      <div className="xl:hidden">
-        <LiveChat streamId={streamId} isLive={streamData.isLive} />
+      {/* Mobile-Friendly Chat Hook */}
+      <div className="lg:hidden">
+        <LiveChat
+          streamId={streamId}
+          isLive={streamData.isLive}
+          mode="mobile"
+        />
       </div>
     </div>
   );

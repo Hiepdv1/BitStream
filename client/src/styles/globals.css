@@ -10,8 +10,6 @@
 @import "./components/cinema-background.css";
 
 @import "../features/auth/styles/index.css";
-@import "./features/home.css";
-@import "./features/stream.css";
 
 @layer base {
   :root {
