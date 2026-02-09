@@ -2,84 +2,84 @@ package ffmpeg
 
 import (
 	"context"
-	"os"
 	"os/exec"
 	"path/filepath"
 )
 
-func BuildCommandContextTest(ctx context.Context, RTMPUrl, streamDir string) *exec.Cmd {
-	segmentPath := filepath.Join(streamDir, "seg_%05d.ts")
-	dvrPlaylist := filepath.Join(streamDir, "dvr.m3u8")
+func BuildStreamCommand(
+	ctx context.Context,
+	rtmpURL string,
+	streamDir string,
+	env string,
+) *exec.Cmd {
 
-	args := []string{
-		"-rw_timeout", "5000000",
+	baseArgs := []string{
+		// RTMP input settings
+		"-rw_timeout", "10000000",
+		"-fflags", "+genpts+igndts+discardcorrupt",
 		"-rtmp_live", "live",
-
-		"-fflags", "+genpts",
-		"-i", RTMPUrl,
-
-		"-c:v", "copy",
-		"-c:a", "copy",
-
-		"-f", "hls",
-		"-hls_time", "2",
-		"-hls_list_size", "0",
+		"-i", rtmpURL,
 	}
 
-	if _, err := os.Stat(dvrPlaylist); err == nil {
-		args = append(args, "-hls_start_number_source", "generic")
-	}
-
-	args = append(args,
-		"-hls_flags", "append_list+independent_segments",
-		"-hls_segment_filename", filepath.ToSlash(segmentPath),
-		filepath.ToSlash(dvrPlaylist),
-	)
-
-	return exec.CommandContext(ctx, "ffmpeg", args...)
-}
-
-func BuildCommandContextProd(ctx context.Context, RTMPUrl, streamDir string) *exec.Cmd {
-	segmentPath := filepath.Join(streamDir, "seg_%05d.ts")
-	dvrPlaylist := filepath.Join(streamDir, "dvr.m3u8")
-
-	args := []string{
-		"-rw_timeout", "5000000",
-		"-rtmp_live", "live",
-
-		"-fflags", "+genpts",
-		"-i", RTMPUrl,
-
-		// VIDEO
+	encodingArgs := []string{
+		// Video encoding
 		"-c:v", "libx264",
 		"-preset", "veryfast",
+		"-tune", "zerolatency",
 		"-profile:v", "main",
-		"-pix_fmt", "yuv420p",
+		"-level", "4.0",
+
 		"-g", "60",
 		"-keyint_min", "60",
 		"-sc_threshold", "0",
+		"-force_key_frames", "expr:gte(t,n_forced*2)",
 
-		// AUDIO
+		// Bitrate
+		"-b:v", "2500k",
+		"-maxrate", "2800k",
+		"-bufsize", "5000k",
+		"-pix_fmt", "yuv420p",
+
+		// Audio encoding
 		"-c:a", "aac",
 		"-b:a", "128k",
 		"-ar", "48000",
 		"-ac", "2",
-
-		// HLS
-		"-f", "hls",
-		"-hls_time", "2",
-		"-hls_list_size", "0",
 	}
 
-	if _, err := os.Stat(dvrPlaylist); err == nil {
-		args = append(args, "-hls_start_number_source", "generic")
+	dashArgs := []string{
+		"-f", "dash",
+
+		"-seg_duration", "2",
+		"-frag_duration", "2",
+		"-min_seg_duration", "2000000",
+
+		"-window_size", "15",
+		"-extra_window_size", "30",
+
+		"-remove_at_exit", "0",
+
+		"-use_template", "1",
+		"-use_timeline", "1",
+
+		"-streaming", "1",
+		"-ldash", "1",
+
+		"-target_latency", "4",
+		"-write_prft", "1",
+
+		"-utc_timing_url", "https://time.akamai.com/?iso",
+
+		"-adaptation_sets", "id=0,streams=v id=1,streams=a",
+
+		"-init_seg_name", "init-$RepresentationID$.mp4",
+		"-media_seg_name", "chunk-$RepresentationID$-$Number$.m4s",
+
+		filepath.ToSlash(filepath.Join(streamDir, "manifest.mpd")),
 	}
 
-	args = append(args,
-		"-hls_flags", "append_list+independent_segments",
-		"-hls_segment_filename", filepath.ToSlash(segmentPath),
-		filepath.ToSlash(dvrPlaylist),
-	)
+	args := append(baseArgs, encodingArgs...)
+	args = append(args, dashArgs...)
 
 	return exec.CommandContext(ctx, "ffmpeg", args...)
 }

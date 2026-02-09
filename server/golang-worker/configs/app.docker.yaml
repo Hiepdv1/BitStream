@@ -1,19 +1,18 @@
-env: development
+env: production
 
 log:
-  level: -4
-  file: ../logs/app.log
+  level: 0
+  file: /app/logs/app.log
 
 ffmpeg:
-  outputDir: D:/CODE/System-streaming/server/dash
+  outputDir: /var/www/media
 
 db:
-  url: postgresql://postgres:1@localhost:5433/stream?sslmode=disable&search_path=public
+  url: postgresql://postgres:1@host.docker.internal:5433/stream?sslmode=disable&search_path=public
 
 kafka:
   brokers:
     - kafka:29092
-    - localhost:9092
 
   clientId: go-stream-worker
   version: "3.5.0"
@@ -34,7 +33,7 @@ kafka:
     retryMax: 5
 
 minio:
-  endpoint: localhost:9000
+  endpoint: minio:9000
   accessKeyId: minioadmin
   secretAccessKey: minioadminpassword
   bucketName: hls-streams

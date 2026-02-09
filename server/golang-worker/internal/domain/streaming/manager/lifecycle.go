@@ -44,8 +44,10 @@ func (m *StreamManager) startStream(p model.StreamPayload) error {
 	proc, err := ffmpeg.NewStreamProcess(
 		p.StreamID,
 		p.RTMPUrl,
-		m.env.FFmpeg.OutputDir,
-		m.env.Env,
+		m.config.FFmpeg.OutputDir,
+		m.config.Env,
+		m.queries,
+		m.storage,
 	)
 	if err != nil {
 		return err

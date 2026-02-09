@@ -11,6 +11,20 @@ type AppConfig struct {
 	Log    LogConfig    `mapstructure:"log"`
 	Kafka  KafkaConfig  `mapstructure:"kafka"`
 	FFmpeg FFmpegConfig `mapstructure:"ffmpeg"`
+	Db     DbConfig     `mapstructure:"db"`
+	MinIO  MinIOConfig  `mapstructure:"minio"`
+}
+
+type MinIOConfig struct {
+	Endpoint        string `mapstructure:"endpoint"`
+	AccessKeyID     string `mapstructure:"accessKeyId"`
+	SecretAccessKey string `mapstructure:"secretAccessKey"`
+	BucketName      string `mapstructure:"bucketName"`
+	UseSSL          bool   `mapstructure:"useSSL"`
+}
+
+type DbConfig struct {
+	Url string `mapstructure:"url"`
 }
 
 type FFmpegConfig struct {

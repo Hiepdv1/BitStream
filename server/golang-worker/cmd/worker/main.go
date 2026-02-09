@@ -3,15 +3,19 @@ package main
 import (
 	"context"
 	"flag"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/bitstream/backend-go/internal/config"
+	"github.com/bitstream/backend-go/internal/db"
+	"github.com/bitstream/backend-go/internal/deps"
 	"github.com/bitstream/backend-go/internal/domain"
 	"github.com/bitstream/backend-go/internal/kafka"
 	"github.com/bitstream/backend-go/internal/kafka/service"
 	"github.com/bitstream/backend-go/internal/logger"
+	"github.com/bitstream/backend-go/internal/storage/minio"
 )
 
 func resolveConfigPath() string {
@@ -41,12 +45,36 @@ func main() {
 		AppName:  "bitstream-worker",
 	})
 
+	database, err := db.NewPostgres(env.Db.Url)
+	if err != nil {
+		slog.Error("failed to init database", "err", err)
+		os.Exit(1)
+	}
+	defer database.Close()
+
+	storageService, err := minio.NewService(env.MinIO)
+	if err != nil {
+		slog.Error("failed to init minio", "err", err)
+		os.Exit(1)
+	}
+
+	appDeps := &deps.Deps{
+		DB:      database,
+		Config:  env,
+		Storage: storageService,
+	}
+
+	if err := storageService.EnsureBucket(context.Background()); err != nil {
+		slog.Error("failed to ensure bucket", "err", err)
+		os.Exit(1)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	saramaCfg := kafka.NewSaramaConfig(env.Kafka)
 
-	domain.RegisterAll(env)
+	domain.RegisterAll(appDeps)
 
 	kafkaService := service.NewKafkaService(env.Kafka, saramaCfg)
 	if err := kafkaService.Start(ctx); err != nil {
