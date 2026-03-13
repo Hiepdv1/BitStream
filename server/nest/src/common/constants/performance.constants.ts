@@ -1,0 +1,1 @@
+export const SLOW_REQUEST_THRESHOLD_MS = 300;

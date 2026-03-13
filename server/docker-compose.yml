@@ -1,0 +1,159 @@
+services:
+  nginx-rtmp:
+    build: ./nginx
+    container_name: nginx-rtmp
+    ports:
+      - "1935:1935"
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/rtmp.conf:/etc/nginx/rtmp.conf
+      - ./dash:/var/www/media
+      - ./nginx-cache:/var/cache/nginx
+    env_file:
+      - ./nginx/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: stream-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: stream
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: UTC
+    command: postgres -c timezone=UTC
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: unless-stopped
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8000:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      DYNAMIC_CONFIG_ENABLED: "true"
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: stream-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadminpassword
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+      MINIO_API_CORS_ALLOW_ORIGIN: "http://localhost:3000"
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+  nest-api:
+    build:
+      context: ./nest
+      dockerfile: Dockerfile
+    container_name: nest-api
+    ports:
+      - "3001:3001"
+    environment:
+      TZ: UTC
+    env_file:
+      - ./nest/.env.docker
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+      - minio
+    volumes:
+      - ./hls:/var/www/hls
+      - ./dash:/var/www/media
+      - ./storage/recovery:/app/storage/recovery
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["node", "dist/main.js"]
+
+  mail-worker:
+    build:
+      context: ./nest
+      dockerfile: Dockerfile
+    container_name: mail-worker
+    environment:
+      TZ: UTC
+    env_file:
+      - ./nest/.env.docker
+    depends_on:
+      - kafka
+      - redis
+    volumes:
+      - ./storage/recovery:/app/storage/recovery
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["node", "dist/workers/mail/main.js"]
+
+  golang-worker:
+    build: ./golang-worker
+    container_name: golang-worker
+    depends_on:
+      - kafka
+      - minio
+      - postgres
+    environment:
+      APP_CONFIG: /app/configs/app.docker.yaml
+      TZ: UTC
+    volumes:
+      - ./dash:/var/www/media
+      - ./golang-worker/configs:/app/configs:ro
+      - golang-worker-logs:/app/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  minio-data:
+  golang-worker-logs:
+  postgres-data:
