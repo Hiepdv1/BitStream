@@ -1,18 +1,20 @@
-env: production
+env: development
 
 log:
-  level: 0
-  file: /app/logs/app.log
+  level: -4
+  file: logs/app.log
 
 ffmpeg:
   outputDir: /var/www/media
+  cdnBaseUrl: http://localhost:8080/vod/streams
 
 db:
-  url: postgresql://postgres:1@host.docker.internal:5433/stream?sslmode=disable&search_path=public
+  url: "postgres://postgres:postgres@postgres:5432/stream?sslmode=disable"
 
 kafka:
   brokers:
     - kafka:29092
+    - localhost:9092
 
   clientId: go-stream-worker
   version: "3.5.0"
@@ -38,3 +40,6 @@ minio:
   secretAccessKey: minioadminpassword
   bucketName: hls-streams
   useSSL: false
+
+data:
+  recoveryDir: /tmp/recovery

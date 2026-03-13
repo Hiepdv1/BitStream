@@ -18,4 +18,6 @@ type StreamPayload struct {
 	MaxRetry   int `json:"maxRetry"`
 
 	OccurredAt string `json:"occurredAt"`
+
+	IsRetry bool
 }

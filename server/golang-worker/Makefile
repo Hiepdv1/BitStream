@@ -1,4 +1,5 @@
 BINARY_NAME=worker-app
+DOCKER_IMAGE_NAME=golang-worker
 MAIN_PATH=./cmd/worker/main.go
 
 SQLC=sqlc
@@ -7,8 +8,33 @@ QUERIES_PATH=./db/queries
 
 all: build
 
+## build: build worker docker image
+docker-build:
+	@echo "=> Building docker image..."
+	docker compose build ${DOCKER_IMAGE_NAME}
+
+## run: run worker
+docker-run:
+	@echo "=> Starting Worker..."
+	docker compose up -d ${DOCKER_IMAGE_NAME}
+
+## stop: stop worker
+docker-stop:
+	@echo "=> Stopping Worker..."
+	docker compose stop ${DOCKER_IMAGE_NAME}
+
+## restart: restart worker
+docker-restart:
+	@echo "=> Restarting Worker..."
+	docker compose restart ${DOCKER_IMAGE_NAME}
+
+## logs: docker logs
+docker-logs:
+	@echo "=> Docker logs..."
+	docker compose logs -f ${DOCKER_IMAGE_NAME}
+
 ## build: build worker binary
-build:
+build-binary:
 	@echo "=> Building binary..."
 	go build -o bin/${BINARY_NAME} ${MAIN_PATH}
 
@@ -16,6 +42,7 @@ build:
 run:
 	@echo "=> Starting Worker..."
 	go run ${MAIN_PATH}
+
 
 ## watch: run worker with air
 watch:

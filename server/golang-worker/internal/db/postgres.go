@@ -1,33 +1,36 @@
 package db
 
 import (
-	"database/sql"
+	"context"
 	"errors"
 	"log/slog"
-	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPostgres(dbURL string) (*sql.DB, error) {
+func NewPostgres(dbURL string) (*pgxpool.Pool, error) {
 	if dbURL == "" {
 		return nil, errors.New("DATABASE_URL is empty")
 	}
 
-	db, err := sql.Open("pgx", dbURL)
+	config, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(25)
-	db.SetConnMaxLifetime(5 * time.Minute)
+	config.MaxConns = 25
+	config.MinConns = 5
 
-	if err := db.Ping(); err != nil {
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
+	if err != nil {
 		return nil, err
 	}
 
-	slog.Info("connected to postgres")
+	if err := pool.Ping(context.Background()); err != nil {
+		return nil, err
+	}
 
-	return db, nil
+	slog.Info("connected to postgres (pgxpool)")
+
+	return pool, nil
 }

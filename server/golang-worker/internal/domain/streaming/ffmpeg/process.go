@@ -1,7 +1,7 @@
 package ffmpeg
 
 import (
-	"bytes"
+	"bufio"
 	"context"
 	"io"
 	"log/slog"
@@ -22,14 +22,14 @@ const (
 
 type StreamProcess struct {
 	StreamID  string
+	Ladders   []int
 	cmd       *exec.Cmd
 	ctx       context.Context
 	cancel    context.CancelFunc
 	outputDir string
 	queries   *stream.Queries
 
-	stdin  io.WriteCloser
-	stderr *bytes.Buffer
+	stdin io.WriteCloser
 
 	done    chan struct{}
 	exitErr error
@@ -51,11 +51,20 @@ func NewStreamProcess(
 	outputDir, env string,
 	queries *stream.Queries,
 	storage *minio.Service,
+	isRetry bool,
+	ladders []int,
+	cdnBaseURL string,
+	fps float64,
 ) (*StreamProcess, error) {
+
 	ctx, cancel := context.WithCancel(context.Background())
 	streamDir := GetStreamDirectory(outputDir, streamID)
 
-	cmd := BuildStreamCommand(ctx, rtmp, streamDir, env)
+	cmd, _, err := BuildStreamCommand(ctx, rtmp, streamDir, env, ladders, fps)
+	if err != nil {
+		cancel()
+		return nil, err
+	}
 
 	stdinPipe, err := cmd.StdinPipe()
 	if err != nil {
@@ -63,10 +72,17 @@ func NewStreamProcess(
 		return nil, err
 	}
 
-	stderrBuf := &bytes.Buffer{}
-	cmd.Stderr = stderrBuf
+	stderrPipe, err := cmd.StderrPipe()
+	if err != nil {
+		cancel()
+		return nil, err
+	}
 
-	slog.Info("Starting FFmpeg process", "streamId", streamID, "command", cmd.String())
+	slog.Info("Starting FFmpeg process",
+		"streamId", streamID,
+		"ladders", ladders,
+		"command", cmd.String(),
+	)
 
 	if err := cmd.Start(); err != nil {
 		cancel()
@@ -74,22 +90,29 @@ func NewStreamProcess(
 	}
 
 	proc := &StreamProcess{
-		StreamID:   streamID,
-		cmd:        cmd,
-		ctx:        ctx,
-		cancel:     cancel,
-		stdin:      stdinPipe,
-		stderr:     stderrBuf,
-		done:       make(chan struct{}),
-		manualStop: false,
-		outputDir:  outputDir,
-		queries:    queries,
+		StreamID:  streamID,
+		Ladders:   ladders,
+		cmd:       cmd,
+		ctx:       ctx,
+		cancel:    cancel,
+		stdin:     stdinPipe,
+		done:      make(chan struct{}),
+		outputDir: outputDir,
+		queries:   queries,
 	}
 
-	tracker := NewSegmentTracker(ctx, streamID, streamDir, queries, storage)
+	tracker := NewSegmentTracker(
+		ctx,
+		streamID,
+		streamDir,
+		queries,
+		storage,
+		isRetry,
+		cdnBaseURL,
+	)
 
 	go tracker.Run()
-
+	go proc.logFFmpegOutput(stderrPipe)
 	go proc.monitor()
 
 	return proc, nil
@@ -104,8 +127,14 @@ func (p *StreamProcess) monitor() {
 		"streamId", p.StreamID,
 		"manualStop", p.manualStop,
 		"error", p.exitErr,
-		"stderr", p.stderr.String(),
 	)
+}
+
+func (p *StreamProcess) logFFmpegOutput(r io.Reader) {
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		slog.Debug("ffmpeg", "streamId", p.StreamID, "log", scanner.Text())
+	}
 }
 
 func (p *StreamProcess) Stop() error {

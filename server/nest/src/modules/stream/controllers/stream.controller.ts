@@ -16,7 +16,6 @@ import { Ok } from 'src/common/response/response.helper';
 import { StreamDto, StreamOnPublishDto } from '../dtos/stream.dto';
 import { StreamService } from '../services/stream.service';
 import { DashPlaylistService } from '../services/dash-playlist.service';
-// import { SegmentService } from '../services/segment.service';
 import type { Request, Response } from 'express';
 
 @Controller('/stream')
@@ -24,7 +23,6 @@ export class StreamController {
   constructor(
     private readonly streamService: StreamService,
     private readonly dashPlaylistService: DashPlaylistService,
-    // private readonly segmentService: SegmentService,
   ) {}
 
   @Post()
@@ -56,53 +54,17 @@ export class StreamController {
     return 'OK';
   }
 
-  @Get('/watch/:streamId/manifest.mpd')
+  @Get('/:streamId')
   @SkipAuth()
   @SkipSignature()
-  @Header('Content-Type', 'application/dash+xml')
-  @Header('Cache-Control', 'no-cache, no-store, must-revalidate')
-  @Header('Pragma', 'no-cache')
-  @Header('Expires', '0')
-  @Header('Access-Control-Allow-Origin', '*')
-  @Header('Access-Control-Expose-Headers', 'Content-Length, Content-Type')
-  public async watch(
+  public async getStreamInfo(
     @Param('streamId') streamId: string,
-    @Res() res: Response,
+    @Req() req: Request,
   ) {
-    const manifest = await this.dashPlaylistService.getManifest(streamId);
-    res.send(manifest);
-  }
+    const auth = req.payload;
 
-  // @Get('/watch/:streamId/:filename')
-  // @SkipAuth()
-  // @SkipSignature()
-  // @Header('Access-Control-Allow-Origin', '*')
-  // @Header(
-  //   'Access-Control-Expose-Headers',
-  //   'Content-Length, Content-Type, Content-Range',
-  // )
-  // public async getSegment(
-  //   @Param('streamId') streamId: string,
-  //   @Param('filename') filename: string,
-  //   @Res({ passthrough: true }) res: Response,
-  // ): Promise<StreamableFile> {
-  //   const { file, contentType, cacheControl } =
-  //     await this.segmentService.getSegment(streamId, filename);
+    const info = await this.dashPlaylistService.getStreamInfo(streamId, auth);
 
-  //   res.set({
-  //     'Content-Type': contentType,
-  //     'Cache-Control': cacheControl,
-  //     'Accept-Ranges': 'bytes',
-  //   });
-
-  //   return file;
-  // }
-
-  @Get('/:streamId/info')
-  @SkipAuth()
-  @SkipSignature()
-  public async getStreamInfo(@Param('streamId') streamId: string) {
-    const info = await this.dashPlaylistService.getStreamInfo(streamId);
     return Ok(info);
   }
 }

@@ -5,6 +5,7 @@ import {
   VideoInfo,
   VideoRecommendations,
   LiveChat,
+  WatchView,
 } from "@/features/watch";
 import { StreamData } from "@/features/stream/types/stream";
 import { serverFetch } from "@/lib/http/server/serverFetch";
@@ -57,7 +58,7 @@ export default async function WatchPage({ params, searchParams }: PageProps) {
 
   try {
     const res = await serverFetch<StreamData>(
-      `/stream/${streamId}/info`,
+      `/stream/${streamId}`,
       {},
       {},
       false,
@@ -96,64 +97,11 @@ export default async function WatchPage({ params, searchParams }: PageProps) {
         }
       `}</style>
 
-      <div className="container max-w-[1920px] mx-auto p-0 lg:p-4 lg:space-y-4">
-        {/* Main Interface: Video and Sticky Chat */}
-        <div className="flex flex-col lg:flex-row gap-4 h-auto lg:h-[65vh] xl:h-[75vh]">
-          {/* Player Column */}
-          <div className="flex-1 bg-black rounded-lg overflow-hidden shadow-2xl relative border border-white/5">
-            <VideoPlayer
-              streamId={streamId}
-              autoPlay={true}
-              isLive={streamData.isLive}
-              totalDuration={streamData.totalDuration}
-            />
-          </div>
-
-          {/* Sidebar Chat Column */}
-          <div className="hidden lg:block w-[340px] shrink-0 bg-background rounded-lg border border-white/5 overflow-hidden h-full">
-            <LiveChat
-              streamId={streamId}
-              isLive={streamData.isLive}
-              mode="sidebar"
-            />
-          </div>
-        </div>
-
-        {/* Supplementary Content Column */}
-        <div className="px-4 lg:px-0 flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 space-y-6 max-w-7xl">
-            <VideoInfo
-              title={streamData.title}
-              description={streamData.description || ""}
-              viewCount={0}
-              createdAt={streamData.createdAt}
-              creatorName="Unknown"
-              isLive={streamData.isLive}
-            />
-
-            <div className="border-t border-white/5 pt-6">
-              <h3 className="text-lg font-semibold mb-4">Recommended</h3>
-              <VideoRecommendations
-                videos={RECOMMENDED_VIDEOS}
-                currentStreamId={streamId}
-                layout="horizontal"
-              />
-            </div>
-          </div>
-
-          {/* Alignment Spacer */}
-          <div className="hidden lg:block w-[340px] shrink-0" />
-        </div>
-      </div>
-
-      {/* Mobile-Friendly Chat Hook */}
-      <div className="lg:hidden">
-        <LiveChat
-          streamId={streamId}
-          isLive={streamData.isLive}
-          mode="mobile"
-        />
-      </div>
+      <WatchView
+        streamId={streamId}
+        streamData={streamData}
+        recommendedVideos={RECOMMENDED_VIDEOS}
+      />
     </div>
   );
 }

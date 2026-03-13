@@ -40,6 +40,11 @@ CREATE TABLE IF NOT EXISTS "StreamMeta" (
   "audioRepId"      TEXT NOT NULL DEFAULT '1',
   "basePath"        TEXT,
 
+  "sourceWidth"     INTEGER,
+  "sourceHeight"    INTEGER,
+  "ladders"         JSONB,
+  "vodManifestUrl"  TEXT,
+
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
 
@@ -117,3 +122,35 @@ CREATE TABLE IF NOT EXISTS "Recording" (
 
 CREATE INDEX "idx_Recording_streamId" ON "Recording"("streamId");
 CREATE INDEX "idx_Recording_createdAt" ON "Recording"("createdAt");
+
+-- =========================
+-- CHAT MESSAGE
+-- =========================
+
+CREATE TABLE "ChatMessage" (
+    "id"            TEXT NOT NULL PRIMARY KEY,
+    "opcode"        INTEGER NOT NULL,
+    "streamId"      TEXT NOT NULL,
+    "userId"        TEXT,
+    "content"       TEXT NOT NULL,
+    "type"          chat_message_type NOT NULL DEFAULT 'TEXT',
+    "metaData"      JSONB, 
+    "offsetMs"      INTEGER,
+    "isDeleted"     BOOLEAN NOT NULL DEFAULT FALSE,
+    "deletedAt"     TIMESTAMP(3) WITHOUT TIME ZONE,
+    "deletedBy"     TEXT,
+    "deletedReason" TEXT,
+    "isPinned"      BOOLEAN NOT NULL DEFAULT FALSE,
+    "createdAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ChatMessage_streamId_fkey" FOREIGN KEY ("streamId") 
+        REFERENCES "Stream"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "ChatMessage_userId_fkey" FOREIGN KEY ("userId") 
+        REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX "ChatMessage_streamId_idx" ON "ChatMessage"("streamId");
+CREATE INDEX "ChatMessage_streamId_offsetMs_idx" ON "ChatMessage"("streamId", "offsetMs");
+CREATE INDEX "ChatMessage_userId_idx" ON "ChatMessage"("userId");
+CREATE INDEX "ChatMessage_createdAt_idx" ON "ChatMessage"("createdAt");

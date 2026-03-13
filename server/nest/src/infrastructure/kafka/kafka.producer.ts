@@ -36,15 +36,19 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
     key?: string,
     partition?: number,
   ) {
-    await this.producer.send({
-      topic,
-      messages: [
-        {
-          key,
-          partition,
-          value: JSON.stringify(payload),
-        },
-      ],
-    });
+    try {
+      await this.producer.send({
+        topic,
+        messages: [
+          {
+            key,
+            partition,
+            value: JSON.stringify(payload),
+          },
+        ],
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }

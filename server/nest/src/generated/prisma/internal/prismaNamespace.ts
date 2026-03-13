@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.3.0
- * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
+ * Prisma Client JS version: 7.4.1
+ * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.3.0",
-  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
+  client: "7.4.1",
+  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
 }
 
 /**
@@ -391,7 +391,8 @@ export const ModelName = {
   StreamKey: 'StreamKey',
   StreamEvent: 'StreamEvent',
   Recording: 'Recording',
-  ViewerSession: 'ViewerSession'
+  ViewerSession: 'ViewerSession',
+  ChatMessage: 'ChatMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "stream" | "streamMeta" | "streamKey" | "streamEvent" | "recording" | "viewerSession"
+    modelProps: "user" | "account" | "stream" | "streamMeta" | "streamKey" | "streamEvent" | "recording" | "viewerSession" | "chatMessage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1003,6 +1004,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChatMessage: {
+      payload: Prisma.$ChatMessagePayload<ExtArgs>
+      fields: Prisma.ChatMessageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChatMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChatMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        findFirst: {
+          args: Prisma.ChatMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChatMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        findMany: {
+          args: Prisma.ChatMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
+        }
+        create: {
+          args: Prisma.ChatMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        createMany: {
+          args: Prisma.ChatMessageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChatMessageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
+        }
+        delete: {
+          args: Prisma.ChatMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        update: {
+          args: Prisma.ChatMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        deleteMany: {
+          args: Prisma.ChatMessageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChatMessageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChatMessageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
+        }
+        upsert: {
+          args: Prisma.ChatMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        aggregate: {
+          args: Prisma.ChatMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatMessage>
+        }
+        groupBy: {
+          args: Prisma.ChatMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChatMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1095,7 +1170,11 @@ export const StreamMetaScalarFieldEnum = {
   audioRepId: 'audioRepId',
   basePath: 'basePath',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  ladders: 'ladders',
+  sourceHeight: 'sourceHeight',
+  sourceWidth: 'sourceWidth',
+  vodManifestUrl: 'vodManifestUrl'
 } as const
 
 export type StreamMetaScalarFieldEnum = (typeof StreamMetaScalarFieldEnum)[keyof typeof StreamMetaScalarFieldEnum]
@@ -1147,6 +1226,27 @@ export const ViewerSessionScalarFieldEnum = {
 } as const
 
 export type ViewerSessionScalarFieldEnum = (typeof ViewerSessionScalarFieldEnum)[keyof typeof ViewerSessionScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  opcode: 'opcode',
+  streamId: 'streamId',
+  userId: 'userId',
+  content: 'content',
+  type: 'type',
+  metaData: 'metaData',
+  offsetMs: 'offsetMs',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+  deletedReason: 'deletedReason',
+  isPinned: 'isPinned'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1302,20 +1402,6 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'StreamEventType'
- */
-export type EnumStreamEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StreamEventType'>
-    
-
-
-/**
- * Reference to a field of type 'StreamEventType[]'
- */
-export type ListEnumStreamEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StreamEventType[]'>
-    
-
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -1330,6 +1416,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'StreamEventType'
+ */
+export type EnumStreamEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StreamEventType'>
+    
+
+
+/**
+ * Reference to a field of type 'StreamEventType[]'
+ */
+export type ListEnumStreamEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StreamEventType[]'>
+    
+
+
+/**
  * Reference to a field of type 'BigInt'
  */
 export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
@@ -1340,6 +1440,20 @@ export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'BigInt[]'
  */
 export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ChatMesssageType'
+ */
+export type EnumChatMesssageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMesssageType'>
+    
+
+
+/**
+ * Reference to a field of type 'ChatMesssageType[]'
+ */
+export type ListEnumChatMesssageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMesssageType[]'>
     
 
 /**
@@ -1445,6 +1559,7 @@ export type GlobalOmitConfig = {
   streamEvent?: Prisma.StreamEventOmit
   recording?: Prisma.RecordingOmit
   viewerSession?: Prisma.ViewerSessionOmit
+  chatMessage?: Prisma.ChatMessageOmit
 }
 
 /* Types for Logging */

@@ -431,14 +431,6 @@ export type RecordingUncheckedUpdateManyWithoutStreamNestedInput = {
   deleteMany?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type NullableBigIntFieldUpdateOperationsInput = {
   set?: bigint | number | null
   increment?: bigint | number

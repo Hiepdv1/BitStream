@@ -32,6 +32,8 @@ export type StreamMetaAvgAggregateOutputType = {
   lastSegmentSeq: number | null
   segmentDuration: number | null
   timescale: number | null
+  sourceHeight: number | null
+  sourceWidth: number | null
 }
 
 export type StreamMetaSumAggregateOutputType = {
@@ -40,6 +42,8 @@ export type StreamMetaSumAggregateOutputType = {
   lastSegmentSeq: number | null
   segmentDuration: number | null
   timescale: number | null
+  sourceHeight: number | null
+  sourceWidth: number | null
 }
 
 export type StreamMetaMinAggregateOutputType = {
@@ -55,6 +59,9 @@ export type StreamMetaMinAggregateOutputType = {
   basePath: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  sourceHeight: number | null
+  sourceWidth: number | null
+  vodManifestUrl: string | null
 }
 
 export type StreamMetaMaxAggregateOutputType = {
@@ -70,6 +77,9 @@ export type StreamMetaMaxAggregateOutputType = {
   basePath: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  sourceHeight: number | null
+  sourceWidth: number | null
+  vodManifestUrl: string | null
 }
 
 export type StreamMetaCountAggregateOutputType = {
@@ -85,6 +95,10 @@ export type StreamMetaCountAggregateOutputType = {
   basePath: number
   createdAt: number
   updatedAt: number
+  ladders: number
+  sourceHeight: number
+  sourceWidth: number
+  vodManifestUrl: number
   _all: number
 }
 
@@ -95,6 +109,8 @@ export type StreamMetaAvgAggregateInputType = {
   lastSegmentSeq?: true
   segmentDuration?: true
   timescale?: true
+  sourceHeight?: true
+  sourceWidth?: true
 }
 
 export type StreamMetaSumAggregateInputType = {
@@ -103,6 +119,8 @@ export type StreamMetaSumAggregateInputType = {
   lastSegmentSeq?: true
   segmentDuration?: true
   timescale?: true
+  sourceHeight?: true
+  sourceWidth?: true
 }
 
 export type StreamMetaMinAggregateInputType = {
@@ -118,6 +136,9 @@ export type StreamMetaMinAggregateInputType = {
   basePath?: true
   createdAt?: true
   updatedAt?: true
+  sourceHeight?: true
+  sourceWidth?: true
+  vodManifestUrl?: true
 }
 
 export type StreamMetaMaxAggregateInputType = {
@@ -133,6 +154,9 @@ export type StreamMetaMaxAggregateInputType = {
   basePath?: true
   createdAt?: true
   updatedAt?: true
+  sourceHeight?: true
+  sourceWidth?: true
+  vodManifestUrl?: true
 }
 
 export type StreamMetaCountAggregateInputType = {
@@ -148,6 +172,10 @@ export type StreamMetaCountAggregateInputType = {
   basePath?: true
   createdAt?: true
   updatedAt?: true
+  ladders?: true
+  sourceHeight?: true
+  sourceWidth?: true
+  vodManifestUrl?: true
   _all?: true
 }
 
@@ -250,6 +278,10 @@ export type StreamMetaGroupByOutputType = {
   basePath: string | null
   createdAt: Date
   updatedAt: Date
+  ladders: runtime.JsonValue | null
+  sourceHeight: number | null
+  sourceWidth: number | null
+  vodManifestUrl: string | null
   _count: StreamMetaCountAggregateOutputType | null
   _avg: StreamMetaAvgAggregateOutputType | null
   _sum: StreamMetaSumAggregateOutputType | null
@@ -288,6 +320,10 @@ export type StreamMetaWhereInput = {
   basePath?: Prisma.StringNullableFilter<"StreamMeta"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StreamMeta"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StreamMeta"> | Date | string
+  ladders?: Prisma.JsonNullableFilter<"StreamMeta">
+  sourceHeight?: Prisma.IntNullableFilter<"StreamMeta"> | number | null
+  sourceWidth?: Prisma.IntNullableFilter<"StreamMeta"> | number | null
+  vodManifestUrl?: Prisma.StringNullableFilter<"StreamMeta"> | string | null
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
 }
 
@@ -304,6 +340,10 @@ export type StreamMetaOrderByWithRelationInput = {
   basePath?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ladders?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrderInput | Prisma.SortOrder
+  vodManifestUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   stream?: Prisma.StreamOrderByWithRelationInput
 }
 
@@ -323,6 +363,10 @@ export type StreamMetaWhereUniqueInput = Prisma.AtLeast<{
   basePath?: Prisma.StringNullableFilter<"StreamMeta"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StreamMeta"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StreamMeta"> | Date | string
+  ladders?: Prisma.JsonNullableFilter<"StreamMeta">
+  sourceHeight?: Prisma.IntNullableFilter<"StreamMeta"> | number | null
+  sourceWidth?: Prisma.IntNullableFilter<"StreamMeta"> | number | null
+  vodManifestUrl?: Prisma.StringNullableFilter<"StreamMeta"> | string | null
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
 }, "id" | "streamId">
 
@@ -339,6 +383,10 @@ export type StreamMetaOrderByWithAggregationInput = {
   basePath?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ladders?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrderInput | Prisma.SortOrder
+  vodManifestUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.StreamMetaCountOrderByAggregateInput
   _avg?: Prisma.StreamMetaAvgOrderByAggregateInput
   _max?: Prisma.StreamMetaMaxOrderByAggregateInput
@@ -362,6 +410,10 @@ export type StreamMetaScalarWhereWithAggregatesInput = {
   basePath?: Prisma.StringNullableWithAggregatesFilter<"StreamMeta"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"StreamMeta"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"StreamMeta"> | Date | string
+  ladders?: Prisma.JsonNullableWithAggregatesFilter<"StreamMeta">
+  sourceHeight?: Prisma.IntNullableWithAggregatesFilter<"StreamMeta"> | number | null
+  sourceWidth?: Prisma.IntNullableWithAggregatesFilter<"StreamMeta"> | number | null
+  vodManifestUrl?: Prisma.StringNullableWithAggregatesFilter<"StreamMeta"> | string | null
 }
 
 export type StreamMetaCreateInput = {
@@ -376,6 +428,10 @@ export type StreamMetaCreateInput = {
   basePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: number | null
+  sourceWidth?: number | null
+  vodManifestUrl?: string | null
   stream: Prisma.StreamCreateNestedOneWithoutMetaInput
 }
 
@@ -392,6 +448,10 @@ export type StreamMetaUncheckedCreateInput = {
   basePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: number | null
+  sourceWidth?: number | null
+  vodManifestUrl?: string | null
 }
 
 export type StreamMetaUpdateInput = {
@@ -406,6 +466,10 @@ export type StreamMetaUpdateInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stream?: Prisma.StreamUpdateOneRequiredWithoutMetaNestedInput
 }
 
@@ -422,6 +486,10 @@ export type StreamMetaUncheckedUpdateInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StreamMetaCreateManyInput = {
@@ -437,6 +505,10 @@ export type StreamMetaCreateManyInput = {
   basePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: number | null
+  sourceWidth?: number | null
+  vodManifestUrl?: string | null
 }
 
 export type StreamMetaUpdateManyMutationInput = {
@@ -451,6 +523,10 @@ export type StreamMetaUpdateManyMutationInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StreamMetaUncheckedUpdateManyInput = {
@@ -466,6 +542,10 @@ export type StreamMetaUncheckedUpdateManyInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StreamMetaNullableScalarRelationFilter = {
@@ -486,6 +566,10 @@ export type StreamMetaCountOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ladders?: Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrder
+  vodManifestUrl?: Prisma.SortOrder
 }
 
 export type StreamMetaAvgOrderByAggregateInput = {
@@ -494,6 +578,8 @@ export type StreamMetaAvgOrderByAggregateInput = {
   lastSegmentSeq?: Prisma.SortOrder
   segmentDuration?: Prisma.SortOrder
   timescale?: Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrder
 }
 
 export type StreamMetaMaxOrderByAggregateInput = {
@@ -509,6 +595,9 @@ export type StreamMetaMaxOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrder
+  vodManifestUrl?: Prisma.SortOrder
 }
 
 export type StreamMetaMinOrderByAggregateInput = {
@@ -524,6 +613,9 @@ export type StreamMetaMinOrderByAggregateInput = {
   basePath?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrder
+  vodManifestUrl?: Prisma.SortOrder
 }
 
 export type StreamMetaSumOrderByAggregateInput = {
@@ -532,6 +624,8 @@ export type StreamMetaSumOrderByAggregateInput = {
   lastSegmentSeq?: Prisma.SortOrder
   segmentDuration?: Prisma.SortOrder
   timescale?: Prisma.SortOrder
+  sourceHeight?: Prisma.SortOrder
+  sourceWidth?: Prisma.SortOrder
 }
 
 export type StreamMetaCreateNestedOneWithoutStreamInput = {
@@ -582,6 +676,14 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type StreamMetaCreateWithoutStreamInput = {
   id?: string
   totalDuration?: number
@@ -594,6 +696,10 @@ export type StreamMetaCreateWithoutStreamInput = {
   basePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: number | null
+  sourceWidth?: number | null
+  vodManifestUrl?: string | null
 }
 
 export type StreamMetaUncheckedCreateWithoutStreamInput = {
@@ -608,6 +714,10 @@ export type StreamMetaUncheckedCreateWithoutStreamInput = {
   basePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: number | null
+  sourceWidth?: number | null
+  vodManifestUrl?: string | null
 }
 
 export type StreamMetaCreateOrConnectWithoutStreamInput = {
@@ -638,6 +748,10 @@ export type StreamMetaUpdateWithoutStreamInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StreamMetaUncheckedUpdateWithoutStreamInput = {
@@ -652,6 +766,10 @@ export type StreamMetaUncheckedUpdateWithoutStreamInput = {
   basePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ladders?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  sourceHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sourceWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  vodManifestUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -669,6 +787,10 @@ export type StreamMetaSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   basePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ladders?: boolean
+  sourceHeight?: boolean
+  sourceWidth?: boolean
+  vodManifestUrl?: boolean
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["streamMeta"]>
 
@@ -685,6 +807,10 @@ export type StreamMetaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   basePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ladders?: boolean
+  sourceHeight?: boolean
+  sourceWidth?: boolean
+  vodManifestUrl?: boolean
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["streamMeta"]>
 
@@ -701,6 +827,10 @@ export type StreamMetaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   basePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ladders?: boolean
+  sourceHeight?: boolean
+  sourceWidth?: boolean
+  vodManifestUrl?: boolean
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["streamMeta"]>
 
@@ -717,9 +847,13 @@ export type StreamMetaSelectScalar = {
   basePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ladders?: boolean
+  sourceHeight?: boolean
+  sourceWidth?: boolean
+  vodManifestUrl?: boolean
 }
 
-export type StreamMetaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "streamId" | "totalDuration" | "segmentCount" | "lastSegmentSeq" | "segmentDuration" | "timescale" | "videoRepId" | "audioRepId" | "basePath" | "createdAt" | "updatedAt", ExtArgs["result"]["streamMeta"]>
+export type StreamMetaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "streamId" | "totalDuration" | "segmentCount" | "lastSegmentSeq" | "segmentDuration" | "timescale" | "videoRepId" | "audioRepId" | "basePath" | "createdAt" | "updatedAt" | "ladders" | "sourceHeight" | "sourceWidth" | "vodManifestUrl", ExtArgs["result"]["streamMeta"]>
 export type StreamMetaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
 }
@@ -748,6 +882,10 @@ export type $StreamMetaPayload<ExtArgs extends runtime.Types.Extensions.Internal
     basePath: string | null
     createdAt: Date
     updatedAt: Date
+    ladders: runtime.JsonValue | null
+    sourceHeight: number | null
+    sourceWidth: number | null
+    vodManifestUrl: string | null
   }, ExtArgs["result"]["streamMeta"]>
   composites: {}
 }
@@ -1184,6 +1322,10 @@ export interface StreamMetaFieldRefs {
   readonly basePath: Prisma.FieldRef<"StreamMeta", 'String'>
   readonly createdAt: Prisma.FieldRef<"StreamMeta", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"StreamMeta", 'DateTime'>
+  readonly ladders: Prisma.FieldRef<"StreamMeta", 'Json'>
+  readonly sourceHeight: Prisma.FieldRef<"StreamMeta", 'Int'>
+  readonly sourceWidth: Prisma.FieldRef<"StreamMeta", 'Int'>
+  readonly vodManifestUrl: Prisma.FieldRef<"StreamMeta", 'String'>
 }
     
 

@@ -1,116 +1,55 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Prisma } from 'src/generated/prisma/client';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { StreamVisibility } from 'src/generated/prisma/enums';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
+import { LoggerService } from 'src/infrastructure/logger/logger.service';
 import { MinioService } from 'src/infrastructure/minio/minio.service';
+import { AccessTokenPayload } from 'src/modules/auth/types/auth';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DashPlaylistService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly config: ConfigService,
     private readonly minio: MinioService,
+    private readonly logger: LoggerService,
+    private readonly configService: ConfigService,
   ) {}
 
-  public async getManifest(streamId: string): Promise<string> {
+  async getStreamInfo(streamId: string, auth?: AccessTokenPayload) {
     const stream = await this.prisma.stream.findUnique({
       where: { id: streamId },
       include: { meta: true },
     });
 
-    if (!stream) {
-      throw new NotFoundException('Stream not found');
+    if (!stream) throw new NotFoundException('Stream not found');
+
+    if (stream.visibility === StreamVisibility.PRIVATE) {
+      if (!auth || stream.userId !== auth.sub) {
+        throw new ForbiddenException('Forbidden');
+      }
     }
 
-    if (!stream.meta) {
-      throw new NotFoundException('Stream metadata missing for replay');
-    }
+    const uri = stream.isLive
+      ? `/live/streams/${streamId}/manifest.mpd`
+      : `/vod/streams/${streamId}/vod.mpd`;
 
-    let duration = stream.meta.totalDuration;
-    if (duration <= 0 && stream.startedAt && stream.endedAt) {
-      duration = (stream.endedAt.getTime() - stream.startedAt.getTime()) / 1000;
-    }
+    const expires = Math.floor(Date.now() / 1000) + 3600;
 
-    return this.generateStaticManifest(stream.id, stream.meta);
-  }
+    const inputString = `${expires}${uri} ${this.configService.get<string>('NGINX_SECRET')}`;
 
-  private generateStaticManifest(
-    streamID: string,
-    meta: Prisma.StreamMetaCreateManyInput,
-  ): string {
-    const timeScale = meta.timescale || 1000;
-    const segDuration = meta.segmentDuration || 0;
-    const segmentCount = meta.lastSegmentSeq || 0;
-
-    const totalDurationSeconds = (segmentCount * segDuration) / timeScale;
-    const mediaPresentationDuration = `PT${totalDurationSeconds.toFixed(3)}S`;
-
-    const videoRepId = meta.videoRepId || '0';
-    const audioRepId = meta.audioRepId || '1';
-    const cdnBase = `${this.config.get('CDN_URL')}/${streamID}`;
-
-    const repeat = segmentCount > 0 ? segmentCount - 1 : 0;
-
-    return `<?xml version="1.0" encoding="utf-8"?>
-<MPD xmlns="urn:mpeg:dash:schema:mpd:2011"
-     profiles="urn:mpeg:dash:profile:isoff-on-demand:2011"
-     type="static"
-     mediaPresentationDuration="${mediaPresentationDuration}"
-     minBufferTime="PT4S">
-  <BaseURL>${cdnBase}/</BaseURL>
-  <Period start="PT0S">
-    <AdaptationSet contentType="video" segmentAlignment="true">
-      <Representation id="${videoRepId}" mimeType="video/mp4" codecs="avc1.4d401f" bandwidth="2500000" width="1280" height="720">
-        <SegmentTemplate
-          timescale="${timeScale}"
-          initialization="init-${videoRepId}.mp4"
-          media="chunk-${videoRepId}-$Number$.m4s"
-          startNumber="1">
-          <SegmentTimeline>
-            <S t="0" d="${segDuration}" r="${repeat}" />
-          </SegmentTimeline>
-        </SegmentTemplate>
-      </Representation>
-    </AdaptationSet>
-
-    <AdaptationSet contentType="audio" segmentAlignment="true">
-      <Representation id="${audioRepId}" mimeType="audio/mp4" codecs="mp4a.40.2" bandwidth="128000">
-        <SegmentTemplate
-          timescale="${timeScale}"
-          initialization="init-${audioRepId}.mp4"
-          media="chunk-${audioRepId}-$Number$.m4s"
-          startNumber="1">
-          <SegmentTimeline>
-            <S t="0" d="${segDuration}" r="${repeat}" />
-          </SegmentTimeline>
-        </SegmentTemplate>
-      </Representation>
-    </AdaptationSet>
-  </Period>
-</MPD>`;
-  }
-
-  private formatISODuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.round(seconds % 60);
-
-    let res = 'PT';
-    if (hours > 0) res += `${hours}H`;
-    if (minutes > 0) res += `${minutes}M`;
-    res += `${secs}S`;
-    return res;
-  }
-
-  async getStreamInfo(streamId: string) {
-    const stream = await this.prisma.stream.findUnique({
-      where: { id: streamId },
-      include: { meta: true },
-    });
-
-    if (!stream) {
-      throw new NotFoundException('Stream not found');
-    }
+    const hash = crypto
+      .createHash('md5')
+      .update(inputString)
+      .digest('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
 
     return {
       streamId: stream.id,
@@ -118,8 +57,12 @@ export class DashPlaylistService {
       description: stream.description,
       isLive: stream.isLive,
       totalDuration: stream.meta?.totalDuration || 0,
+      sourceWidth: stream.meta?.sourceWidth || null,
+      sourceHeight: stream.meta?.sourceHeight || null,
+      ladders: stream.meta?.ladders || null,
       createdAt: stream.createdAt,
       updatedAt: stream.updatedAt,
+      manifestUrl: `${this.configService.get<string>('CDN_DOMAIN')}${uri}?st=${hash}&e=${expires}`,
     };
   }
 }

@@ -6,13 +6,18 @@ import (
 )
 
 type AppConfig struct {
-	Env    string       `mapstructure:"env"`
-	Server ServerConfig `mapstructure:"server"`
-	Log    LogConfig    `mapstructure:"log"`
-	Kafka  KafkaConfig  `mapstructure:"kafka"`
-	FFmpeg FFmpegConfig `mapstructure:"ffmpeg"`
-	Db     DbConfig     `mapstructure:"db"`
-	MinIO  MinIOConfig  `mapstructure:"minio"`
+	Env     string        `mapstructure:"env"`
+	Server  ServerConfig  `mapstructure:"server"`
+	Log     LogConfig     `mapstructure:"log"`
+	Kafka   KafkaConfig   `mapstructure:"kafka"`
+	FFmpeg  FFmpegConfig  `mapstructure:"ffmpeg"`
+	Db      DbConfig      `mapstructure:"db"`
+	MinIO   MinIOConfig   `mapstructure:"minio"`
+	Storage StorageConfig `mapstructure:"storage"`
+}
+
+type StorageConfig struct {
+	RecoveryDir string `mapstructure:"recoveryDir"`
 }
 
 type MinIOConfig struct {
@@ -28,7 +33,8 @@ type DbConfig struct {
 }
 
 type FFmpegConfig struct {
-	OutputDir string `mapstructure:"outputDir"`
+	OutputDir  string `mapstructure:"outputDir"`
+	CdnBaseURL string `mapstructure:"cdnBaseUrl"`
 }
 
 type ServerConfig struct {

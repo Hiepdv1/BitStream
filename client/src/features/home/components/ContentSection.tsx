@@ -101,11 +101,11 @@ export function ContentSection({
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                 style={{ backgroundImage: `url(${item.thumbnailUrl})` }}
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
 
               {item.category && (
                 <div className="absolute top-3 left-3">
-                  <span className="px-2 py-1 text-xs font-bold bg-white/20 backdrop-blur-md text-white rounded-md border border-white/10">
+                  <span className="px-2.5 py-1 text-[10px] font-bold tracking-wider bg-white/10 backdrop-blur-md text-white rounded-md border border-white/10 uppercase shadow-sm">
                     {item.category}
                   </span>
                 </div>

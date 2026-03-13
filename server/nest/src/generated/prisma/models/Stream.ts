@@ -222,11 +222,12 @@ export type StreamWhereInput = {
   endedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  recordings?: Prisma.RecordingListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  events?: Prisma.StreamEventListRelationFilter
   ingestKey?: Prisma.XOR<Prisma.StreamKeyNullableScalarRelationFilter, Prisma.StreamKeyWhereInput> | null
   meta?: Prisma.XOR<Prisma.StreamMetaNullableScalarRelationFilter, Prisma.StreamMetaWhereInput> | null
-  events?: Prisma.StreamEventListRelationFilter
-  recordings?: Prisma.RecordingListRelationFilter
   viewerSessions?: Prisma.ViewerSessionListRelationFilter
 }
 
@@ -241,11 +242,12 @@ export type StreamOrderByWithRelationInput = {
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  recordings?: Prisma.RecordingOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
+  events?: Prisma.StreamEventOrderByRelationAggregateInput
   ingestKey?: Prisma.StreamKeyOrderByWithRelationInput
   meta?: Prisma.StreamMetaOrderByWithRelationInput
-  events?: Prisma.StreamEventOrderByRelationAggregateInput
-  recordings?: Prisma.RecordingOrderByRelationAggregateInput
   viewerSessions?: Prisma.ViewerSessionOrderByRelationAggregateInput
 }
 
@@ -263,11 +265,12 @@ export type StreamWhereUniqueInput = Prisma.AtLeast<{
   endedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  recordings?: Prisma.RecordingListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  events?: Prisma.StreamEventListRelationFilter
   ingestKey?: Prisma.XOR<Prisma.StreamKeyNullableScalarRelationFilter, Prisma.StreamKeyWhereInput> | null
   meta?: Prisma.XOR<Prisma.StreamMetaNullableScalarRelationFilter, Prisma.StreamMetaWhereInput> | null
-  events?: Prisma.StreamEventListRelationFilter
-  recordings?: Prisma.RecordingListRelationFilter
   viewerSessions?: Prisma.ViewerSessionListRelationFilter
 }, "id">
 
@@ -313,11 +316,12 @@ export type StreamCreateInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -332,10 +336,11 @@ export type StreamUncheckedCreateInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -349,11 +354,12 @@ export type StreamUpdateInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -368,10 +374,11 @@ export type StreamUncheckedUpdateInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -587,6 +594,20 @@ export type StreamUpdateOneRequiredWithoutViewerSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StreamUpdateToOneWithWhereWithoutViewerSessionsInput, Prisma.StreamUpdateWithoutViewerSessionsInput>, Prisma.StreamUncheckedUpdateWithoutViewerSessionsInput>
 }
 
+export type StreamCreateNestedOneWithoutChatMessagesInput = {
+  create?: Prisma.XOR<Prisma.StreamCreateWithoutChatMessagesInput, Prisma.StreamUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.StreamCreateOrConnectWithoutChatMessagesInput
+  connect?: Prisma.StreamWhereUniqueInput
+}
+
+export type StreamUpdateOneRequiredWithoutChatMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.StreamCreateWithoutChatMessagesInput, Prisma.StreamUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.StreamCreateOrConnectWithoutChatMessagesInput
+  upsert?: Prisma.StreamUpsertWithoutChatMessagesInput
+  connect?: Prisma.StreamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StreamUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.StreamUpdateWithoutChatMessagesInput>, Prisma.StreamUncheckedUpdateWithoutChatMessagesInput>
+}
+
 export type StreamCreateWithoutUserInput = {
   id?: string
   title: string
@@ -597,10 +618,11 @@ export type StreamCreateWithoutUserInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -614,10 +636,11 @@ export type StreamUncheckedCreateWithoutUserInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -673,10 +696,11 @@ export type StreamCreateWithoutMetaInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutStreamsInput
-  ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
+  user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -691,9 +715,10 @@ export type StreamUncheckedCreateWithoutMetaInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -723,10 +748,11 @@ export type StreamUpdateWithoutMetaInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
-  ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -741,9 +767,10 @@ export type StreamUncheckedUpdateWithoutMetaInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -757,10 +784,11 @@ export type StreamCreateWithoutIngestKeyInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutStreamsInput
-  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
+  user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -775,9 +803,10 @@ export type StreamUncheckedCreateWithoutIngestKeyInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
   recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -807,10 +836,11 @@ export type StreamUpdateWithoutIngestKeyInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
-  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -825,9 +855,10 @@ export type StreamUncheckedUpdateWithoutIngestKeyInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -841,10 +872,11 @@ export type StreamCreateWithoutEventsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -859,9 +891,10 @@ export type StreamUncheckedCreateWithoutEventsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -891,10 +924,11 @@ export type StreamUpdateWithoutEventsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -909,9 +943,10 @@ export type StreamUncheckedUpdateWithoutEventsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -925,10 +960,11 @@ export type StreamCreateWithoutRecordingsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
 }
 
@@ -943,9 +979,10 @@ export type StreamUncheckedCreateWithoutRecordingsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
 }
 
@@ -975,10 +1012,11 @@ export type StreamUpdateWithoutRecordingsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -993,9 +1031,10 @@ export type StreamUncheckedUpdateWithoutRecordingsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -1009,11 +1048,12 @@ export type StreamCreateWithoutViewerSessionsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
   user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
 }
 
 export type StreamUncheckedCreateWithoutViewerSessionsInput = {
@@ -1027,10 +1067,11 @@ export type StreamUncheckedCreateWithoutViewerSessionsInput = {
   endedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutStreamInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
   ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
   meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
-  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
-  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
 }
 
 export type StreamCreateOrConnectWithoutViewerSessionsInput = {
@@ -1059,11 +1100,12 @@ export type StreamUpdateWithoutViewerSessionsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
 }
 
 export type StreamUncheckedUpdateWithoutViewerSessionsInput = {
@@ -1077,10 +1119,99 @@ export type StreamUncheckedUpdateWithoutViewerSessionsInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+}
+
+export type StreamCreateWithoutChatMessagesInput = {
+  id?: string
+  title: string
+  description?: string | null
+  isLive?: boolean
+  visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordings?: Prisma.RecordingCreateNestedManyWithoutStreamInput
+  user: Prisma.UserCreateNestedOneWithoutStreamsInput
+  events?: Prisma.StreamEventCreateNestedManyWithoutStreamInput
+  ingestKey?: Prisma.StreamKeyCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaCreateNestedOneWithoutStreamInput
+  viewerSessions?: Prisma.ViewerSessionCreateNestedManyWithoutStreamInput
+}
+
+export type StreamUncheckedCreateWithoutChatMessagesInput = {
+  id?: string
+  userId: string
+  title: string
+  description?: string | null
+  isLive?: boolean
+  visibility?: $Enums.StreamVisibility
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutStreamInput
+  events?: Prisma.StreamEventUncheckedCreateNestedManyWithoutStreamInput
+  ingestKey?: Prisma.StreamKeyUncheckedCreateNestedOneWithoutStreamInput
+  meta?: Prisma.StreamMetaUncheckedCreateNestedOneWithoutStreamInput
+  viewerSessions?: Prisma.ViewerSessionUncheckedCreateNestedManyWithoutStreamInput
+}
+
+export type StreamCreateOrConnectWithoutChatMessagesInput = {
+  where: Prisma.StreamWhereUniqueInput
+  create: Prisma.XOR<Prisma.StreamCreateWithoutChatMessagesInput, Prisma.StreamUncheckedCreateWithoutChatMessagesInput>
+}
+
+export type StreamUpsertWithoutChatMessagesInput = {
+  update: Prisma.XOR<Prisma.StreamUpdateWithoutChatMessagesInput, Prisma.StreamUncheckedUpdateWithoutChatMessagesInput>
+  create: Prisma.XOR<Prisma.StreamCreateWithoutChatMessagesInput, Prisma.StreamUncheckedCreateWithoutChatMessagesInput>
+  where?: Prisma.StreamWhereInput
+}
+
+export type StreamUpdateToOneWithWhereWithoutChatMessagesInput = {
+  where?: Prisma.StreamWhereInput
+  data: Prisma.XOR<Prisma.StreamUpdateWithoutChatMessagesInput, Prisma.StreamUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type StreamUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutStreamsNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
+  ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
+  viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
+}
+
+export type StreamUncheckedUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibility?: Prisma.EnumStreamVisibilityFieldUpdateOperationsInput | $Enums.StreamVisibility
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
+  ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
+  meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
+  viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
 export type StreamCreateManyUserInput = {
@@ -1105,10 +1236,11 @@ export type StreamUpdateWithoutUserInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUpdateManyWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUpdateManyWithoutStreamNestedInput
 }
 
@@ -1122,10 +1254,11 @@ export type StreamUncheckedUpdateWithoutUserInput = {
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutStreamNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
+  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
   ingestKey?: Prisma.StreamKeyUncheckedUpdateOneWithoutStreamNestedInput
   meta?: Prisma.StreamMetaUncheckedUpdateOneWithoutStreamNestedInput
-  events?: Prisma.StreamEventUncheckedUpdateManyWithoutStreamNestedInput
-  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutStreamNestedInput
   viewerSessions?: Prisma.ViewerSessionUncheckedUpdateManyWithoutStreamNestedInput
 }
 
@@ -1147,14 +1280,16 @@ export type StreamUncheckedUpdateManyWithoutUserInput = {
  */
 
 export type StreamCountOutputType = {
-  events: number
+  chatMessages: number
   recordings: number
+  events: number
   viewerSessions: number
 }
 
 export type StreamCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  events?: boolean | StreamCountOutputTypeCountEventsArgs
+  chatMessages?: boolean | StreamCountOutputTypeCountChatMessagesArgs
   recordings?: boolean | StreamCountOutputTypeCountRecordingsArgs
+  events?: boolean | StreamCountOutputTypeCountEventsArgs
   viewerSessions?: boolean | StreamCountOutputTypeCountViewerSessionsArgs
 }
 
@@ -1171,8 +1306,8 @@ export type StreamCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * StreamCountOutputType without action
  */
-export type StreamCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StreamEventWhereInput
+export type StreamCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatMessageWhereInput
 }
 
 /**
@@ -1180,6 +1315,13 @@ export type StreamCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.E
  */
 export type StreamCountOutputTypeCountRecordingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RecordingWhereInput
+}
+
+/**
+ * StreamCountOutputType without action
+ */
+export type StreamCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StreamEventWhereInput
 }
 
 /**
@@ -1201,11 +1343,12 @@ export type StreamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   endedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  chatMessages?: boolean | Prisma.Stream$chatMessagesArgs<ExtArgs>
+  recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
   ingestKey?: boolean | Prisma.Stream$ingestKeyArgs<ExtArgs>
   meta?: boolean | Prisma.Stream$metaArgs<ExtArgs>
-  events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
-  recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   viewerSessions?: boolean | Prisma.Stream$viewerSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.StreamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["stream"]>
@@ -1253,11 +1396,12 @@ export type StreamSelectScalar = {
 
 export type StreamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "isLive" | "visibility" | "startedAt" | "endedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["stream"]>
 export type StreamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  chatMessages?: boolean | Prisma.Stream$chatMessagesArgs<ExtArgs>
+  recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
   ingestKey?: boolean | Prisma.Stream$ingestKeyArgs<ExtArgs>
   meta?: boolean | Prisma.Stream$metaArgs<ExtArgs>
-  events?: boolean | Prisma.Stream$eventsArgs<ExtArgs>
-  recordings?: boolean | Prisma.Stream$recordingsArgs<ExtArgs>
   viewerSessions?: boolean | Prisma.Stream$viewerSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.StreamCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1271,11 +1415,12 @@ export type StreamIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type $StreamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Stream"
   objects: {
+    chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    recordings: Prisma.$RecordingPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
+    events: Prisma.$StreamEventPayload<ExtArgs>[]
     ingestKey: Prisma.$StreamKeyPayload<ExtArgs> | null
     meta: Prisma.$StreamMetaPayload<ExtArgs> | null
-    events: Prisma.$StreamEventPayload<ExtArgs>[]
-    recordings: Prisma.$RecordingPayload<ExtArgs>[]
     viewerSessions: Prisma.$ViewerSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1683,11 +1828,12 @@ readonly fields: StreamFieldRefs;
  */
 export interface Prisma__StreamClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  chatMessages<T extends Prisma.Stream$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recordings<T extends Prisma.Stream$recordingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$recordingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  events<T extends Prisma.Stream$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StreamEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ingestKey<T extends Prisma.Stream$ingestKeyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$ingestKeyArgs<ExtArgs>>): Prisma.Prisma__StreamKeyClient<runtime.Types.Result.GetResult<Prisma.$StreamKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   meta<T extends Prisma.Stream$metaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$metaArgs<ExtArgs>>): Prisma.Prisma__StreamMetaClient<runtime.Types.Result.GetResult<Prisma.$StreamMetaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  events<T extends Prisma.Stream$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StreamEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  recordings<T extends Prisma.Stream$recordingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$recordingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   viewerSessions<T extends Prisma.Stream$viewerSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Stream$viewerSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ViewerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2124,6 +2270,78 @@ export type StreamDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
+ * Stream.chatMessages
+ */
+export type Stream$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatMessage
+   */
+  select?: Prisma.ChatMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatMessage
+   */
+  omit?: Prisma.ChatMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatMessageInclude<ExtArgs> | null
+  where?: Prisma.ChatMessageWhereInput
+  orderBy?: Prisma.ChatMessageOrderByWithRelationInput | Prisma.ChatMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ChatMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * Stream.recordings
+ */
+export type Stream$recordingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Recording
+   */
+  select?: Prisma.RecordingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Recording
+   */
+  omit?: Prisma.RecordingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecordingInclude<ExtArgs> | null
+  where?: Prisma.RecordingWhereInput
+  orderBy?: Prisma.RecordingOrderByWithRelationInput | Prisma.RecordingOrderByWithRelationInput[]
+  cursor?: Prisma.RecordingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecordingScalarFieldEnum | Prisma.RecordingScalarFieldEnum[]
+}
+
+/**
+ * Stream.events
+ */
+export type Stream$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StreamEvent
+   */
+  select?: Prisma.StreamEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StreamEvent
+   */
+  omit?: Prisma.StreamEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StreamEventInclude<ExtArgs> | null
+  where?: Prisma.StreamEventWhereInput
+  orderBy?: Prisma.StreamEventOrderByWithRelationInput | Prisma.StreamEventOrderByWithRelationInput[]
+  cursor?: Prisma.StreamEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StreamEventScalarFieldEnum | Prisma.StreamEventScalarFieldEnum[]
+}
+
+/**
  * Stream.ingestKey
  */
 export type Stream$ingestKeyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2159,54 +2377,6 @@ export type Stream$metaArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.StreamMetaInclude<ExtArgs> | null
   where?: Prisma.StreamMetaWhereInput
-}
-
-/**
- * Stream.events
- */
-export type Stream$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the StreamEvent
-   */
-  select?: Prisma.StreamEventSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the StreamEvent
-   */
-  omit?: Prisma.StreamEventOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.StreamEventInclude<ExtArgs> | null
-  where?: Prisma.StreamEventWhereInput
-  orderBy?: Prisma.StreamEventOrderByWithRelationInput | Prisma.StreamEventOrderByWithRelationInput[]
-  cursor?: Prisma.StreamEventWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.StreamEventScalarFieldEnum | Prisma.StreamEventScalarFieldEnum[]
-}
-
-/**
- * Stream.recordings
- */
-export type Stream$recordingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Recording
-   */
-  select?: Prisma.RecordingSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Recording
-   */
-  omit?: Prisma.RecordingOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.RecordingInclude<ExtArgs> | null
-  where?: Prisma.RecordingWhereInput
-  orderBy?: Prisma.RecordingOrderByWithRelationInput | Prisma.RecordingOrderByWithRelationInput[]
-  cursor?: Prisma.RecordingWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.RecordingScalarFieldEnum | Prisma.RecordingScalarFieldEnum[]
 }
 
 /**

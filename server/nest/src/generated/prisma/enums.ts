@@ -45,3 +45,13 @@ export const ProviderType = {
 } as const
 
 export type ProviderType = (typeof ProviderType)[keyof typeof ProviderType]
+
+
+export const ChatMesssageType = {
+  TEXT: 'TEXT',
+  SYSTEM: 'SYSTEM',
+  DONATION: 'DONATION',
+  MEMBER: 'MEMBER'
+} as const
+
+export type ChatMesssageType = (typeof ChatMesssageType)[keyof typeof ChatMesssageType]

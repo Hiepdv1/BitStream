@@ -1,0 +1,11 @@
+.git
+.vscode
+node_modules
+dist
+logs
+coverage
+.env*
+!.env.docker
+.yarn/cache
+.yarn/install-state.gz
+.DS_Store

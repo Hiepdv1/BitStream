@@ -5,14 +5,18 @@ import { validateKafkaPayload } from 'src/common/utils';
 import { kafka } from 'src/infrastructure/kafka/kafka.config';
 import { KafkaProducerService } from 'src/infrastructure/kafka/kafka.producer';
 import { KafkaTopic } from 'src/infrastructure/kafka/kafka.topics';
+import { RecoveryEntry } from 'src/infrastructure/local-recovery/interfaces/recovery-entry.interface';
+import { LocalRecoveryService } from 'src/infrastructure/local-recovery/local-recovery.service';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
 import { MailService } from 'src/workers/mail/mail.service';
 
 @Injectable()
 export class MailConsumer implements OnModuleInit {
+  private readonly SERVICE_NAME = 'mail-consumer';
+
   private consumer: Consumer = kafka.consumer({
     groupId: 'mail-worker-group',
-    sessionTimeout: 30000,
+    sessionTimeout: 45000,
     heartbeatInterval: 3000,
   });
 
@@ -20,53 +24,59 @@ export class MailConsumer implements OnModuleInit {
     private readonly logger: LoggerService,
     private readonly mailService: MailService,
     private readonly producer: KafkaProducerService,
+    private readonly storage: LocalRecoveryService,
   ) {}
 
   async onModuleInit() {
     await this.consumer.connect();
+
     await this.consumer.subscribe({
       topics: [KafkaTopic.MAIL_SEND, KafkaTopic.MAIL_SEND_RETRY],
     });
 
     await this.consumer.run({
-      eachMessage: async ({ message, topic, partition }) => {
-        let raw: any;
+      eachMessage: async ({ message }) => {
+        if (!message.value) return;
+
+        let rawPayload: any;
+        const rawString = message.value.toString();
+
         try {
-          raw = JSON.parse(message.value!.toString());
+          rawPayload = JSON.parse(rawString);
 
           const { data, errors } = await validateKafkaPayload(
             SendMailPayload,
-            raw,
+            rawPayload,
           );
 
           if (errors) {
-            await this.sendToDLQ(
-              raw,
-              `VALIDATION_ERROR: ${JSON.stringify(errors)}`,
+            return await this.sendToDLQ(
+              rawPayload,
+              'MAIL_PAYLOAD_VALIDATION_FAILED',
             );
-            return;
           }
 
           await this.mailService.send(data);
+
+          this.logger.info({
+            message: `Send mail to ${data.to} successfully`,
+            service: this.SERVICE_NAME,
+            timestamp: new Date().toISOString(),
+          });
         } catch (err) {
           this.logger.error({
-            message: `Error processing message from topic ${topic}: ${err.message}`,
-            service: 'Mail Consumer',
-            context: 'onModuleInit',
+            message: 'mail consumer processing failed',
+            service: this.SERVICE_NAME,
             timestamp: new Date().toISOString(),
-            error: {
-              name: err.name,
-              message: err.message,
-              stack: err.stack,
-            },
+            error: err,
           });
 
-          if (raw) {
-            await this.handleRetry(raw, err);
+          if (rawPayload) {
+            await this.handleRetry(rawPayload, err);
           } else {
             await this.sendToDLQ(
-              { originalValue: message.value?.toString() } as any,
-              'JSON_PARSE_ERROR',
+              { raw: rawString },
+              'MAIL_PAYLOAD_JSON_PARSE_FAILED',
             );
           }
         }
@@ -75,45 +85,68 @@ export class MailConsumer implements OnModuleInit {
   }
 
   private async handleRetry(payload: SendMailPayload, err: any) {
-    const currentRetry = payload.retryCount || 0;
-    const maxRetry = payload.maxRetry || 3;
+    try {
+      const currentRetry = payload.retryCount || 0;
+      const maxRetry = payload.maxRetry || 3;
 
-    if (currentRetry >= maxRetry) {
-      await this.sendToDLQ(payload, `MAX_RETRY_REACHED: ${err.message}`);
-      return;
+      if (currentRetry >= maxRetry) {
+        return await this.sendToDLQ(payload, 'MAIL_MAX_RETRY_EXCEEDED');
+      }
+
+      payload.retryCount = currentRetry + 1;
+
+      await this.producer.publish(KafkaTopic.MAIL_SEND_RETRY, payload);
+
+      this.logger.warn({
+        message: 'mail send failed, retry queued',
+        service: this.SERVICE_NAME,
+        error: err,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (retryErr) {
+      this.logger.error({
+        message: 'mail retry publish failed',
+        service: this.SERVICE_NAME,
+        timestamp: new Date().toISOString(),
+        error: retryErr,
+      });
+
+      const entry: RecoveryEntry<SendMailPayload> = {
+        data: payload,
+        timestamp: Date.now(),
+        source: this.SERVICE_NAME,
+        type: 'mail.retry.publish.failed',
+        reason: retryErr?.message,
+      };
+
+      await this.storage.save(entry);
     }
-
-    payload.retryCount = currentRetry + 1;
-
-    const delay = payload.retryCount * 5000;
-    await new Promise((resolve) => setTimeout(resolve, delay));
-
-    await this.producer.publish(KafkaTopic.MAIL_SEND_RETRY, payload);
-
-    this.logger.warn({
-      message: `Retrying mail (${payload.retryCount}/${maxRetry}) for ${payload.to}`,
-      service: 'Mail Consumer',
-      context: 'handleRetry',
-      timestamp: new Date().toISOString(),
-    });
   }
 
-  private async sendToDLQ(payload: SendMailPayload, reason: string) {
-    await this.producer.publish(KafkaTopic.MAIL_SEND_DLQ, {
-      ...payload,
-      failedReason: reason,
-      failedAt: new Date().toISOString(),
-    });
+  private async sendToDLQ<T>(payload: T, reason: string) {
+    try {
+      await this.producer.publish(KafkaTopic.MAIL_SEND_DLQ, {
+        ...payload,
+        failedReason: reason,
+        failedAt: new Date().toISOString(),
+      });
+    } catch (dlqErr) {
+      this.logger.error({
+        message: 'mail dlq publish failed',
+        service: this.SERVICE_NAME,
+        timestamp: new Date().toISOString(),
+        error: dlqErr,
+      });
 
-    this.logger.error({
-      message: 'Mail moved to DLQ',
-      service: 'Mail Consumer',
-      context: 'sendToDLO',
-      timestamp: new Date().toISOString(),
-      error: {
-        name: 'Mail Worker Exception',
-        message: reason,
-      },
-    });
+      const entry: RecoveryEntry<T> = {
+        data: payload,
+        source: this.SERVICE_NAME,
+        timestamp: Date.now(),
+        type: 'mail.dlq.publish.failed',
+        reason: dlqErr?.message,
+      };
+
+      await this.storage.save(entry);
+    }
   }
 }

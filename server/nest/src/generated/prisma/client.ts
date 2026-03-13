@@ -77,3 +77,8 @@ export type Recording = Prisma.RecordingModel
  * 
  */
 export type ViewerSession = Prisma.ViewerSessionModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel

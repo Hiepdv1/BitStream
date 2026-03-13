@@ -6,12 +6,9 @@ export interface SystemLog {
   timestamp: string;
   service: string;
   traceId?: string;
+  data?: string;
   context?: string;
-  error?: {
-    name: string;
-    message: string;
-    stack?: string;
-  };
+  error?: any;
   request?: {
     method: string;
     path: string;

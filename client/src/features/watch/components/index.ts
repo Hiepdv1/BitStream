@@ -1,4 +1,5 @@
-export { VideoPlayer } from "./VideoPlayer";
-export { VideoInfo } from "./VideoInfo";
-export { VideoRecommendations } from "./VideoRecommendations";
-export { LiveChat } from "./LiveChat";
+export * from "./VideoPlayer";
+export * from "./LiveChat";
+export * from "./VideoInfo";
+export * from "./VideoRecommendations";
+export * from "./WatchView";

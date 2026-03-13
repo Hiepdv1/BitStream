@@ -11,3 +11,10 @@ CREATE TYPE stream_event_type AS ENUM (
   'STREAM_DISCONNECT',
   'INVALID_KEY'
 );
+
+CREATE TYPE chat_message_type AS ENUM (
+  'TEXT',
+  'SYSTEM',
+  'DONATION',
+  'MEMBER'
+);

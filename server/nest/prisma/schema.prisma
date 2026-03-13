@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider     = "prisma-client"
   output       = "../src/generated/prisma"
@@ -12,6 +6,160 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  avatar       String?
+  name         String?       @default(dbgenerated("('user_'::text || \"substring\"(md5((random())::text), 1, 8))"))
+  email        String        @unique
+  role         UserRole      @default(VIEWER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  accounts     Account[]
+  chatMessages ChatMessage[]
+  streams      Stream[]
+
+  @@index([role])
+}
+
+model Account {
+  id                String       @id @default(cuid())
+  userId            String
+  provider          ProviderType
+  providerAccountId String
+  isVerified        Boolean      @default(false)
+  password          String?
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Stream {
+  id             String           @id @default(cuid())
+  userId         String
+  title          String
+  description    String?
+  isLive         Boolean          @default(false)
+  visibility     StreamVisibility @default(PUBLIC)
+  startedAt      DateTime?
+  endedAt        DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  chatMessages   ChatMessage[]
+  recordings     Recording[]
+  user           User             @relation(fields: [userId], references: [id])
+  events         StreamEvent[]
+  ingestKey      StreamKey?
+  meta           StreamMeta?
+  viewerSessions ViewerSession[]
+
+  @@index([userId])
+  @@index([isLive])
+  @@index([visibility])
+  @@index([createdAt])
+}
+
+model StreamMeta {
+  id              String   @id @default(cuid())
+  streamId        String   @unique
+  totalDuration   Float    @default(0)
+  segmentCount    Int      @default(0)
+  lastSegmentSeq  Int      @default(0)
+  segmentDuration Int      @default(2)
+  timescale       Int      @default(1000)
+  videoRepId      String   @default("0")
+  audioRepId      String   @default("1")
+  basePath        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+  ladders         Json?
+  sourceHeight    Int?
+  sourceWidth     Int?
+  vodManifestUrl  String?
+  stream          Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@index([streamId])
+}
+
+model StreamKey {
+  id         String    @id @default(cuid())
+  streamId   String    @unique
+  keyHash    String
+  isActive   Boolean   @default(true)
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  stream     Stream    @relation(fields: [streamId], references: [id])
+
+  @@index([streamId])
+  @@index([isActive])
+}
+
+model StreamEvent {
+  id        String          @id @default(cuid())
+  streamId  String
+  type      StreamEventType
+  payload   Json?
+  createdAt DateTime        @default(now())
+  stream    Stream          @relation(fields: [streamId], references: [id])
+
+  @@index([streamId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([streamId, createdAt])
+}
+
+model Recording {
+  id        String   @id @default(cuid())
+  streamId  String
+  fileUrl   String
+  duration  Int?
+  size      BigInt?
+  createdAt DateTime @default(now())
+  stream    Stream   @relation(fields: [streamId], references: [id])
+
+  @@index([streamId])
+  @@index([createdAt])
+}
+
+model ViewerSession {
+  id        String    @id @default(cuid())
+  streamId  String
+  ip        String
+  userAgent String?
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  stream    Stream    @relation(fields: [streamId], references: [id])
+
+  @@index([streamId])
+  @@index([startedAt])
+}
+
+model ChatMessage {
+  id            String           @id
+  opcode        Int
+  streamId      String
+  userId        String?
+  content       String
+  type          ChatMesssageType @default(TEXT)
+  metaData      Json?
+  offsetMs      Int?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now())
+  isDeleted     Boolean          @default(false)
+  deletedAt     DateTime?
+  deletedBy     String?
+  deletedReason String?
+  isPinned      Boolean          @default(false)
+  stream        Stream           @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([streamId])
+  @@index([streamId, offsetMs])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 enum UserRole {
@@ -40,146 +188,9 @@ enum ProviderType {
   DISCORD
 }
 
-model User {
-  id     String   @id @default(cuid())
-  avatar String?
-  name   String?  @default(dbgenerated("('user_' || substring(md5(random()::text), 1, 8))"))
-  email  String   @unique
-  role   UserRole @default(VIEWER)
-
-  accounts Account[]
-  streams  Stream[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([role])
-}
-
-model Account {
-  id                String       @id @default(cuid())
-  userId            String
-  provider          ProviderType
-  providerAccountId String
-  isVerified        Boolean      @default(false)
-
-  password String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-}
-
-model Stream {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  title       String
-  description String?
-  isLive      Boolean          @default(false)
-  visibility  StreamVisibility @default(PUBLIC)
-
-  ingestKey StreamKey?
-  meta      StreamMeta?
-
-  events StreamEvent[]
-
-  recordings Recording[]
-
-  startedAt DateTime?
-  endedAt   DateTime?
-
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  viewerSessions ViewerSession[]
-
-  @@index([userId])
-  @@index([isLive])
-  @@index([visibility])
-  @@index([createdAt])
-}
-
-model StreamMeta {
-  id       String @id @default(cuid())
-  streamId String @unique
-  stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
-
-  totalDuration  Float   @default(0)
-  segmentCount   Int     @default(0)
-  lastSegmentSeq Int     @default(0)
-
-  // DASH Mathematical Metadata
-  segmentDuration Int    @default(2)
-  timescale       Int    @default(1000)
-  videoRepId      String @default("0")
-  audioRepId      String @default("1")
-  basePath        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  @@index([streamId])
-}
-
-model StreamKey {
-  id       String @id @default(cuid())
-  streamId String @unique
-  stream   Stream @relation(fields: [streamId], references: [id])
-
-  keyHash   String
-  isActive  Boolean   @default(true)
-  expiresAt DateTime?
-
-  lastUsedAt DateTime?
-  createdAt  DateTime  @default(now())
-
-  @@index([streamId])
-  @@index([isActive])
-}
-
-model StreamEvent {
-  id       String @id @default(cuid())
-  streamId String
-  stream   Stream @relation(fields: [streamId], references: [id])
-
-  type    StreamEventType
-  payload Json?
-
-  createdAt DateTime @default(now())
-
-  @@index([streamId])
-  @@index([type])
-  @@index([createdAt])
-  @@index([streamId, createdAt])
-}
-
-model Recording {
-  id       String @id @default(cuid())
-  streamId String
-  stream   Stream @relation(fields: [streamId], references: [id])
-
-  fileUrl  String
-  duration Int?
-  size     BigInt?
-
-  createdAt DateTime @default(now())
-
-  @@index([streamId])
-  @@index([createdAt])
-}
-
-model ViewerSession {
-  id       String @id @default(cuid())
-  streamId String
-  stream   Stream @relation(fields: [streamId], references: [id])
-
-  ip        String
-  userAgent String?
-  startedAt DateTime  @default(now())
-  endedAt   DateTime?
-
-  @@index([streamId])
-  @@index([startedAt])
+enum ChatMesssageType {
+  TEXT
+  SYSTEM
+  DONATION
+  MEMBER
 }

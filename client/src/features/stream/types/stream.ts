@@ -9,4 +9,5 @@ export interface StreamData {
   segmentCount: number;
   createdAt: string;
   updatedAt: string;
+  manifestUrl: string;
 }

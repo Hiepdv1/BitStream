@@ -26,4 +26,19 @@ export const topicsConfig: ITopicConfig[] = [
     numPartitions: 3,
     replicationFactor: 1,
   },
+  {
+    topic: KafkaTopic.MAIL_SEND_DLQ,
+    numPartitions: 3,
+    replicationFactor: 1,
+  },
+  {
+    topic: KafkaTopic.CHAT_MESSAGE,
+    numPartitions: 12,
+    replicationFactor: 1,
+  },
+  {
+    topic: KafkaTopic.CHAT_MESSAGE_DLQ,
+    numPartitions: 3,
+    replicationFactor: 1,
+  },
 ];

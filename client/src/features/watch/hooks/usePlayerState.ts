@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect, useCallback, RefObject } from "react";
+import { useState, useEffect, useCallback, useRef, RefObject } from "react";
 
 const VOLUME_STORAGE_KEY = "bitstream_player_volume";
 const MUTED_STORAGE_KEY = "bitstream_player_muted";
+const TIME_UPDATE_THROTTLE_MS = 500;
 
 export function usePlayerState(videoRef: RefObject<HTMLVideoElement | null>) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,6 +16,9 @@ export function usePlayerState(videoRef: RefObject<HTMLVideoElement | null>) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [isStorageLoaded, setIsStorageLoaded] = useState(false);
+
+  // Throttle ref for timeupdate — prevents excessive re-renders
+  const lastTimeUpdateRef = useRef(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -52,9 +56,13 @@ export function usePlayerState(videoRef: RefObject<HTMLVideoElement | null>) {
     if (!video) return;
 
     const onTimeUpdate = () => {
+      // Throttle to ~2 updates/second to avoid excessive re-renders
+      const now = performance.now();
+      if (now - lastTimeUpdateRef.current < TIME_UPDATE_THROTTLE_MS) return;
+      lastTimeUpdateRef.current = now;
+
       setCurrentTime(video.currentTime);
       if (isFinite(video.duration) && video.duration > 0) {
-        console.log(video.currentTime / video.duration);
         setProgress((video.currentTime / video.duration) * 100);
       }
     };

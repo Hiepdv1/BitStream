@@ -6,9 +6,10 @@ log:
 
 ffmpeg:
   outputDir: D:/CODE/System-streaming/server/dash
+  cdnBaseUrl: http://localhost:8080/vod/streams
 
 db:
-  url: postgresql://postgres:1@localhost:5433/stream?sslmode=disable&search_path=public
+  url: "postgres://postgres:postgres@postgres:5432/stream?sslmode=disable"
 
 kafka:
   brokers:
@@ -34,8 +35,11 @@ kafka:
     retryMax: 5
 
 minio:
-  endpoint: localhost:9000
+  endpoint: minio:9000
   accessKeyId: minioadmin
   secretAccessKey: minioadminpassword
   bucketName: hls-streams
   useSSL: false
+
+data:
+  recoveryDir: D:/CODE/System-streaming/server/storage/recovery

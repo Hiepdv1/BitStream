@@ -16,7 +16,11 @@ import { plainToClass } from 'class-transformer';
 import { StreamStartedPayload } from 'src/common/kafka-payloads/stream';
 import { generateRandomString, validateKafkaPayload } from 'src/common/utils';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
-import { Prisma, StreamVisibility } from 'src/generated/prisma/client';
+import {
+  Prisma,
+  StreamEventType,
+  StreamVisibility,
+} from 'src/generated/prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from 'src/infrastructure/redis/redis.service';
 import { RedisKeyManager } from 'src/infrastructure/redis/redis-key.manager';
@@ -105,36 +109,33 @@ export class StreamService {
       throw new InternalServerErrorException('Internal Server Error');
     }
 
-    await this.prisma.$transaction([
-      this.prisma.stream.update({
-        where: { id: data.streamId },
+    await this.prisma.$transaction(async () => {
+      await this.prisma.streamEvent.create({
         data: {
-          isLive: true,
-          startedAt: new Date(),
-          endedAt: null,
-        },
-      }),
-      this.prisma.streamMeta.upsert({
-        where: { streamId: data.streamId },
-        create: {
           streamId: data.streamId,
-          segmentDuration: 2,
-          timescale: 1000,
-          videoRepId: '0',
-          audioRepId: '1',
-          basePath: `streams/${data.streamId}`,
+          type: StreamEventType.STREAM_CONNECT,
         },
-        update: {
-          updatedAt: new Date(),
-        },
-      }),
-    ]);
+      });
 
-    await this.kafkaProducerService.publish(
-      KafkaTopic.STREAM_ON_PUBLISH,
-      value,
-      data.streamId,
-    );
+      const kafkaErr = await this.kafkaProducerService.publish(
+        KafkaTopic.STREAM_ON_PUBLISH,
+        value,
+        data.streamId,
+      );
+
+      if (kafkaErr) {
+        this.logger.error({
+          message: 'Kafka Stream Payload Validation Failed',
+          error: kafkaErr,
+          service: 'Stream Service',
+          data: JSON.stringify(value),
+          context: 'onPublish',
+          timestamp: new Date().toISOString(),
+        });
+
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    });
   }
 
   public async onDone(data: StreamOnPublishDto) {
@@ -170,33 +171,41 @@ export class StreamService {
       throw new InternalServerErrorException('Internal Server Error');
     }
 
-    await Promise.all([
-      this.prisma.stream.update({
-        where: {
-          id: data.streamId,
-          isLive: true,
-        },
-        data: {
-          isLive: false,
-          endedAt: new Date(),
-        },
-      }),
-      this.prisma.streamKey.update({
-        where: {
-          streamId: data.streamId,
-        },
-        data: {
-          isActive: false,
-          expiresAt: new Date(),
-        },
-      }),
+    const [_, kafkaErr] = await Promise.all([
+      this.prisma.$transaction([
+        this.prisma.streamKey.update({
+          where: {
+            streamId: data.streamId,
+          },
+          data: {
+            isActive: false,
+            expiresAt: new Date(),
+          },
+        }),
+        this.prisma.streamEvent.create({
+          data: {
+            streamId: data.streamId,
+            type: StreamEventType.STREAM_STOP,
+          },
+        }),
+      ]),
+      this.kafkaProducerService.publish(
+        KafkaTopic.STREAM_ON_PUBLISH,
+        value,
+        data.streamId,
+      ),
     ]);
 
-    await this.kafkaProducerService.publish(
-      KafkaTopic.STREAM_ON_PUBLISH,
-      value,
-      data.streamId,
-    );
+    if (kafkaErr) {
+      this.logger.error({
+        message: 'Kafka Stream Payload Validation Failed',
+        error: kafkaErr,
+        service: 'Stream Service',
+        context: 'onPublish',
+        data: JSON.stringify(value),
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 
   public async getStreamInfo(streamId: string) {

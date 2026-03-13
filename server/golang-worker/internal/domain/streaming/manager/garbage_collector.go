@@ -71,6 +71,9 @@ func (gc *GarbageCollector) collect() {
 func (gc *GarbageCollector) scanLocalStreams() []string {
 	entries, err := os.ReadDir(gc.outputDir)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		slog.Error("GC: Failed to read output directory", "error", err)
 		return nil
 	}
@@ -117,8 +120,8 @@ func (gc *GarbageCollector) cleanupStreamDirectory(streamID string) {
 	}
 
 	patterns := []string{
-		"manifest.mpd",
-		"manifest.mpd.tmp",
+		"*.mpd",
+		"*.mpd.tmp",
 		"init-*.mp4",
 		"chunk-*.m4s",
 	}

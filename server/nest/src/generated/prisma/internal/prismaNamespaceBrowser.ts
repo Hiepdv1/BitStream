@@ -58,7 +58,8 @@ export const ModelName = {
   StreamKey: 'StreamKey',
   StreamEvent: 'StreamEvent',
   Recording: 'Recording',
-  ViewerSession: 'ViewerSession'
+  ViewerSession: 'ViewerSession',
+  ChatMessage: 'ChatMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -130,7 +131,11 @@ export const StreamMetaScalarFieldEnum = {
   audioRepId: 'audioRepId',
   basePath: 'basePath',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  ladders: 'ladders',
+  sourceHeight: 'sourceHeight',
+  sourceWidth: 'sourceWidth',
+  vodManifestUrl: 'vodManifestUrl'
 } as const
 
 export type StreamMetaScalarFieldEnum = (typeof StreamMetaScalarFieldEnum)[keyof typeof StreamMetaScalarFieldEnum]
@@ -182,6 +187,27 @@ export const ViewerSessionScalarFieldEnum = {
 } as const
 
 export type ViewerSessionScalarFieldEnum = (typeof ViewerSessionScalarFieldEnum)[keyof typeof ViewerSessionScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  opcode: 'opcode',
+  streamId: 'streamId',
+  userId: 'userId',
+  content: 'content',
+  type: 'type',
+  metaData: 'metaData',
+  offsetMs: 'offsetMs',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+  deletedReason: 'deletedReason',
+  isPinned: 'isPinned'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
 export const SortOrder = {

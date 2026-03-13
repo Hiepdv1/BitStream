@@ -10,12 +10,26 @@ services:
       - ./nginx/rtmp.conf:/etc/nginx/rtmp.conf
       - ./dash:/var/www/media
       - ./nginx-cache:/var/cache/nginx
+    env_file:
+      - ./nginx/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
-    # depends_on:
-    #   - nest
-    #   - stream
+
+  postgres:
+    image: postgres:16
+    container_name: stream-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: stream
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: UTC
+    command: postgres -c timezone=UTC
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -54,6 +68,13 @@ services:
       DYNAMIC_CONFIG_ENABLED: "true"
     restart: unless-stopped
 
+  redis:
+    image: redis:alpine
+    container_name: stream-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -70,21 +91,49 @@ services:
       - minio-data:/data
     restart: unless-stopped
 
-  # nest:
-  #   build: ./nest
-  #   container_name: nest-api
-  #   expose:
-  #     - "3001"
-  #   volumes:
-  #     - ./hls:/var/www/hls
-  #   command: node dist/main.js
-  #   restart: unless-stopped
+  nest-api:
+    build:
+      context: ./nest
+      dockerfile: Dockerfile
+    container_name: nest-api
+    ports:
+      - "3001:3001"
+    environment:
+      TZ: UTC
+    env_file:
+      - ./nest/.env.docker
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+      - minio
+    volumes:
+      - ./hls:/var/www/hls
+      - ./dash:/var/www/media
+      - ./storage/recovery:/app/storage/recovery
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["node", "dist/main.js"]
 
-  # mail-worker:
-  #   build: ./nest
-  #   container_name: mail-worker
-  #   command: node dist/workers/mail/main.js
-  #   restart: unless-stopped
+  mail-worker:
+    build:
+      context: ./nest
+      dockerfile: Dockerfile
+    container_name: mail-worker
+    environment:
+      TZ: UTC
+    env_file:
+      - ./nest/.env.docker
+    depends_on:
+      - kafka
+      - redis
+    volumes:
+      - ./storage/recovery:/app/storage/recovery
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["node", "dist/workers/mail/main.js"]
 
   golang-worker:
     build: ./golang-worker
@@ -92,9 +141,10 @@ services:
     depends_on:
       - kafka
       - minio
+      - postgres
     environment:
       APP_CONFIG: /app/configs/app.docker.yaml
-      TZ: Asia/Ho_Chi_Minh
+      TZ: UTC
     volumes:
       - ./dash:/var/www/media
       - ./golang-worker/configs:/app/configs:ro
@@ -106,3 +156,4 @@ services:
 volumes:
   minio-data:
   golang-worker-logs:
+  postgres-data:

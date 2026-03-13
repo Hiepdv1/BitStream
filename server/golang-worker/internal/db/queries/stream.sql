@@ -9,6 +9,14 @@ INSERT INTO "Stream" (
   $1, $2, $3, $4, $5
 );
 
+-- name: ExistStreamIsLive :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Stream"
+  WHERE id = $1
+    AND "isLive" = TRUE
+);
+
 -- name: UpdateStreamLive :exec
 UPDATE "Stream"
 SET "isLive" = $2,
@@ -18,8 +26,9 @@ WHERE id = $1;
 
 -- name: SetStreamStarted :exec
 UPDATE "Stream"
-SET "startedAt" = now(),
-    "updatedAt" = now()
+SET "startedAt" = $2,
+    "updatedAt" = $2,
+    "isLive" = TRUE
 WHERE id = $1;
 
 -- name: UpdateStreamInfo :exec
@@ -156,6 +165,20 @@ SET "totalDuration" = $2,
     "updatedAt" = now()
 WHERE "streamId" = $1;
 
+-- name: UpdateStreamResolution :exec
+UPDATE "StreamMeta"
+SET "sourceWidth" = $2,
+    "sourceHeight" = $3,
+    "ladders" = $4,
+    "updatedAt" = now()
+WHERE "streamId" = $1;
+
+-- name: SetVodManifestUrl :exec
+UPDATE "StreamMeta"
+SET "vodManifestUrl" = $2,
+    "updatedAt" = now()
+WHERE "streamId" = $1;
+
 -- ============================================
 -- GARBAGE COLLECTION QUERIES
 -- ============================================
@@ -172,3 +195,24 @@ FROM "Stream"
 WHERE "isLive" = FALSE
   AND "endedAt" IS NOT NULL
   AND "endedAt" < $1;
+
+-- =========================
+-- CHAT MESSAGE
+-- =========================
+
+-- name: BulkInsertChatMessages :copyfrom
+INSERT INTO "ChatMessage" (
+  id, 
+  "opcode",
+  "streamId", 
+  "userId", 
+  content, 
+  type, 
+  "metaData", 
+  "offsetMs", 
+  "isDeleted", 
+  "deletedAt", 
+  "deletedBy", 
+  "deletedReason", 
+  "isPinned"
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);

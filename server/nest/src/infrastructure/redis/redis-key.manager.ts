@@ -5,7 +5,7 @@ export class RedisKeyManager {
   static getAuthSessionKey(
     userId: string,
     sid: string,
-    type: 'access' | 'refresh' | 'stream',
+    type: 'access' | 'refresh',
   ) {
     return this.buildKey(REDIS_PREFIX.AUTH_SESSION, userId, sid, type);
   }
@@ -18,8 +18,8 @@ export class RedisKeyManager {
     return this.buildKey(REDIS_PREFIX.SIGNATURE, signature);
   }
 
-  static getAccessHlsKey(streamId: string) {
-    return this.buildKey(REDIS_PREFIX.ACCESS_HLS, streamId);
+  static getStreamSessionKey(streamId: string) {
+    return this.buildKey(REDIS_PREFIX.STREAM_SESSION, streamId);
   }
 
   private static buildKey(

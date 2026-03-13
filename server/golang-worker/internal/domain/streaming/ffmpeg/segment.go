@@ -2,7 +2,6 @@ package ffmpeg
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -14,6 +13,8 @@ import (
 
 	stream "github.com/bitstream/backend-go/internal/db/generated"
 	"github.com/bitstream/backend-go/internal/storage/minio"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const (
@@ -33,6 +34,8 @@ type SegmentTracker struct {
 	firstSegUploaded bool
 	segmentDuration  float64
 	metaInitialized  bool
+	isRetry          bool
+	cdnBaseURL       string
 }
 
 func NewSegmentTracker(
@@ -40,6 +43,8 @@ func NewSegmentTracker(
 	streamID, streamDir string,
 	queries *stream.Queries,
 	storage *minio.Service,
+	isRetry bool,
+	cdnBaseURL string,
 ) *SegmentTracker {
 	return &SegmentTracker{
 		ctx:             ctx,
@@ -49,13 +54,15 @@ func NewSegmentTracker(
 		storage:         storage,
 		lastSegmentSeq:  -1,
 		uploadedSeq:     -1,
-		segmentDuration: 2.0,
+		segmentDuration: float64(SegDuration),
 		metaInitialized: false,
+		isRetry:         isRetry,
+		cdnBaseURL:      cdnBaseURL,
 	}
 }
 
 func (st *SegmentTracker) Run() {
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
 	slog.Info("Segment tracker started", "streamId", st.streamID, "streamDir", st.streamDir)
@@ -72,7 +79,7 @@ func (st *SegmentTracker) Run() {
 }
 
 func (st *SegmentTracker) scanAndUpload() {
-	if !st.metaInitialized {
+	if !st.metaInitialized && !st.isRetry {
 		st.initializeMetadata()
 	}
 
@@ -103,11 +110,20 @@ func (st *SegmentTracker) scanAndUpload() {
 		repId, seq := st.parseChunkName(filename)
 
 		if seq == 1 && !st.firstSegUploaded {
-			if err := st.queries.SetStreamStarted(context.Background(), st.streamID); err != nil {
-				slog.Error("Failed to set stream startedAt", "err", err)
-			} else {
-				slog.Info("Stream started (first segment)", "streamId", st.streamID)
+			if st.isRetry {
 				st.firstSegUploaded = true
+			} else {
+				now := time.Now().UTC()
+				err := st.queries.SetStreamStarted(context.Background(), stream.SetStreamStartedParams{
+					ID:        st.streamID,
+					StartedAt: pgtype.Timestamptz{Valid: true, Time: now},
+				})
+				if err != nil {
+					slog.Error("Failed to set stream startedAt", "err", err)
+				} else {
+					slog.Info("Stream started (first segment)", "streamId", st.streamID)
+					st.firstSegUploaded = true
+				}
 			}
 		}
 
@@ -139,7 +155,7 @@ func (st *SegmentTracker) scanAndUpload() {
 func (st *SegmentTracker) initializeMetadata() {
 	_, err := st.queries.GetStreamMeta(context.Background(), st.streamID)
 
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, pgx.ErrNoRows) {
 		err = st.queries.CreateStreamMeta(context.Background(), stream.CreateStreamMetaParams{
 			ID:              st.streamID,
 			StreamId:        st.streamID,
@@ -147,7 +163,7 @@ func (st *SegmentTracker) initializeMetadata() {
 			Timescale:       1000,
 			VideoRepId:      "0",
 			AudioRepId:      "1",
-			BasePath:        sql.NullString{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
+			BasePath:        pgtype.Text{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
 		})
 
 		if err != nil {
@@ -174,13 +190,13 @@ func (st *SegmentTracker) updateMetadata() {
 		stream.UpdateStreamMetaWithSegmentsParams{
 			StreamId:        st.streamID,
 			TotalDuration:   totalDuration,
-			SegmentCount:    sql.NullInt32{Valid: true, Int32: int32(segmentCount)},
-			LastSegmentSeq:  sql.NullInt32{Valid: true, Int32: int32(lastSeq)},
+			SegmentCount:    pgtype.Int4{Valid: true, Int32: int32(segmentCount)},
+			LastSegmentSeq:  pgtype.Int4{Valid: true, Int32: int32(lastSeq)},
 			SegmentDuration: int32(st.segmentDuration * 1000),
 			Timescale:       1000,
 			VideoRepId:      "0",
 			AudioRepId:      "1",
-			BasePath:        sql.NullString{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
+			BasePath:        pgtype.Text{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
 		},
 	)
 
@@ -197,17 +213,19 @@ func (st *SegmentTracker) finalizeStream() {
 	segmentCount := st.lastSegmentSeq
 	st.mu.RUnlock()
 
-	_, err := st.queries.GetStreamMeta(context.Background(), st.streamID)
+	ctx := context.Background()
 
-	if err == sql.ErrNoRows {
-		err = st.queries.CreateStreamMeta(context.Background(), stream.CreateStreamMetaParams{
+	_, err := st.queries.GetStreamMeta(ctx, st.streamID)
+
+	if err == pgx.ErrNoRows {
+		err = st.queries.CreateStreamMeta(ctx, stream.CreateStreamMetaParams{
 			ID:              st.streamID,
 			StreamId:        st.streamID,
 			SegmentDuration: int32(st.segmentDuration * 1000),
 			Timescale:       1000,
 			VideoRepId:      "0",
 			AudioRepId:      "1",
-			BasePath:        sql.NullString{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
+			BasePath:        pgtype.Text{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
 		})
 		if err != nil {
 			slog.Error("Failed to create stream meta during finalization", "error", err)
@@ -217,17 +235,17 @@ func (st *SegmentTracker) finalizeStream() {
 	}
 
 	err = st.queries.UpdateStreamMetaWithSegments(
-		context.Background(),
+		ctx,
 		stream.UpdateStreamMetaWithSegmentsParams{
 			StreamId:        st.streamID,
 			TotalDuration:   totalDuration,
-			SegmentCount:    sql.NullInt32{Valid: true, Int32: int32(segmentCount)},
-			LastSegmentSeq:  sql.NullInt32{Valid: true, Int32: int32(st.lastSegmentSeq)},
+			SegmentCount:    pgtype.Int4{Valid: true, Int32: int32(segmentCount)},
+			LastSegmentSeq:  pgtype.Int4{Valid: true, Int32: int32(st.lastSegmentSeq)},
 			SegmentDuration: int32(st.segmentDuration * 1000),
 			Timescale:       1000,
 			VideoRepId:      "0",
 			AudioRepId:      "1",
-			BasePath:        sql.NullString{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
+			BasePath:        pgtype.Text{Valid: true, String: fmt.Sprintf("streams/%s", st.streamID)},
 		},
 	)
 
@@ -235,10 +253,56 @@ func (st *SegmentTracker) finalizeStream() {
 		slog.Error("Failed to update stream meta", "error", err)
 	}
 
+	st.buildAndUploadVODManifest()
+
+	err = st.queries.UpdateStreamLive(ctx, stream.UpdateStreamLiveParams{
+		ID:     st.streamID,
+		IsLive: false,
+	})
+
+	if err != nil {
+		slog.Error("Failed to update stream live", "error", err)
+	}
+
 	slog.Info("Stream finalized",
 		"streamId", st.streamID,
 		"segments", segmentCount,
 		"duration", totalDuration,
+	)
+}
+
+func (st *SegmentTracker) buildAndUploadVODManifest() {
+	if st.cdnBaseURL == "" {
+		slog.Warn("cdnBaseURL not configured, skipping VOD manifest generation", "streamId", st.streamID)
+		return
+	}
+
+	vodPath, err := BuildAndSaveVODManifest(st.streamDir, st.streamID, st.cdnBaseURL)
+	if err != nil {
+		slog.Error("Failed to build VOD manifest", "streamId", st.streamID, "error", err)
+		return
+	}
+
+	remotePath := fmt.Sprintf("streams/%s/vod.mpd", st.streamID)
+	if err := st.storage.UploadFile(context.Background(), vodPath, remotePath, "application/dash+xml"); err != nil {
+		slog.Error("Failed to upload VOD manifest to MinIO", "streamId", st.streamID, "error", err)
+		return
+	}
+
+	vodURL := fmt.Sprintf("%s/%s/vod.mpd", st.cdnBaseURL, st.streamID)
+
+	if err := st.queries.SetVodManifestUrl(context.Background(), stream.SetVodManifestUrlParams{
+		StreamId:       st.streamID,
+		VodManifestUrl: pgtype.Text{Valid: true, String: vodURL},
+	}); err != nil {
+		slog.Error("Failed to save VOD manifest URL to DB", "streamId", st.streamID, "error", err)
+		return
+	}
+
+	slog.Info("VOD manifest built and uploaded",
+		"streamId", st.streamID,
+		"remotePath", remotePath,
+		"vodURL", vodURL,
 	)
 }
 

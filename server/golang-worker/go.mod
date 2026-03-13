@@ -9,7 +9,6 @@ require (
 	github.com/lmittmann/tint v1.1.2
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/spf13/viper v1.21.0
-	github.com/sqlc-dev/pqtype v0.3.0
 )
 
 require (
