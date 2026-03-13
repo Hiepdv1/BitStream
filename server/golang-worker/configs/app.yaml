@@ -1,0 +1,45 @@
+env: development
+
+log:
+  level: -4
+  file: ../logs/app.log
+
+ffmpeg:
+  outputDir: D:/CODE/System-streaming/server/dash
+  cdnBaseUrl: http://localhost:8080/vod/streams
+
+db:
+  url: "postgres://postgres:postgres@postgres:5432/stream?sslmode=disable"
+
+kafka:
+  brokers:
+    - kafka:29092
+    - localhost:9092
+
+  clientId: go-stream-worker
+  version: "3.5.0"
+
+  consumer:
+    groupId: stream-worker-group
+    initialOffset: oldest
+    minBytes: 1024
+    maxBytes: 1048576
+    maxWaitTime: 2500ms
+    sessionTimeout: 10000ms
+    rebalanceTimeout: 60000ms
+
+  producer:
+    batchSize: 100
+    batchTimeoutMs: 100ms
+    requiredAcks: -1
+    retryMax: 5
+
+minio:
+  endpoint: minio:9000
+  accessKeyId: minioadmin
+  secretAccessKey: minioadminpassword
+  bucketName: hls-streams
+  useSSL: false
+
+data:
+  recoveryDir: D:/CODE/System-streaming/server/storage/recovery

@@ -1,0 +1,48 @@
+FROM openresty/openresty:1.25.3.1-alpine
+
+USER root
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN apk --no-cache add \
+    build-base \
+    pcre-dev \
+    zlib-dev \
+    openssl-dev \
+    git \
+    wget \
+    perl
+
+WORKDIR /tmp
+
+RUN git clone https://github.com/arut/nginx-rtmp-module.git
+
+RUN wget https://openresty.org/download/openresty-1.25.3.1.tar.gz \
+    && tar -xzf openresty-1.25.3.1.tar.gz
+
+WORKDIR /tmp/openresty-1.25.3.1
+
+RUN ./configure \
+    --add-module=/tmp/nginx-rtmp-module \
+    --with-http_ssl_module \
+    --with-http_v2_module \
+    --with-http_realip_module \
+    --with-http_stub_status_module \
+    --with-http_gzip_static_module \
+    --with-http_secure_link_module
+
+RUN make -j$(nproc) && make install
+
+RUN mkdir -p \
+    /var/cache/nginx/dash \
+    /var/cache/nginx/live_manifest \
+    /var/cache/nginx/live_init \
+    /var/cache/nginx/live_chunks \
+    /var/www/media
+
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY rtmp.conf /usr/local/openresty/nginx/conf/rtmp.conf
+
+EXPOSE 80 1935
+
+CMD ["/usr/local/openresty/bin/openresty","-g","daemon off;"]
