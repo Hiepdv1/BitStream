@@ -1,0 +1,63 @@
+@layer components {
+  .loading-container {
+    @apply flex items-center justify-center;
+  }
+
+  .loading-fullscreen {
+    @apply fixed inset-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm z-50;
+  }
+
+  .loading-content {
+    @apply flex flex-col items-center gap-4;
+  }
+
+  .loading-spinner {
+    @apply relative flex items-center justify-center gap-2;
+  }
+
+  .loading-spinner-circle {
+    @apply rounded-full bg-brand dark:bg-brand;
+    animation: loading-bounce 1.4s infinite ease-in-out both;
+  }
+
+  .loading-spinner-circle:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+
+  .loading-spinner-circle:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+
+  .loading-spinner-sm .loading-spinner-circle {
+    @apply w-2 h-2;
+  }
+
+  .loading-spinner-md .loading-spinner-circle {
+    @apply w-3 h-3;
+  }
+
+  .loading-spinner-lg .loading-spinner-circle {
+    @apply w-4 h-4;
+  }
+
+  .loading-spinner-xl .loading-spinner-circle {
+    @apply w-6 h-6;
+  }
+
+  .loading-text {
+    @apply text-base sm:text-lg font-medium text-gray-700 dark:text-gray-300;
+  }
+}
+
+@keyframes loading-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

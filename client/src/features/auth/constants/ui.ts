@@ -1,0 +1,66 @@
+export const UI_TEXT = {
+  auth: {
+    signIn: {
+      title: "Welcome Back",
+      subtitle: "Sign in to continue your experience",
+      emailLabel: "Email Address",
+      passwordLabel: "Password",
+      forgotPassword: "Forgot password?",
+      submitButton: "Sign In",
+      noAccount: "Don't have an account?",
+      signUpLink: "Sign up now",
+    },
+    signUp: {
+      title: "Create Account",
+      subtitle: "Start your journey with us",
+      fullNameLabel: "Full Name",
+      emailLabel: "Email Address",
+      passwordLabel: "Password",
+      confirmPasswordLabel: "Confirm Password",
+      submitButton: "Create Account",
+      hasAccount: "Already have an account?",
+      signInLink: "Sign in",
+      termsPrefix: "I agree to the",
+      termsLink: "Terms of Service",
+      and: "and",
+      privacyLink: "Privacy Policy",
+    },
+    social: {
+      google: "Continue with Google",
+      discord: "Continue with Discord",
+      divider: "OR",
+    },
+    loading: "Processing...",
+    postAuth: {
+      loading: {
+        title: "Verifying Access",
+        message: "Verifying your authentication...",
+      },
+      success: {
+        title: "Welcome Back!",
+        message: "Authentication verified! Redirecting...",
+      },
+      error: {
+        title: "Access Denied",
+        defaultMessage: "Authentication failed. Please try again.",
+        returnButton: "Return to Sign In",
+      },
+      ui: {
+        loadingColor: "border-brand",
+        successColor: "border-success text-success bg-success/20",
+        errorColor: "border-error text-error bg-error/20",
+      },
+    },
+  },
+  passwordStrength: {
+    weak: "Weak",
+    medium: "Medium",
+    strong: "Strong",
+    veryStrong: "Very Strong",
+    enterPassword: "Enter password",
+    addUpperLower: "uppercase and lowercase letters",
+    addNumber: "numbers",
+    addSpecial: "special characters",
+    excellent: "Excellent password!",
+  },
+} as const;
