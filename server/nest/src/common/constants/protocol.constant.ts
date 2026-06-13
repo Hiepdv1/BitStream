@@ -5,12 +5,15 @@ export const PACKET_CONFIG = {
 
 export enum Opcode {
   // System 0 - 9
-  HEARTBEAT = 0,
+  STREAM_HEARTBEAT = 0,
   STREAM_MESSAGE = 1,
+  STREAM_METRICS = 2,
 
   // Chat 10 - 19
   MSG_TEXT = 10,
-  MSG_EMOJI = 11,
+  MSG_PIN = 11,
+  MSG_UNPIN = 12,
+  MSG_DELETE = 13,
 
   // Room 20 - 29
   JOIN_ROOM = 20,

@@ -7,17 +7,33 @@ import {
   UploadedObjectInfo,
 } from 'node_modules/minio/dist/esm/internal/type.mjs';
 import { Readable } from 'stream';
+import { BucketType, DeleteObjectOptions } from './types/minio';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class MinioService implements OnModuleInit {
   private client: Minio.Client;
+  private readonly buckets: Record<BucketType, string>;
+
   private readonly defaultBucket: string;
 
-  constructor(private readonly config: ConfigService) {
-    this.defaultBucket = this.config.get('MINIO_BUCKET_NAME', 'hls-streams');
+  constructor(
+    private readonly config: ConfigService,
+    private readonly logger: LoggerService,
+  ) {
+    this.buckets = {
+      [BucketType.GIFT]: this.config.get('MINIO_GIFT_BUCKET', 'gift'),
+      [BucketType.LIVE]: this.config.get('MINIO_LIVE_BUCKET', 'hls-streams'),
+      [BucketType.STREAM_THUMBNAIL]: this.config.get(
+        'MINIO_STREAM_THUMBNAIL_BUCKET',
+        'stream-thumbnail',
+      ),
+      [BucketType.AVATAR]: this.config.get('MINIO_AVATAR_BUCKET', 'avatar'),
+    };
+    this.defaultBucket = this.buckets[BucketType.LIVE];
   }
 
-  onModuleInit() {
+  async onModuleInit() {
     this.client = new Minio.Client({
       endPoint: this.config.get('MINIO_ENDPOINT', 'localhost'),
       port: Number(this.config.get('MINIO_PORT', 9000)),
@@ -25,11 +41,64 @@ export class MinioService implements OnModuleInit {
       accessKey: this.config.get('MINIO_ACCESS_KEY'),
       secretKey: this.config.get('MINIO_SECRET_KEY'),
     });
+
+    await this.initBuckets();
   }
 
-  /**
-   * Get file as readable stream
-   */
+  private async initBuckets() {
+    const buckets = Object.values(this.buckets);
+
+    for (const bucket of buckets) {
+      try {
+        const exists = await this.client.bucketExists(bucket);
+        if (!exists) {
+          await this.client.makeBucket(bucket);
+          this.logger.info({
+            message: `Successfully created bucket: ${bucket}`,
+            service: 'minio',
+            timestamp: new Date().toISOString(),
+          });
+
+          await this.setPublicBucketPolicy(bucket);
+        }
+      } catch (error) {
+        this.logger.error({
+          message: `Error initializing bucket ${bucket}:`,
+          service: 'minio',
+          timestamp: new Date().toISOString(),
+          error,
+        });
+      }
+    }
+  }
+
+  private async setPublicBucketPolicy(bucketName: string) {
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetBucketLocation', 's3:ListBucket'],
+          Resource: [`arn:aws:s3:::${bucketName}`],
+        },
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${bucketName}/*`],
+        },
+      ],
+    };
+
+    await this.client.setBucketPolicy(bucketName, JSON.stringify(policy));
+    this.logger.info({
+      message: `Public Policy applied to bucket: ${bucketName}`,
+      service: 'minio',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   async getFileStream(
     objectName: string,
     bucket = this.defaultBucket,
@@ -37,9 +106,6 @@ export class MinioService implements OnModuleInit {
     return this.client.getObject(bucket, objectName);
   }
 
-  /**
-   * Get text file content as string
-   */
   async getTextFile(
     objectName: string,
     bucket = this.defaultBucket,
@@ -54,18 +120,10 @@ export class MinioService implements OnModuleInit {
     });
   }
 
-  /**
-   * Get object (alias for getFileStream for compatibility)
-   * Used by SegmentService
-   */
   async getObject(bucket: string, objectPath: string): Promise<Readable> {
     return this.client.getObject(bucket, objectPath);
   }
 
-  /**
-   * Get object metadata/stats
-   * Used to check if segment exists
-   */
   async statObject(
     bucket: string,
     objectPath: string,
@@ -73,9 +131,6 @@ export class MinioService implements OnModuleInit {
     return this.client.statObject(bucket, objectPath);
   }
 
-  /**
-   * Upload file to MinIO
-   */
   async uploadFile(
     bucket: string,
     objectPath: string,
@@ -86,9 +141,6 @@ export class MinioService implements OnModuleInit {
     return this.client.putObject(bucket, objectPath, stream, size, metadata);
   }
 
-  /**
-   * Check if object exists
-   */
   async objectExists(bucket: string, objectPath: string): Promise<boolean> {
     try {
       await this.statObject(bucket, objectPath);
@@ -101,16 +153,25 @@ export class MinioService implements OnModuleInit {
     }
   }
 
-  /**
-   * Delete object from MinIO
-   */
-  async deleteObject(bucket: string, objectPath: string): Promise<void> {
-    return this.client.removeObject(bucket, objectPath);
+  async deleteObject(
+    bucket: string,
+    objectPath: string,
+    options: DeleteObjectOptions = { ignoreNotFound: true },
+  ): Promise<void> {
+    try {
+      await this.client.removeObject(bucket, objectPath);
+    } catch (error) {
+      if (
+        options.ignoreNotFound &&
+        (error.code === 'NoSuchKey' || error.code === 'NotFound')
+      ) {
+        return;
+      }
+
+      throw error;
+    }
   }
 
-  /**
-   * List objects with prefix
-   */
   async listObjects(
     bucket: string,
     prefix: string,
@@ -126,10 +187,23 @@ export class MinioService implements OnModuleInit {
     });
   }
 
-  /**
-   * Get default bucket name
-   */
   getDefaultBucket(): string {
     return this.defaultBucket;
+  }
+
+  getGiftBucket(): string {
+    return this.buckets.gift;
+  }
+
+  getLiveBucket(): string {
+    return this.buckets.live;
+  }
+
+  getStreamThumbnailBucket(): string {
+    return this.buckets['stream-thumbnail'];
+  }
+
+  getAvatarBucket(): string {
+    return this.buckets.avatar;
   }
 }

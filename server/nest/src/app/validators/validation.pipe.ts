@@ -3,7 +3,7 @@ import {
   ValidationPipe,
   ValidationError,
 } from '@nestjs/common';
-import { formatValidationErrors } from 'src/common/validators';
+import { formatValidationErrors } from 'src/common/helpers/validation-error.helper';
 
 export class GlobalValidationPipe extends ValidationPipe {
   constructor() {

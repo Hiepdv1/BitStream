@@ -1,13 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisKey, RedisSetOptions } from './redis.types';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Redis } from 'ioredis';
+import { REDIS_CLIENT } from './redis.constant';
 
 @Injectable()
 export class RedisService {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
+    @Inject(REDIS_CLIENT) public readonly client: Redis,
   ) {}
+
+  async setNX(
+    key: string,
+    value: string,
+    ttlSeconds: number,
+  ): Promise<boolean> {
+    const result = await this.client.set(key, value, 'EX', ttlSeconds, 'NX');
+
+    return result === 'OK';
+  }
 
   async get<T>(key: RedisKey): Promise<T | null> {
     const value = await this.cache.get<T>(key);

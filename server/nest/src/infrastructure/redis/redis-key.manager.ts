@@ -22,6 +22,30 @@ export class RedisKeyManager {
     return this.buildKey(REDIS_PREFIX.STREAM_SESSION, streamId);
   }
 
+  static getActiveStreamsKey() {
+    return this.buildKey(REDIS_PREFIX.STREAM_SESSION, 'ACTIVE_LIST');
+  }
+
+  static getResendVerificationEmailKey(id: string) {
+    return this.buildKey(REDIS_PREFIX.RESEND_VERIFICATION_EMAIL, id);
+  }
+
+  static getStreamUniqueViewsKey(streamID: string) {
+    return this.buildKey(REDIS_PREFIX.STREAM_SESSION, streamID, 'UNIQUE_VIEWS');
+  }
+
+  static getStreamCCUKey(streamID: string) {
+    return this.buildKey(REDIS_PREFIX.STREAM_SESSION, streamID, 'CCU');
+  }
+
+  static getChatHistoryKey(streamID: string) {
+    return this.buildKey(REDIS_PREFIX.CHAT_HISTORY, streamID);
+  }
+
+  static getChatPinMessageKey(streamID: string) {
+    return this.buildKey(REDIS_PREFIX.CHAT_PIN_MESSAGE, streamID);
+  }
+
   private static buildKey(
     prefix: REDIS_PREFIX,
     ...parts: (string | number)[]

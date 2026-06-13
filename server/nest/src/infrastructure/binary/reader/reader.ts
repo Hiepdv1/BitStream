@@ -17,6 +17,10 @@ export class BinaryReader {
 
   // --- PRIMITIVE TYPES (Fixed Size) ---
 
+  readBool(): boolean {
+    return this.readUint8() !== 0;
+  }
+
   readUint8(): number {
     this.assertAvailable(1);
     const value = this.buffer.readUint8(this.offset);

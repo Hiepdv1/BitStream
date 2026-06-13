@@ -22,7 +22,7 @@ export class GoogleTokenProvider implements TokenVerifier {
       return {
         email: payload.email,
         provider: ProviderType.GOOGLE,
-        name: payload?.name,
+        name: payload?.name || '',
         avatar: payload?.picture || '',
       };
     } catch {

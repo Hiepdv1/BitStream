@@ -1,6 +1,6 @@
 import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { formatValidationErrors } from '../validators';
+import { formatValidationErrors } from '../helpers/validation-error.helper';
 
 export async function validateKafkaPayload<T extends object>(
   cls: new () => T,

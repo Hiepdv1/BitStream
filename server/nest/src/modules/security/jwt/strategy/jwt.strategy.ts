@@ -4,10 +4,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JWT_CONFIG } from '../configs/jwt.config';
 import { JwtTokenType } from '../types/jwt.type';
 import { cookieJwtExtractor } from '../extractors/cookie-jwt.extractor';
+import { AuthPayload } from 'src/modules/auth/types/auth';
+import { RedisService } from 'src/infrastructure/redis/redis.service';
+import { RedisKeyManager } from 'src/infrastructure/redis/redis-key.manager';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-auth') {
-  constructor() {
+  constructor(private readonly redisService: RedisService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,8 +33,19 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-auth') {
     });
   }
 
-  async validate(payload: any) {
-    if (!payload || !payload?.sub) throw new UnauthorizedException();
+  async validate(payload: AuthPayload) {
+    if (!payload || !payload.sub || payload.type !== JwtTokenType.ACCESS) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+
+    const isBlacklisted = await this.redisService.get(
+      RedisKeyManager.getBlacklistKey(payload.jti),
+    );
+
+    if (isBlacklisted) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+
     return payload;
   }
 }

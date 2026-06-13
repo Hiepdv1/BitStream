@@ -1,12 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { JWT_CONFIG } from '../configs/jwt.config';
-import {
-  BaseJwtPayload,
-  DecodedJwtPayload,
-  JwtTokenType,
-} from '../types/jwt.type';
+import { DecodedJwtPayload, JwtTokenType } from '../types/jwt.type';
 import crypto from 'crypto';
+import { JwtFullPayload } from 'src/modules/auth/types/auth';
 
 @Injectable()
 export class JwtTokenService {
@@ -39,12 +36,15 @@ export class JwtTokenService {
     };
   }
 
-  verify<T = any>(type: JwtTokenType, token: string): T & DecodedJwtPayload {
+  verify<T extends object>(
+    type: JwtTokenType,
+    token: string,
+  ): JwtFullPayload<T> {
     const config = JWT_CONFIG[type];
     try {
       return this.jwt.verify(token, {
         secret: config.secret,
-      }) as T & DecodedJwtPayload;
+      }) as JwtFullPayload<T>;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

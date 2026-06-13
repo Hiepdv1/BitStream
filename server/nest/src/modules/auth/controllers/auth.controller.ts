@@ -6,7 +6,6 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Post,
-  Query,
   Req,
   Res,
   UnauthorizedException,
@@ -20,8 +19,8 @@ import { CredentialsDto, SignUpDto } from '../dtos/auth.dto';
 import { SkipAuth } from 'src/common/decorators/auth.decorator';
 import { Ok } from 'src/common/response/response.helper';
 import { AUTH_COOKIE_KEYS } from 'src/common/constants/auth.constants';
-import { SkipSignature } from 'src/common/decorators';
-import { AccessTokenPayload } from '../types/auth';
+import type { AccessTokenPayload, AuthPayload } from '../types/auth';
+import { ReqPayload } from 'src/common/decorators/auth-payload';
 
 @Controller('/auth')
 export class AuthController {
@@ -29,24 +28,34 @@ export class AuthController {
 
   @Post('/sign-in/social')
   @SkipAuth()
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Throttle({ default: { ttl: 300000, limit: 3 } })
   @UseGuards(ProviderTokenGuard)
-  public async socialSignIn(@Req() req: Request) {
-    const auth = req.auth;
-    if (!auth) {
+  public async socialSignIn(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const payload = req.auth;
+    if (!payload) {
       throw new InternalServerErrorException('Auth context not found');
     }
-    await this.authService.socialSignIn(auth);
+    const { accessToken, refreshToken, provider } =
+      await this.authService.socialSignIn(payload);
 
-    return;
+    this.setAuthCookies(res, { accessToken, refreshToken, provider });
+
+    return Ok({
+      accessTokenExpiresAt: accessToken.expiresAt,
+      refreshTokenExpiresAt: refreshToken.expiresAt,
+      message: 'User signed in successfully',
+    });
+    7;
   }
 
   @Post('/sign-in/credentials')
   @HttpCode(HttpStatus.OK)
   @SkipAuth()
-  @SkipSignature() // TODO: remove this decorator
-  // @Throttle({ default: { ttl: 300000, limit: 3 } })
+  @Throttle({ default: { ttl: 300000, limit: 3 } })
   public async credentialsSignIn(
     @Res({ passthrough: true }) res: Response,
     @Body() body: CredentialsDto,
@@ -91,12 +100,13 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refresh_token_header = req.cookies[AUTH_COOKIE_KEYS.REFRESH_TOKEN];
+    const refreshCookie =
+      req.cookies[AUTH_COOKIE_KEYS.REFRESH_TOKEN] || req.body?.refreshToken;
 
-    if (!refresh_token_header) throw new UnauthorizedException();
+    if (!refreshCookie) throw new UnauthorizedException();
 
     const { accessToken, refreshToken, provider } =
-      await this.authService.refreshToken(refresh_token_header);
+      await this.authService.refreshToken(refreshCookie);
 
     this.setAuthCookies(res, { accessToken, refreshToken, provider });
 
@@ -108,10 +118,8 @@ export class AuthController {
   }
 
   @Get('/status')
-  @SkipSignature()
   @HttpCode(HttpStatus.OK)
-  public async status(@Req() req: Request) {
-    const auth = req.payload;
+  public async status(@ReqPayload() auth: AuthPayload) {
     if (!auth) {
       throw new UnauthorizedException();
     }
@@ -123,6 +131,8 @@ export class AuthController {
       role: auth.role,
       sid: auth.sid,
       sub: auth.sub,
+      name: auth.name,
+      avatar: auth.avatar,
     };
 
     return Ok(data);
@@ -130,15 +140,15 @@ export class AuthController {
 
   @Post('/verify-email')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { ttl: 300000, limit: 3 } })
   public async verifyEmail(
     @Body() body: { token: string },
-    @Req() req: Request,
+    @ReqPayload() payload: AuthPayload,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { token } = body;
     if (!token) throw new UnauthorizedException();
 
-    const payload = req.payload;
     if (!payload) throw new UnauthorizedException();
 
     const { accessToken, refreshToken, provider } =
@@ -150,6 +160,40 @@ export class AuthController {
       accessTokenExpiresAt: accessToken.expiresAt,
       refreshTokenExpiresAt: refreshToken.expiresAt,
     });
+  }
+
+  @Post('/resend-verification-email')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { ttl: 300000, limit: 3 } })
+  public async resendVerificationEmail(
+    @ReqPayload() payload: AuthPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!payload) throw new UnauthorizedException();
+
+    const { remainingSeconds } =
+      await this.authService.resendVerificationEmail(payload);
+
+    return Ok({
+      message: 'Verification email resent successfully',
+      remainingSeconds,
+    });
+  }
+
+  @Post('/logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async logout(
+    @ReqPayload() auth: AuthPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!auth) throw new UnauthorizedException();
+
+    await this.authService.logout(auth);
+
+    res.clearCookie(AUTH_COOKIE_KEYS.ACCESS_TOKEN);
+    res.clearCookie(AUTH_COOKIE_KEYS.REFRESH_TOKEN);
+
+    return;
   }
 
   // ------------------------------- PRIVATE METHODS -------------------------------
@@ -167,10 +211,12 @@ export class AuthController {
       provider: string;
     },
   ) {
+    const secure = process.env.NODE_ENV === 'production';
+
     res.cookie(AUTH_COOKIE_KEYS.ACCESS_TOKEN, tokens.accessToken.token, {
       path: '/',
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure,
       sameSite: 'lax',
       expires: new Date(tokens.accessToken.expiresAt * 1000),
     });
@@ -178,27 +224,7 @@ export class AuthController {
     res.cookie(AUTH_COOKIE_KEYS.REFRESH_TOKEN, tokens.refreshToken.token, {
       path: '/',
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      expires: new Date(tokens.refreshToken.expiresAt * 1000),
-    });
-
-    res.cookie(
-      AUTH_COOKIE_KEYS.AUTH_SESSION_EXP,
-      tokens.accessToken.expiresAt,
-      {
-        path: '/',
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        expires: new Date(tokens.refreshToken.expiresAt * 1000),
-      },
-    );
-
-    res.cookie(AUTH_COOKIE_KEYS.AUTH_PROVIDER, tokens.provider, {
-      path: '/',
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure,
       sameSite: 'lax',
       expires: new Date(tokens.refreshToken.expiresAt * 1000),
     });

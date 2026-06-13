@@ -9,7 +9,7 @@ import type { Request } from 'express';
 import { SignatureService } from './signature.service';
 import { SIGNATURE_HEADERS } from './signature.constants';
 import { Reflector } from '@nestjs/core';
-import { SKIP_SIGNATURE_KEY } from 'src/common/decorators';
+import { REQUIRE_SIGNATURE_KEY } from 'src/common/decorators';
 
 @Injectable()
 export class SignatureGuard implements CanActivate {
@@ -19,12 +19,12 @@ export class SignatureGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    const skip = this.reflector.getAllAndOverride<Boolean>(SKIP_SIGNATURE_KEY, [
-      ctx.getHandler(),
-      ctx.getClass(),
-    ]);
+    const requireSignature = this.reflector.getAllAndOverride<boolean>(
+      REQUIRE_SIGNATURE_KEY,
+      [ctx.getHandler(), ctx.getClass()],
+    );
 
-    if (skip) {
+    if (!requireSignature) {
       return true;
     }
 

@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -59,4 +60,72 @@ export class ChatDLQPayload extends KafkaEventBase {
   streamID: string;
   reason: string;
   data: JSON;
+}
+
+export class PinMessagePayload
+  extends KafkaEventBase
+  implements KafkaRetryBase
+{
+  @IsString()
+  @IsNotEmpty()
+  action: 'UPDATE';
+
+  @IsNumber()
+  opcode: number;
+
+  @IsString()
+  @IsNotEmpty()
+  streamID: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  isPinned: boolean;
+
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  userID: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  retryCount: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  maxRetry: number;
+}
+
+export class DeleteMessagePayload
+  extends KafkaEventBase
+  implements KafkaRetryBase
+{
+  @IsString()
+  @IsNotEmpty()
+  action: 'DELETE';
+
+  @IsNumber()
+  opcode: number;
+
+  @IsString()
+  @IsNotEmpty()
+  streamID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  userID: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  retryCount: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  maxRetry: number;
 }

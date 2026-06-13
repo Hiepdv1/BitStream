@@ -1,4 +1,4 @@
-import { Opcode } from 'src/common/constants/protocol.constant';
+import { Opcode, PACKET_CONFIG } from 'src/common/constants/protocol.constant';
 
 export class BinaryWriter {
   private chunks: Buffer;
@@ -22,6 +22,10 @@ export class BinaryWriter {
   }
 
   // --- PRIMITIVE TYPES (Fixed Size) ---
+
+  writeBool(value: boolean) {
+    this.writeUint8(value ? 1 : 0);
+  }
 
   writeUint8(value: number) {
     if (value < 0 || value > 255) throw new Error('Uint8 out of range');
@@ -117,14 +121,22 @@ export class BinaryWriter {
     this.offset = 0;
   }
 
-  static createPacket(opcode: Opcode, version = 1): BinaryWriter {
-    const writer = new BinaryWriter();
-    writer.writeUint8(version);
+  static createPacket(opcode: Opcode, Writer?: BinaryWriter): BinaryWriter {
+    const writer = Writer || new BinaryWriter();
+    writer.reset();
+
+    writer.writeUint8(PACKET_CONFIG.VERSION);
     writer.writeUint8(opcode);
     return writer;
   }
 
-  finish(): Buffer {
-    return this.getBuffer();
+  finish(copy = false): Buffer {
+    const data = this.getBuffer();
+
+    if (copy) {
+      return Buffer.from(data);
+    }
+
+    return data;
   }
 }

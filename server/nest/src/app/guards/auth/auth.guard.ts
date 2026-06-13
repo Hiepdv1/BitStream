@@ -1,52 +1,52 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import { ProviderType } from 'src/generated/prisma/enums';
-import { TokenProviderFactory } from 'src/modules/security/token-providers/token-provider.factory';
 import { JwtAuthGuard } from 'src/modules/security/jwt/guards/jwt.guard';
 import { Reflector } from '@nestjs/core';
+import { ROLES_KEY, SKIP_AUTH_KEY } from 'src/common/decorators';
+import { AuthPayload } from 'src/modules/auth/types/auth';
 
 @Injectable()
 export class GlobalAuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly factory: TokenProviderFactory,
     private readonly jwtGuard: JwtAuthGuard,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    const skipAuth = this.reflector.getAllAndOverride<boolean>('skip-auth', [
+    const skipAuth = this.reflector.getAllAndOverride<boolean>(SKIP_AUTH_KEY, [
       ctx.getHandler(),
       ctx.getClass(),
     ]);
 
     if (skipAuth) return true;
 
-    const req = ctx.switchToHttp().getRequest<Request>();
+    const canAccess = await this.jwtGuard.canActivate(ctx);
+    if (!canAccess) return false;
 
-    const provider =
-      (req.headers['x-provider'] as string) || req.cookies?.auth_provider;
+    const requiredRolesMask = this.reflector.getAllAndOverride<
+      number[] | number
+    >(ROLES_KEY, [ctx.getHandler(), ctx.getClass()]);
 
-    const token =
-      req.headers.authorization?.replace('Bearer ', '') ||
-      req.cookies?.access_token;
+    if (!requiredRolesMask) return true;
 
-    if (!provider || !token) {
-      throw new UnauthorizedException();
+    const requiredMask = Array.isArray(requiredRolesMask)
+      ? requiredRolesMask.reduce((acc, role) => acc | role, 0)
+      : requiredRolesMask;
+
+    const req = ctx.switchToHttp().getRequest();
+    const user = req.payload as AuthPayload;
+
+    const hasPermission = (user.role & requiredMask) !== 0;
+
+    if (!user || !hasPermission) {
+      throw new ForbiddenException(
+        'You do not have permission to access this resource',
+      );
     }
-
-    if (provider === ProviderType.CREDENTIALS) {
-      return (await this.jwtGuard.canActivate(ctx)) as boolean;
-    }
-
-    const authProvider = this.factory.get(provider as ProviderType);
-    const payload = await authProvider.verify(token);
-
-    req.auth = payload;
 
     return true;
   }

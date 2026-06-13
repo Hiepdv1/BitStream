@@ -1,12 +1,21 @@
 import 'express';
-import { AccessTokenPayload } from 'src/modules/auth/types/auth';
+import { AuthPayload } from 'src/modules/auth/types/auth';
 import { SocialAuth } from 'src/modules/security/token-providers/providers/token-verifier.interface';
 
 declare global {
   namespace Express {
     interface Request {
+      /**
+       * Set by JwtAuthGuard (via JWT strategy) for all normal authenticated requests.
+       * Always AccessTokenPayload — the server-issued JWT decoded payload.
+       */
+      payload?: AuthPayload;
+      /**
+       * Set ONLY by ProviderTokenGuard on the /auth/sign-in/social endpoint.
+       * Contains the verified identity from Google/Discord for the ONE-TIME sign-in step.
+       * After sign-in, server JWTs are issued and all subsequent auth uses req.payload.
+       */
       auth?: SocialAuth;
-      payload?: AccessTokenPayload;
       cookies?: Record<string, string> & {
         access_token?: string;
         refresh_token?: string;
@@ -18,6 +27,7 @@ declare global {
 
 declare module 'socket.io' {
   interface Socket {
-    auth?: AccessTokenPayload;
+    auth?: AuthPayload;
+    currentRoom?: string;
   }
 }

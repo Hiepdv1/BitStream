@@ -1,13 +1,22 @@
 import { ProviderType } from 'src/generated/prisma/enums';
-import { BaseJwtPayload } from 'src/modules/security/jwt/types/jwt.type';
+import {
+  BaseJwtPayload,
+  DecodedJwtPayload,
+} from 'src/modules/security/jwt/types/jwt.type';
 
 export interface AccessTokenPayload extends BaseJwtPayload {
   isVerified: boolean;
-  role: string;
+  role: number;
   sid: string;
   email: string;
+  name: string;
+  avatar: string;
   provider: ProviderType;
 }
+
+export type JwtFullPayload<T = object> = T & DecodedJwtPayload;
+
+export type AuthPayload = JwtFullPayload<AccessTokenPayload>;
 
 export interface RefreshTokenPayload extends BaseJwtPayload {
   sid: string;

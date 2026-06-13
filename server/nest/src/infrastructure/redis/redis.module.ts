@@ -3,7 +3,8 @@ import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { RedisService } from './redis.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DEFAULT_REDIS_TTL_SECONDS } from './redis.constant';
+import { DEFAULT_REDIS_TTL_SECONDS, REDIS_CLIENT } from './redis.constant';
+import { Redis } from 'ioredis';
 
 @Global()
 @Module({
@@ -28,7 +29,20 @@ import { DEFAULT_REDIS_TTL_SECONDS } from './redis.constant';
       inject: [ConfigService],
     }),
   ],
-  providers: [RedisService],
+  providers: [
+    {
+      provide: REDIS_CLIENT,
+      useFactory: (configService: ConfigService) => {
+        return new Redis({
+          host: configService.get('REDIS_HOST') || 'localhost',
+          port: configService.get('REDIS_PORT') || 6379,
+          password: configService.get('REDIS_PASSWORD') || '',
+        });
+      },
+      inject: [ConfigService],
+    },
+    RedisService,
+  ],
   exports: [RedisService, CacheModule],
 })
 export class RedisModule {}
