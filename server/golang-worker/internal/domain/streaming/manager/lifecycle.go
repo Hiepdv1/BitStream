@@ -23,6 +23,9 @@ func (m *StreamManager) handlePayload(p model.StreamPayload) {
 		err = m.startStream(p)
 	case model.StreamStop:
 		err = m.stopStream(p)
+	case model.StreamAbort:
+		m.abortStream(p)
+		return
 	default:
 		slog.Warn("Unknown action", "action", p.Action, "streamId", p.StreamID)
 		return
@@ -97,6 +100,7 @@ func (m *StreamManager) probeAndStart(p model.StreamPayload, probeCtx context.Co
 		ladders,
 		m.config.FFmpeg.CdnBaseURL,
 		probeResult.FPS,
+		m.config.FFmpeg.UploadWorkers,
 	)
 	if err != nil {
 		slog.Error("Failed to start FFmpeg process", "streamId", p.StreamID, "error", err)
@@ -173,6 +177,40 @@ func (m *StreamManager) stopStream(p model.StreamPayload) error {
 	m.cancelProbe(p.StreamID)
 	m.setProbing(p.StreamID, false, nil)
 	return m.cleanupProcess(p.StreamID)
+}
+
+func (m *StreamManager) abortStream(p model.StreamPayload) {
+	slog.Warn("ABORT: Emergency stream termination initiated",
+		"streamId", p.StreamID,
+		"eventId", p.EventID,
+	)
+
+	m.cancelProbe(p.StreamID)
+	m.setProbing(p.StreamID, false, nil)
+
+	m.mu.Lock()
+	proc, ok := m.process[p.StreamID]
+	if ok {
+		delete(m.process, p.StreamID)
+	}
+	m.mu.Unlock()
+
+	if ok {
+		if err := proc.Kill(); err != nil {
+			slog.Error("ABORT: Failed to kill process", "streamId", p.StreamID, "error", err)
+		}
+	}
+
+	m.gc.cleanupStreamDirectory(p.StreamID)
+
+	remotePrefix := fmt.Sprintf("streams/%s/", p.StreamID)
+	if err := m.storage.DeletePrefix(context.Background(), remotePrefix); err != nil {
+		slog.Error("ABORT: Failed to delete remote files on MinIO", "streamId", p.StreamID, "prefix", remotePrefix, "error", err)
+	}
+
+	slog.Warn("ABORT: Stream terminated, local and remote files wiped",
+		"streamId", p.StreamID,
+	)
 }
 
 func (m *StreamManager) monitorProcess(p model.StreamPayload, proc *ffmpeg.StreamProcess) {

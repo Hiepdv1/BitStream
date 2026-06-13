@@ -3,6 +3,7 @@ package minio
 import (
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/bitstream/backend-go/internal/config"
 	"github.com/minio/minio-go/v7"
@@ -70,10 +71,47 @@ func (s *Service) UploadFile(ctx context.Context, localPath, remotePath, content
 	return nil
 }
 
+func (s *Service) UploadFromReader(ctx context.Context, reader io.Reader, size int64, remotePath, contentType string) error {
+	_, err := s.client.PutObject(ctx, s.bucketName, remotePath, reader, size, minio.PutObjectOptions{
+		ContentType: contentType,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to upload %s: %w", remotePath, err)
+	}
+	return nil
+}
+
 func (s *Service) DeleteObject(ctx context.Context, remotePath string) error {
 	err := s.client.RemoveObject(ctx, s.bucketName, remotePath, minio.RemoveObjectOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete object %s: %w", remotePath, err)
 	}
+	return nil
+}
+
+func (s *Service) DeletePrefix(ctx context.Context, prefix string) error {
+	objectsCh := s.client.ListObjects(ctx, s.bucketName, minio.ListObjectsOptions{
+		Prefix:    prefix,
+		Recursive: true,
+	})
+
+	removeCh := make(chan minio.ObjectInfo)
+
+	go func() {
+		defer close(removeCh)
+		for obj := range objectsCh {
+			if obj.Err != nil {
+				continue
+			}
+			removeCh <- obj
+		}
+	}()
+
+	for err := range s.client.RemoveObjects(ctx, s.bucketName, removeCh, minio.RemoveObjectsOptions{}) {
+		if err.Err != nil {
+			return fmt.Errorf("failed to delete object %s: %w", err.ObjectName, err.Err)
+		}
+	}
+
 	return nil
 }

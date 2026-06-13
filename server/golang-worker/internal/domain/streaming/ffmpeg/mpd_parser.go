@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-// --- Structs định nghĩa cấu trúc MPD ---
-
 type mpdRoot struct {
 	XMLName                   xml.Name    `xml:"MPD"`
 	MediaPresentationDuration string      `xml:"mediaPresentationDuration,attr"`
@@ -63,7 +61,6 @@ type mpdTimelineEntry struct {
 	R int   `xml:"r,attr,omitempty"`
 }
 
-// Struct hỗ trợ build VOD
 type VODAdaptationSet struct {
 	ID          string
 	ContentType string
@@ -86,8 +83,6 @@ type VODRepresentation struct {
 	StartNumber    int
 	Timeline       []mpdTimelineEntry
 }
-
-// --- Logic xử lý ---
 
 func ParseLiveMPD(streamDir string) (*mpdRoot, error) {
 	mpdPath := filepath.Join(streamDir, "manifest.mpd")

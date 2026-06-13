@@ -33,8 +33,9 @@ type DbConfig struct {
 }
 
 type FFmpegConfig struct {
-	OutputDir  string `mapstructure:"outputDir"`
-	CdnBaseURL string `mapstructure:"cdnBaseUrl"`
+	OutputDir     string `mapstructure:"outputDir"`
+	CdnBaseURL    string `mapstructure:"cdnBaseUrl"`
+	UploadWorkers int    `mapstructure:"uploadWorkers"`
 }
 
 type ServerConfig struct {

@@ -7,10 +7,12 @@ type MessagePayload struct {
 	ID         string `json:"id"`
 	Opcode     int    `json:"opcode"`
 	StreamID   string `json:"streamId"`
-	Message    string `json:"message"`
+	Message    string `json:"message,omitempty"`
 	UserID     string `json:"userId,omitempty"`
-	Type       string `json:"type"`
-	OffsetMs   int64  `json:"offsetMs"`
+	IsPinned   bool   `json:"isPinned,omitempty"`
+	IsDeleted  bool   `json:"isDeleted,omitempty"`
+	Type       string `json:"type,omitempty"`
+	OffsetMs   int64  `json:"offsetMs,omitempty"`
 	RetryCount int    `json:"retryCount"`
 	MaxRetry   int    `json:"maxRetry"`
 	EventID    string `json:"eventId"`

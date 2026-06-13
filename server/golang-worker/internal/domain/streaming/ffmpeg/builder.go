@@ -12,21 +12,43 @@ import (
 
 const SegDuration = 2
 
+// StreamConfig allows flexible configuration for A/V encoding
+type StreamConfig struct {
+	VideoCodec      string
+	VideoPreset     string
+	AudioCodec      string
+	AudioBitrate    string
+	AudioSampleRate string
+	AudioChannels   string
+}
+
+// BuilderOption defines a function to modify StreamConfig
+type BuilderOption func(*StreamConfig)
+
+func WithVideoCodec(codec string) BuilderOption {
+	return func(c *StreamConfig) { c.VideoCodec = codec }
+}
+
+func WithVideoPreset(preset string) BuilderOption {
+	return func(c *StreamConfig) { c.VideoPreset = preset }
+}
+
+var segmentRegex = regexp.MustCompile(`chunk-.*-(\d+)\.m4s$`)
+
 // ===============================
 // Resume helper
 // ===============================
-func getLastSegmentNumber(dir string) int {
+func getLastSegmentNumber(dir string) (int, error) {
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return 0
+		return 0, err
 	}
-	re := regexp.MustCompile(`chunk-.*-(\d+)\.m4s$`)
 	maxNum := 0
 	for _, file := range files {
 		if file.IsDir() {
 			continue
 		}
-		matches := re.FindStringSubmatch(file.Name())
+		matches := segmentRegex.FindStringSubmatch(file.Name())
 		if len(matches) > 1 {
 			num, _ := strconv.Atoi(matches[1])
 			if num > maxNum {
@@ -34,7 +56,7 @@ func getLastSegmentNumber(dir string) int {
 			}
 		}
 	}
-	return maxNum
+	return maxNum, nil
 }
 
 // ===============================
@@ -47,9 +69,24 @@ func BuildStreamCommand(
 	env string,
 	ladders []int,
 	inputFPS float64,
+	opts ...BuilderOption,
 ) (*exec.Cmd, []int, error) {
 
-	lastNum := getLastSegmentNumber(streamDir)
+	config := &StreamConfig{
+		VideoCodec:      "libx264",
+		AudioCodec:      "aac",
+		AudioBitrate:    "128k",
+		AudioSampleRate: "48000",
+		AudioChannels:   "2",
+	}
+	for _, opt := range opts {
+		opt(config)
+	}
+
+	lastNum, err := getLastSegmentNumber(streamDir)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, nil, err
+	}
 	isResume := lastNum > 0
 	startNum := lastNum + 1
 
@@ -102,21 +139,40 @@ func BuildStreamCommand(
 		cfg := GetLadderConfig(h)
 		encodingArgs = append(encodingArgs,
 			"-map", "[vout"+strconv.Itoa(i)+"]",
-			"-c:v:"+strconv.Itoa(i), "libx264",
+			"-c:v:"+strconv.Itoa(i), config.VideoCodec,
 			"-b:v:"+strconv.Itoa(i), cfg.Bitrate,
 			"-maxrate:v:"+strconv.Itoa(i), cfg.MaxRate,
 			"-bufsize:v:"+strconv.Itoa(i), cfg.BufSize,
-
 			"-profile:v:"+strconv.Itoa(i), "high",
-			"-level:v:"+strconv.Itoa(i), cfg.Level,
-
-			"-x264-params", "nal-hrd=cbr:force-cfr=1:rc-lookahead=10:sliced-threads=0",
 		)
+
+		if config.VideoCodec == "h264_nvenc" {
+			preset := config.VideoPreset
+			if preset == "" {
+				preset = "p4"
+			}
+			encodingArgs = append(encodingArgs,
+				"-preset:v:"+strconv.Itoa(i), preset,
+				"-tune:v:"+strconv.Itoa(i), "hq",
+				"-rc:v:"+strconv.Itoa(i), "vbr",
+			)
+		} else { // default to libx264
+			encodingArgs = append(encodingArgs,
+				"-level:v:"+strconv.Itoa(i), cfg.Level,
+				"-x264-params", "nal-hrd=cbr:force-cfr=1:rc-lookahead=10:sliced-threads=0",
+			)
+		}
+	}
+
+	if config.VideoCodec != "h264_nvenc" {
+		preset := config.VideoPreset
+		if preset == "" {
+			preset = "veryfast"
+		}
+		encodingArgs = append(encodingArgs, "-preset", preset)
 	}
 
 	encodingArgs = append(encodingArgs,
-		"-preset", "veryfast",
-
 		"-r", strconv.Itoa(fpsInt),
 
 		"-g", strconv.Itoa(gopSize),
@@ -126,10 +182,10 @@ func BuildStreamCommand(
 		"-pix_fmt", "yuv420p",
 
 		"-map", "0:a?",
-		"-c:a", "aac",
-		"-b:a", "128k",
-		"-ar", "48000",
-		"-ac", "2",
+		"-c:a", config.AudioCodec,
+		"-b:a", config.AudioBitrate,
+		"-ar", config.AudioSampleRate,
+		"-ac", config.AudioChannels,
 	)
 
 	dashArgs := []string{

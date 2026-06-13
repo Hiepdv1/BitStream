@@ -162,31 +162,7 @@ func (b *BatchBuffer) processBatch(batch []models.MessagePayload) {
 	}
 }
 
-func (b *BatchBuffer) executeCombinedBatch(batch []models.MessagePayload) ([]models.MessagePayload, error) {
-	pgBatch := &pgx.Batch{}
-
-	var queuedMessages []models.MessagePayload
-
-	for _, msg := range batch {
-		switch msg.Action {
-		case "INSERT":
-			b.queueInsert(pgBatch, msg)
-			queuedMessages = append(queuedMessages, msg)
-		case "UPDATE":
-			b.queueUpdate(pgBatch, msg)
-			queuedMessages = append(queuedMessages, msg)
-		case "DELETE":
-			b.queueDelete(pgBatch, msg)
-			queuedMessages = append(queuedMessages, msg)
-		default:
-			slog.Warn("Unknown action ignored", "action", msg.Action, "id", msg.ID)
-		}
-	}
-
-	if len(queuedMessages) == 0 {
-		return nil, nil
-	}
-
+func (b *BatchBuffer) runBatchExec(pgBatch *pgx.Batch, queuedMessages []models.MessagePayload) ([]models.MessagePayload, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -215,6 +191,55 @@ func (b *BatchBuffer) executeCombinedBatch(batch []models.MessagePayload) ([]mod
 	return failedMessages, lastErr
 }
 
+func (b *BatchBuffer) executeCombinedBatch(batch []models.MessagePayload) ([]models.MessagePayload, error) {
+	stateMap := make(map[string]*models.MessagePayload)
+
+	for _, msg := range batch {
+		existing, ok := stateMap[msg.ID]
+		if !ok {
+			msgCopy := msg
+			stateMap[msg.ID] = &msgCopy
+			continue
+		}
+
+		switch msg.Action {
+		case "INSERT":
+			*existing = msg
+		case "UPDATE":
+			existing.IsPinned = msg.IsPinned
+
+			if msg.Message != "" {
+				existing.Message = msg.Message
+			}
+		case "DELETE":
+			existing.Action = "DELETE"
+			existing.IsDeleted = true
+		}
+	}
+	pgBatch := &pgx.Batch{}
+	var queuedMessages []models.MessagePayload
+
+	for _, finalMsg := range stateMap {
+		switch finalMsg.Action {
+		case "INSERT":
+			b.queueInsert(pgBatch, *finalMsg)
+			queuedMessages = append(queuedMessages, *finalMsg)
+		case "UPDATE":
+			b.queueUpdate(pgBatch, *finalMsg)
+			queuedMessages = append(queuedMessages, *finalMsg)
+		case "DELETE":
+			b.queueDelete(pgBatch, *finalMsg)
+			queuedMessages = append(queuedMessages, *finalMsg)
+		}
+	}
+
+	if len(queuedMessages) == 0 {
+		return nil, nil
+	}
+
+	return b.runBatchExec(pgBatch, queuedMessages)
+}
+
 func (b *BatchBuffer) queueInsert(pgBatch *pgx.Batch, msg models.MessagePayload) {
 	query := `
 		INSERT INTO "ChatMessage" (
@@ -239,13 +264,21 @@ func (b *BatchBuffer) queueInsert(pgBatch *pgx.Batch, msg models.MessagePayload)
 }
 
 func (b *BatchBuffer) queueUpdate(pgBatch *pgx.Batch, msg models.MessagePayload) {
-	query := `UPDATE "ChatMessage" SET "isPinned" = $1, "updatedAt" = now() WHERE id = $2`
-	pgBatch.Queue(query, true, msg.ID)
+	query := `
+        UPDATE "ChatMessage" 
+        SET "isPinned" = $1, "updatedAt" = now() 
+        WHERE id = $2 AND "streamId" = $3`
+
+	pgBatch.Queue(query, msg.IsPinned, msg.ID, msg.StreamID)
 }
 
 func (b *BatchBuffer) queueDelete(pgBatch *pgx.Batch, msg models.MessagePayload) {
-	query := `UPDATE "ChatMessage" SET "isDeleted" = TRUE, "deletedAt" = now() WHERE id = $1`
-	pgBatch.Queue(query, msg.ID)
+	query := `
+        UPDATE "ChatMessage" 
+        SET "isDeleted" = TRUE, "deletedAt" = now() 
+        WHERE id = $1 AND "streamId" = $2`
+
+	pgBatch.Queue(query, msg.ID, msg.StreamID)
 }
 
 func (b *BatchBuffer) toText(s string) any {

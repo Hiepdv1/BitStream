@@ -36,6 +36,7 @@ type StreamProcess struct {
 
 	mu         sync.Mutex
 	manualStop bool
+	aborted    bool
 }
 
 func GetStreamDirectory(outputDir, streamId string) string {
@@ -55,12 +56,25 @@ func NewStreamProcess(
 	ladders []int,
 	cdnBaseURL string,
 	fps float64,
+	workerCount int,
 ) (*StreamProcess, error) {
+
+	codec := os.Getenv("STREAM_VIDEO_CODEC")
+	preset := os.Getenv("STREAM_VIDEO_PRESET")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	streamDir := GetStreamDirectory(outputDir, streamID)
 
-	cmd, _, err := BuildStreamCommand(ctx, rtmp, streamDir, env, ladders, fps)
+	cmd, _, err := BuildStreamCommand(
+		ctx,
+		rtmp,
+		streamDir,
+		env,
+		ladders,
+		fps,
+		WithVideoCodec(codec),
+		WithVideoPreset(preset),
+	)
 	if err != nil {
 		cancel()
 		return nil, err
@@ -103,12 +117,14 @@ func NewStreamProcess(
 
 	tracker := NewSegmentTracker(
 		ctx,
+		proc,
 		streamID,
 		streamDir,
 		queries,
 		storage,
 		isRetry,
 		cdnBaseURL,
+		workerCount,
 	)
 
 	go tracker.Run()
@@ -134,6 +150,10 @@ func (p *StreamProcess) logFFmpegOutput(r io.Reader) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		slog.Debug("ffmpeg", "streamId", p.StreamID, "log", scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		slog.Error("ffmpeg scanner error", "streamId", p.StreamID, "error", err)
 	}
 }
 
@@ -223,4 +243,24 @@ func (p *StreamProcess) IsManualStop() bool {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	return p.manualStop
+}
+
+func (p *StreamProcess) Kill() error {
+	p.mu.Lock()
+	if p.manualStop {
+		p.mu.Unlock()
+		return nil
+	}
+	p.manualStop = true
+	p.aborted = true
+	p.mu.Unlock()
+
+	slog.Warn("ABORT: Force-killing FFmpeg process immediately", "streamId", p.StreamID)
+	return p.terminateForcibly()
+}
+
+func (p *StreamProcess) IsAborted() bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.aborted
 }

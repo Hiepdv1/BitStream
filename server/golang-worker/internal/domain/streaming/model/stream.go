@@ -3,8 +3,10 @@ package model
 type StreamAction string
 
 const (
-	StreamStart StreamAction = "START"
-	StreamStop  StreamAction = "STOP"
+	StreamStart   StreamAction = "START"
+	StreamStop    StreamAction = "STOP"
+	StreamAbort   StreamAction = "ABORT"
+	StreamRestart StreamAction = "RESTART"
 )
 
 type StreamPayload struct {
