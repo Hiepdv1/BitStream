@@ -1,6 +1,9 @@
 "use client";
 
 import { Heart, Star, Share2, MoreVertical, User, Users } from "lucide-react";
+import { memo } from "react";
+import { Button } from "@/components/ui/Button";
+import { ExpandableText } from "@/components/ui/expandable-text";
 
 interface VideoInfoProps {
   title: string;
@@ -10,11 +13,10 @@ interface VideoInfoProps {
   creatorName?: string;
   creatorAvatar?: string;
   isLive?: boolean;
-  category?: string;
   tags?: string[];
 }
 
-export function VideoInfo({
+const VideoInfo = ({
   title,
   description,
   viewCount,
@@ -22,9 +24,8 @@ export function VideoInfo({
   creatorName,
   creatorAvatar,
   isLive = false,
-  category,
   tags = [],
-}: VideoInfoProps) {
+}: VideoInfoProps) => {
   const formatViews = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
@@ -37,7 +38,7 @@ export function VideoInfo({
         {/* Channel info + Title + Actions row */}
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Avatar */}
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand to-purple-600 flex items-center justify-center shrink-0 overflow-hidden ring-2 ring-brand/30">
+          <div className="w-12 h-12 rounded-full bg-linear-to-br from-brand to-purple-600 flex items-center justify-center shrink-0 overflow-hidden ring-2 ring-brand/30">
             {creatorAvatar ? (
               <img
                 src={creatorAvatar}
@@ -57,27 +58,19 @@ export function VideoInfo({
               <span className="text-sm font-semibold text-brand hover:text-brand/80 cursor-pointer">
                 {creatorName || "Unknown"}
               </span>
-              {category && (
-                <>
-                  <span className="text-zinc-300 dark:text-zinc-600">•</span>
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {category}
-                  </span>
-                </>
-              )}
             </div>
           </div>
 
           {/* Action buttons */}
           <div className="flex items-center gap-2 shrink-0">
-            <button className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-all border border-zinc-200 dark:border-white/[0.06]">
-              <Heart className="w-4 h-4" />
+            <Button variant="primary" size="sm">
+              <Heart className="w-4 h-4 mr-2" />
               Follow
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-lg text-sm font-bold transition-all">
-              <Star className="w-4 h-4" />
-              Subscribe
-            </button>
+            </Button>
+            <Button variant="outline" size="sm">
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
           </div>
         </div>
 
@@ -103,7 +96,7 @@ export function VideoInfo({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 bg-zinc-100 dark:bg-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-600 dark:text-zinc-300 text-xs font-medium rounded-md border border-zinc-200 dark:border-white/[0.06] cursor-pointer transition-colors"
+              className="px-2.5 py-1 bg-zinc-100 dark:bg-white/6 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-600 dark:text-zinc-300 text-xs font-medium rounded-md border border-zinc-200 dark:border-white/6 cursor-pointer transition-colors"
             >
               {tag}
             </span>
@@ -111,7 +104,7 @@ export function VideoInfo({
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-6 border-t border-zinc-200 dark:border-white/[0.06] pt-3">
+        <div className="flex items-center gap-6 border-t border-zinc-200 dark:border-white/6 pt-3">
           {["About", "Schedule", "Videos", "Clips"].map((tab, i) => (
             <button
               key={tab}
@@ -134,33 +127,29 @@ export function VideoInfo({
     <div className="space-y-5">
       {/* Title + Action buttons row */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 flex-1">
+        <h1 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 flex-1">
           {title}
         </h1>
 
         <div className="flex items-center gap-2 shrink-0">
-          <button className="flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-lg text-sm font-bold transition-all">
-            <Heart className="w-4 h-4" />
+          <Button variant="primary" size="sm">
+            <Heart className="w-4 h-4 mr-2" />
             Follow
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-all border border-zinc-200 dark:border-white/[0.06]">
-            <Star className="w-4 h-4" />
-            Subscribe
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-all border border-zinc-200 dark:border-white/[0.06]">
-            <Share2 className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="sm">
+            <Share2 className="w-4 h-4 mr-2" />
             Share
-          </button>
-          <button className="p-2 bg-zinc-100 dark:bg-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-lg transition-all border border-zinc-200 dark:border-white/[0.06]">
+          </Button>
+          <Button variant="ghost" size="xs" className="p-2">
             <MoreVertical className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Channel info */}
       {creatorName && (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-purple-600 flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 rounded-full bg-linear-to-br from-brand to-purple-600 flex items-center justify-center shrink-0 overflow-hidden">
             {creatorAvatar ? (
               <img
                 src={creatorAvatar}
@@ -172,42 +161,41 @@ export function VideoInfo({
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-zinc-900 dark:text-white text-sm">
+            <h3 className="text-md sm:text-lg font-semibold text-zinc-900 dark:text-white">
               {creatorName}
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
               {createdAt && `Streamed ${createdAt}`}
-              {category && ` • ${category}`}
             </p>
           </div>
         </div>
       )}
 
-      {/* About this VOD */}
       {(description || tags.length > 0) && (
-        <div className="p-5 rounded-xl bg-zinc-50 dark:bg-[#1a1528]/80 border border-zinc-200 dark:border-white/[0.06]">
-          <h3 className="font-bold text-zinc-900 dark:text-white text-sm mb-3">
-            About this VOD
-          </h3>
-          {description && (
-            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line mb-4">
-              {description}
-            </p>
-          )}
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 bg-brand/10 text-brand text-xs font-medium rounded-full cursor-pointer hover:bg-brand/20 transition-colors"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
+        <ExpandableText maxLines={6}>
+          <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100 hover:bg-zinc-50 dark:bg-zinc-800 dark:hover:bg-zinc-700">
+            {description && (
+              <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line mb-4">
+                {description}
+              </p>
+            )}
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 bg-brand/10 text-brand text-xs font-medium rounded-full cursor-pointer hover:bg-brand/20 transition-colors"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </ExpandableText>
       )}
     </div>
   );
-}
+};
+
+export default memo(VideoInfo);

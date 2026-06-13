@@ -1,10 +1,15 @@
 export const PACKET_VERSION = 1;
 
 export enum Opcode {
-  HEARTBEAT = 0,
+  STREAM_HEARTBEAT = 0,
   STREAM_MESSAGE = 1,
+  STREAM_METRICS = 2,
+
   MSG_TEXT = 10,
-  MSG_EMOJI = 11,
+  MSG_PIN = 11,
+  MSG_UNPIN = 12,
+  MSG_DELETE = 13,
+
   JOIN_ROOM = 20,
   LEAVE_ROOM = 21,
 }
@@ -30,6 +35,10 @@ export class BinaryWriter {
       this.buffer = newBuffer;
       this.view = new DataView(this.buffer);
     }
+  }
+
+  writeBool(value: boolean) {
+    this.writeUint8(value ? 1 : 0);
   }
 
   writeUint8(value: number) {
@@ -91,6 +100,10 @@ export class BinaryReader {
         `BinaryReader: need ${len} bytes, only ${this.remainingBytes} left`,
       );
     }
+  }
+
+  readBool(): boolean {
+    return this.readUint8() !== 0;
   }
 
   readUint8(): number {

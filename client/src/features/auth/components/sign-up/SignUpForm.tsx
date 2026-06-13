@@ -12,11 +12,15 @@ import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 import { UI_TEXT } from "../../constants/ui";
 import { signUpSchema, type SignUpFormData } from "../../schemas";
 import { extractApiError } from "@/lib/http/extractApiError";
-import { useRegister } from "../../hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useRegister } from "../../hooks";
+import { useAppQueryClient } from "@/hooks";
 
 export function SignUpForm() {
+  const router = useRouter();
   const { mutate: registerUser, isPending: isLoading } = useRegister();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { removeQueryProfile } = useAppQueryClient();
 
   const {
     register,
@@ -44,6 +48,10 @@ export function SignUpForm() {
   const onSubmit = (data: SignUpFormData) => {
     setSubmitError(null);
     registerUser(data, {
+      onSuccess: () => {
+        removeQueryProfile();
+        router.push("/verify-email");
+      },
       onError: (error) => {
         const apiError = extractApiError(error);
 

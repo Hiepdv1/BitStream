@@ -1,0 +1,142 @@
+@reference "tailwindcss";
+@reference "../../../styles/base/variables.css";
+
+.gift-panel-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.gift-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.gift-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+}
+
+.gift-coin-balance {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.coin-icon {
+  color: #fbbf24; /* yellow */
+}
+
+.coin-amount {
+  color: var(--color-text-main);
+}
+
+.buy-coins-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.buy-coins-btn:hover {
+  opacity: 0.8;
+}
+
+.gift-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-main);
+}
+
+.gift-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gift-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gift-item:not(.empty):hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.gift-item.selected {
+  background-color: rgba(255, 92, 0, 0.1); /* brand overlay */
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+}
+
+.gift-item.empty {
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  background-color: transparent;
+  cursor: default;
+}
+
+.gift-item-icon {
+  margin-bottom: 6px;
+}
+
+.gift-item-price {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.gift-panel-footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.gift-description {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.gift-description strong {
+  color: var(--color-text-main);
+}

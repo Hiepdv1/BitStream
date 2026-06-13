@@ -1,0 +1,376 @@
+@layer components {
+  /* ── Page Layout ── */
+  .admin-create-gift {
+    @apply max-w-[1400px] mx-auto px-4 lg:px-6 py-8;
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .admin-create-gift-breadcrumb {
+    @apply flex items-center gap-2 text-sm mb-2;
+  }
+
+  .admin-create-gift-breadcrumb a {
+    @apply text-text-muted hover:text-brand transition-colors;
+  }
+
+  .admin-create-gift-breadcrumb-sep {
+    @apply text-text-muted/50;
+  }
+
+  .admin-create-gift-breadcrumb-current {
+    @apply text-brand font-semibold;
+  }
+
+  .admin-create-gift-header {
+    @apply mb-8;
+  }
+
+  .admin-create-gift-header h1 {
+    @apply text-3xl font-bold text-text-main tracking-wide font-heading;
+    letter-spacing: -0.01em;
+  }
+
+  .admin-create-gift-header p {
+    @apply text-sm text-text-muted mt-1 max-w-xl;
+  }
+
+  .admin-create-gift-layout {
+    @apply grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8;
+  }
+
+  /* ── Form Sections ── */
+  .admin-gift-form-section {
+    @apply rounded-2xl border border-border bg-surface/50 p-6 mb-6;
+  }
+
+  .admin-gift-form-section-header {
+    @apply flex items-center gap-3 mb-6;
+  }
+
+  .admin-gift-form-section-icon {
+    @apply w-8 h-8 rounded-lg flex items-center justify-center shrink-0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 92, 0, 0.15),
+      rgba(255, 92, 0, 0.05)
+    );
+    color: var(--color-brand);
+  }
+
+  .admin-gift-form-section-title {
+    @apply text-base font-bold text-text-main tracking-wide font-heading;
+  }
+
+  /* ── Form Fields ── */
+  .admin-gift-form-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-5;
+  }
+
+  .admin-gift-form-full {
+    @apply col-span-1 sm:col-span-2;
+  }
+
+  .admin-gift-form-label {
+    @apply block text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-2;
+  }
+
+  .admin-gift-form-input {
+    @apply w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-text-main text-sm placeholder-text-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all duration-200;
+  }
+
+  .admin-gift-form-input--error {
+    @apply border-error focus:border-error focus:ring-error/20;
+  }
+
+  .admin-gift-form-input-with-icon {
+    @apply relative;
+  }
+
+  .admin-gift-form-input-icon {
+    @apply absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none;
+  }
+
+  .admin-gift-form-input-icon + .admin-gift-form-input {
+    @apply pl-10;
+  }
+
+  .admin-gift-form-select {
+    @apply w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-text-main text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all duration-200 cursor-pointer appearance-none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    padding-right: 2.5rem;
+  }
+
+  .admin-gift-form-select option {
+    @apply bg-surface text-text-main;
+  }
+
+  .admin-gift-form-error {
+    @apply text-error text-xs mt-1.5 flex items-center gap-1;
+  }
+
+  /* ── Media Upload ── */
+  .admin-gift-media-row {
+    @apply mb-5 last:mb-0;
+  }
+
+  .admin-gift-media-input-row {
+    @apply flex gap-2;
+  }
+
+  .admin-gift-media-input {
+    @apply flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-text-main text-sm placeholder-text-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all duration-200;
+  }
+
+  .admin-gift-media-btn {
+    @apply px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-text-main hover:bg-white/10 hover:border-white/20 transition-all duration-200 cursor-pointer whitespace-nowrap;
+  }
+
+  .admin-gift-media-btn--active {
+    @apply bg-brand/10 border-brand/30 text-brand;
+  }
+
+  .admin-gift-file-upload {
+    @apply relative;
+  }
+
+  .admin-gift-file-input {
+    @apply absolute inset-0 w-full h-full opacity-0 cursor-pointer;
+  }
+
+  .admin-gift-file-label {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-dashed border-white/15 text-sm text-text-muted cursor-pointer hover:border-brand/40 hover:text-text-main hover:bg-white/[0.03] transition-all duration-200;
+  }
+
+  .admin-gift-file-name {
+    @apply text-text-main font-medium truncate;
+  }
+
+  /* ── Live Preview Panel ── */
+  .admin-gift-preview-panel {
+    @apply sticky top-24 self-start flex flex-col gap-5;
+  }
+
+  .admin-gift-preview-card {
+    @apply rounded-2xl border border-border overflow-hidden bg-surface/50;
+  }
+
+  .admin-gift-preview-card--anim {
+    /* animation card stays full height */
+  }
+
+  /* ── Thumbnail Stage ── */
+  .admin-gift-preview-thumb-stage {
+    @apply relative flex items-center justify-center min-h-[160px] p-4 overflow-hidden;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 255, 255, 0.02) 0%,
+      transparent 70%
+    );
+  }
+
+  .admin-gift-preview-thumb-img {
+    @apply w-32 h-32 object-contain rounded-xl;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  }
+
+  .admin-gift-preview-header {
+    @apply flex items-center justify-between px-5 py-3 border-b border-white/5;
+  }
+
+  .admin-gift-preview-header-title {
+    @apply text-[10px] uppercase tracking-widest font-semibold text-text-muted;
+  }
+
+  .admin-gift-preview-dots {
+    @apply flex items-center gap-1.5;
+  }
+
+  .admin-gift-preview-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .admin-gift-preview-dot--red {
+    @apply bg-red-500/70;
+  }
+
+  .admin-gift-preview-dot--yellow {
+    @apply bg-yellow-500/70;
+  }
+
+  .admin-gift-preview-dot--green {
+    @apply bg-green-500/70;
+  }
+
+  .admin-gift-preview-stage {
+    @apply relative flex items-center justify-center min-h-[280px] overflow-hidden;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 92, 0, 0.05) 0%,
+      transparent 70%
+    );
+  }
+
+  .admin-gift-preview-lottie {
+    @apply w-full h-full max-w-[260px] max-h-[260px];
+  }
+
+  .admin-gift-preview-placeholder {
+    @apply flex flex-col items-center justify-center gap-3 text-text-muted/40;
+  }
+
+  .admin-gift-preview-placeholder-icon {
+    @apply w-16 h-16 opacity-30;
+  }
+
+  .admin-gift-preview-placeholder-text {
+    @apply text-sm;
+  }
+
+  .admin-gift-preview-info {
+    @apply px-5 py-4 text-center border-t border-white/5;
+  }
+
+  .admin-gift-preview-info-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold mb-2;
+  }
+
+  .admin-gift-preview-info-name {
+    @apply text-xl font-bold text-text-main tracking-wide font-heading;
+  }
+
+  .admin-gift-preview-info-meta {
+    @apply flex items-center justify-center gap-4 mt-2 text-sm text-text-muted;
+  }
+
+  .admin-gift-preview-info-price {
+    @apply flex items-center gap-1.5 font-semibold;
+  }
+
+  /* ── Animation Controls ── */
+  .admin-gift-preview-controls {
+    @apply px-5 py-3 border-t border-white/5;
+  }
+
+  .admin-gift-preview-loop {
+    @apply flex items-center justify-between text-sm mb-3;
+  }
+
+  .admin-gift-preview-loop-label {
+    @apply text-text-muted;
+  }
+
+  .admin-gift-preview-loop-status {
+    @apply font-semibold text-success;
+  }
+
+  .admin-gift-preview-progress {
+    @apply w-full h-1.5 rounded-full bg-white/10 mb-4 overflow-hidden;
+  }
+
+  .admin-gift-preview-progress-bar {
+    @apply h-full rounded-full transition-all duration-100;
+    background: linear-gradient(90deg, var(--color-brand), #ff8c42);
+  }
+
+  .admin-gift-preview-actions {
+    @apply grid grid-cols-2 gap-2;
+  }
+
+  .admin-gift-preview-action-btn {
+    @apply flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-text-main hover:bg-white/10 hover:border-white/20 transition-all duration-200 cursor-pointer;
+  }
+
+  /* ── Stats Section ── */
+  .admin-gift-preview-stats {
+    @apply px-5 py-4 border-t border-white/5;
+  }
+
+  .admin-gift-preview-stats-title {
+    @apply text-[10px] uppercase tracking-widest font-semibold text-text-muted mb-3;
+  }
+
+  .admin-gift-preview-stats-row {
+    @apply flex items-center justify-between py-1.5;
+  }
+
+  .admin-gift-preview-stats-label {
+    @apply text-sm text-text-muted;
+  }
+
+  .admin-gift-preview-stats-value {
+    @apply text-sm font-semibold text-text-main;
+  }
+
+  .admin-gift-preview-stats-value--safe {
+    @apply text-success;
+  }
+
+  /* ── Submit Area ── */
+  .admin-gift-submit {
+    @apply flex items-center justify-end gap-3 mt-6;
+  }
+
+  .admin-gift-upload-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm;
+    background: rgba(0, 0, 0, 0.5);
+    animation: fade-in 0.2s ease-out;
+  }
+
+  .admin-gift-upload-card {
+    @apply w-full max-w-md p-8 rounded-2xl flex flex-col items-center text-center shadow-2xl;
+    @apply bg-surface border border-border;
+    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .admin-gift-upload-icon-wrapper {
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-5 bg-brand/10 border border-brand/20;
+    box-shadow: 0 0 30px rgba(255, 92, 0, 0.15);
+  }
+
+  .admin-gift-upload-title {
+    @apply text-xl font-bold mb-2 text-text-main tracking-wide font-heading;
+  }
+
+  .admin-gift-upload-desc {
+    @apply text-sm mb-8 max-w-sm text-text-muted;
+  }
+
+  .admin-gift-upload-bar-wrapper {
+    @apply w-full mb-8;
+  }
+
+  .admin-gift-upload-bar-info {
+    @apply flex justify-between items-center mb-2 text-sm;
+  }
+
+  .admin-gift-upload-bar-label {
+    @apply font-medium text-text-muted;
+  }
+
+  .admin-gift-upload-bar-percent {
+    @apply font-bold text-brand;
+  }
+
+  .admin-gift-upload-bar-bg {
+    @apply relative w-full h-3 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border border-border;
+  }
+
+  .admin-gift-upload-bar-fill {
+    @apply absolute top-0 left-0 h-full rounded-r-full bg-brand transition-all duration-300;
+    box-shadow:
+      inset 0 0 10px rgba(255, 92, 0, 0.3),
+      0 0 15px rgba(255, 92, 0, 0.4);
+  }
+
+  .admin-gift-upload-cancel {
+    @apply flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-medium cursor-pointer transition-all duration-200;
+    @apply bg-background border border-border text-text-main;
+  }
+
+  .admin-gift-upload-cancel:hover {
+    @apply bg-error/10 text-error border-error/30;
+  }
+}

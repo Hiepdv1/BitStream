@@ -5,6 +5,9 @@ import { AuthTokenPayload } from "../types/auth";
 
 export const useEmailVerification = () => {
   return useMutation<AuthTokenPayload, ApiError, string>({
-    mutationFn: authApi.verifyEmail,
+    mutationFn: async (token: string) => {
+      const res = await authApi.verifyEmail(token);
+      return res;
+    },
   });
 };

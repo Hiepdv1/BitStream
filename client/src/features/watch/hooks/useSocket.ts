@@ -22,7 +22,7 @@ interface UseSocketOptions {
   enabled?: boolean;
 }
 
-export function useSocket({ url, enabled = true }: UseSocketOptions) {
+export function useSocket({ url, enabled = false }: UseSocketOptions) {
   const socketRef = useRef<Socket | null>(null);
   const handlersRef = useRef<Set<BinaryMessageHandler>>(new Set());
   const [isConnected, setIsConnected] = useState(false);
@@ -73,9 +73,7 @@ export function useSocket({ url, enabled = true }: UseSocketOptions) {
         handlersRef.current.forEach((handler) => {
           handler(opcode, reader);
         });
-      } catch {
-        // malformed packet, ignore
-      }
+      } catch {}
     });
 
     return () => {

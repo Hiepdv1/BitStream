@@ -1,14 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import * as authApi from "../api/auth.api";
 import { SignInFormData } from "../schemas";
-import { ApiError } from "@/lib/http/types/api-error.types";
+import { MutationOptions } from "@/lib/react-query/type";
 
-export const useLogin = () => {
-  return useMutation<
-    { success: boolean; message: string },
-    ApiError,
-    SignInFormData
-  >({
+type LoginMutationOptions = MutationOptions<
+  Awaited<ReturnType<typeof authApi.login>>,
+  SignInFormData
+>;
+
+export const useLogin = (options?: LoginMutationOptions) => {
+  return useMutation({
     mutationFn: authApi.login,
+    ...options,
   });
 };

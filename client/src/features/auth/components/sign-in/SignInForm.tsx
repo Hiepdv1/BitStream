@@ -10,11 +10,16 @@ import { SocialAuthButtons } from "../shared/SocialAuthButtons";
 import { AuthDivider } from "../shared/AuthDivider";
 import { UI_TEXT } from "../../constants/ui";
 import { signInSchema, type SignInFormData } from "../../schemas";
-import { useLogin } from "../../hooks/useAuth";
+import { useLogin } from "../../hooks";
+import { useRouter } from "next/navigation";
+import { setAuthExpiries } from "@/lib/auth/tokenUtils";
+import { useAppQueryClient } from "@/hooks";
 
 export function SignInForm() {
   const { mutate: login, isPending: isLoading } = useLogin();
+  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { removeQueryProfile } = useAppQueryClient();
 
   const {
     register,
@@ -31,8 +36,12 @@ export function SignInForm() {
   const onSubmit = (data: SignInFormData) => {
     setSubmitError(null);
     login(data, {
+      onSuccess: (data) => {
+        removeQueryProfile();
+        setAuthExpiries(data.accessTokenExpiresAt, data.refreshTokenExpiresAt);
+        router.push("/");
+      },
       onError: (error) => {
-        console.error("Sign in error:", error);
         setSubmitError("Please use Social Login (Google/Facebook) for now.");
       },
     });

@@ -1,0 +1,265 @@
+@layer components {
+  /* ── Page Layout ── */
+  .admin-gift-page {
+    @apply max-w-[1400px] mx-auto px-4 lg:px-6 py-6 sm:py-8 w-full overflow-hidden;
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .admin-gift-header {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8;
+  }
+
+  .admin-gift-header-text h1 {
+    @apply text-3xl font-bold text-text-main tracking-wide font-heading;
+    letter-spacing: -0.01em;
+  }
+
+  .admin-gift-header-text p {
+    @apply text-sm text-text-muted mt-1 max-w-xl;
+  }
+
+  /* ── Stats Cards ── */
+  .admin-gift-stats {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8;
+  }
+
+  .admin-gift-stat-card {
+    @apply relative rounded-2xl border border-border bg-surface/50 p-5 overflow-hidden transition-all duration-300 hover:border-white/15;
+  }
+
+  .admin-gift-stat-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .admin-gift-stat-card--total::before {
+    background: var(--color-brand);
+  }
+
+  .admin-gift-stat-card--active::before {
+    background: var(--color-success);
+  }
+
+  .admin-gift-stat-card--inactive::before {
+    background: var(--color-error);
+  }
+
+  .admin-gift-stat-card--revenue::before {
+    background: var(--color-info);
+  }
+
+  .admin-gift-stat-label {
+    @apply text-[10px] uppercase tracking-widest font-semibold mb-2;
+  }
+
+  .admin-gift-stat-label--total {
+    color: var(--color-brand);
+  }
+
+  .admin-gift-stat-label--active {
+    color: var(--color-success);
+  }
+
+  .admin-gift-stat-label--inactive {
+    color: var(--color-error);
+  }
+
+  .admin-gift-stat-label--revenue {
+    color: var(--color-info);
+  }
+
+  .admin-gift-stat-row {
+    @apply flex items-center justify-between;
+  }
+
+  .admin-gift-stat-value {
+    @apply text-3xl font-bold text-text-main tracking-wide font-heading;
+  }
+
+  .admin-gift-stat-icon {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center shrink-0 opacity-60;
+  }
+
+  .admin-gift-stat-icon--total {
+    background: rgba(255, 92, 0, 0.12);
+    color: var(--color-brand);
+  }
+
+  .admin-gift-stat-icon--active {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--color-success);
+  }
+
+  .admin-gift-stat-icon--inactive {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--color-error);
+  }
+
+  .admin-gift-stat-icon--revenue {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--color-info);
+  }
+
+  /* ── Filter Bar ── */
+  .admin-gift-filters {
+    @apply flex flex-col lg:flex-row gap-3 mb-6;
+  }
+
+  .admin-gift-search {
+    @apply relative flex-1;
+  }
+
+  .admin-gift-search-icon {
+    @apply absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4 pointer-events-none;
+  }
+
+  .admin-gift-search-input {
+    @apply w-full pl-10 pr-4 py-3 rounded-xl bg-surface/50 border border-border text-sm text-text-main placeholder-text-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all duration-200;
+  }
+
+  .admin-gift-filter-group {
+    @apply flex gap-3;
+  }
+
+  .admin-gift-select {
+    @apply px-4 py-3 rounded-xl bg-surface/50 border border-border text-sm text-text-main focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all duration-200 cursor-pointer appearance-none min-w-[140px];
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  .admin-gift-select option {
+    @apply bg-surface text-text-main;
+  }
+
+  /* Table-level CSS now handled by shared DataView component (data-view.css) */
+  /* Gift-specific cell styles remain below */
+
+  /* ── Table Cell Variants ── */
+  .admin-gift-preview-cell {
+    @apply flex items-center gap-3;
+  }
+
+  .admin-gift-preview-thumb {
+    @apply w-10 h-10 rounded-lg object-cover bg-white/5 border border-white/10 shrink-0;
+  }
+
+  .admin-gift-preview-name {
+    @apply font-semibold text-text-main text-sm truncate;
+  }
+
+  .admin-gift-preview-id {
+    @apply text-[11px] text-text-muted truncate;
+  }
+
+  .admin-gift-tier-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold;
+  }
+
+  .admin-gift-tier-badge--basic {
+    background: rgba(161, 161, 170, 0.15);
+    color: #a1a1aa;
+    border: 1px solid rgba(161, 161, 170, 0.2);
+  }
+
+  .admin-gift-tier-badge--rare {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .admin-gift-tier-badge--epic {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .admin-gift-tier-badge--legendary {
+    background: rgba(255, 92, 0, 0.15);
+    color: var(--color-brand);
+    border: 1px solid rgba(255, 92, 0, 0.25);
+  }
+
+  .admin-gift-price {
+    @apply flex items-center gap-1.5 font-semibold text-text-main;
+  }
+
+  .admin-gift-price-coin {
+    @apply w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+  }
+
+  .admin-gift-duration {
+    @apply text-text-secondary;
+  }
+
+  .admin-gift-shake {
+    @apply flex items-center gap-2 text-text-secondary;
+  }
+
+  .admin-gift-shake-dot {
+    @apply w-2 h-2 rounded-full shrink-0;
+  }
+
+  .admin-gift-shake-dot--none {
+    @apply bg-zinc-500;
+  }
+  .admin-gift-shake-dot--low {
+    @apply bg-green-400;
+  }
+  .admin-gift-shake-dot--medium {
+    @apply bg-yellow-400;
+  }
+  .admin-gift-shake-dot--high {
+    @apply bg-orange-400;
+  }
+
+  .admin-gift-date {
+    @apply text-text-muted text-xs;
+  }
+
+  .admin-gift-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .admin-gift-action-btn {
+    @apply w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-main hover:bg-white/5 transition-all duration-200 cursor-pointer;
+  }
+
+  /* ── Pagination ── */
+  .admin-gift-pagination {
+    @apply flex items-center justify-between px-4 py-4;
+  }
+
+  .admin-gift-pagination-info {
+    @apply text-sm text-text-muted;
+  }
+
+  .admin-gift-pagination-buttons {
+    @apply flex items-center gap-1;
+  }
+
+  .admin-gift-pagination-btn {
+    @apply w-9 h-9 rounded-lg flex items-center justify-center text-sm font-medium transition-all duration-200 cursor-pointer;
+  }
+
+  .admin-gift-pagination-btn--active {
+    @apply bg-brand text-white;
+  }
+
+  .admin-gift-pagination-btn--inactive {
+    @apply text-text-muted hover:text-text-main hover:bg-white/5;
+  }
+
+  .admin-gift-pagination-btn--disabled {
+    @apply opacity-30 cursor-not-allowed;
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { signIn } from "next-auth/react";
 import { UI_TEXT } from "../../constants/ui";
 
 export function SocialAuthButtons() {
@@ -11,26 +11,20 @@ export function SocialAuthButtons() {
     setMounted(true);
   }, []);
 
-  const handleGoogleAuth = async () => {
-    try {
-      await signIn("google", {
-        callbackUrl: "/post-auth",
-        redirect: true,
-      });
-    } catch (error) {
-      console.error("Google auth error:", error);
-    }
+  const handleGoogleAuth = () => {
+    const callbackUrl = `${window.location.origin}`;
+    signIn("google", {
+      callbackUrl,
+      redirect: true,
+    });
   };
 
-  const handleDiscordAuth = async () => {
-    try {
-      await signIn("discord", {
-        callbackUrl: "/post-auth",
-        redirect: true,
-      });
-    } catch (error) {
-      console.error("Discord auth error:", error);
-    }
+  const handleDiscordAuth = () => {
+    const callbackUrl = `${window.location.origin}`;
+    signIn("discord", {
+      callbackUrl,
+      redirect: true,
+    });
   };
 
   const isDisabled = !mounted;

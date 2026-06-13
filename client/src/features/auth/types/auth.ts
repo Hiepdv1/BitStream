@@ -26,18 +26,34 @@ export interface AuthIdentity {
 }
 
 export interface AuthTokenPayload {
-  accessTokenExpiresAt: string;
-  refreshTokenExpiresAt: string;
+  accessTokenExpiresAt: number;
+  refreshTokenExpiresAt: number;
 }
 
 export interface AuthStatus {
   sub: string;
   isVerified: boolean;
-  role: string;
+  role: number;
   sid: string;
   email: string;
   jti: string;
   type: string;
   iat: number;
   exp: number;
+}
+
+export interface ResendVerificationEmailResponse {
+  remainingSeconds: number;
+  message: string;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+  bio: string | null;
+  role: number;
+  avatarUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
