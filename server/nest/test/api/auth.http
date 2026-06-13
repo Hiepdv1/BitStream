@@ -1,0 +1,12 @@
+# @name login
+POST {{host}}/api/auth/sign-in/credentials
+Content-Type: application/json
+
+{
+    "email": "dinhhiep311@gmail.com",
+    "password": "@bwwFhtGQ994xRcR"
+}
+
+{{
+    console.log("Response: ", response);
+}}

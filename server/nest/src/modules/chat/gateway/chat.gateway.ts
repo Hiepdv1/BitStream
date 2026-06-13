@@ -13,17 +13,14 @@ import { WsUnauthorizedException } from 'src/common/exceptions/ws-exception';
 import {
   MAX_PACKET_SIZE,
   MIN_PACKET_SIZE,
-  Opcode,
   PACKET_CONFIG,
 } from 'src/common/constants/protocol.constant';
 import { BinaryReader } from 'src/infrastructure/binary/reader/reader';
-import { BinaryWriter } from 'src/infrastructure/binary/write/write';
-import { RedisService } from 'src/infrastructure/redis/redis.service';
 import { AccessTokenPayload } from 'src/modules/auth/types/auth';
 import { JwtTokenService } from 'src/modules/security/jwt/services/jwt.service';
 import { JwtTokenType } from 'src/modules/security/jwt/types/jwt.type';
-import { ChatHandler } from '../handlers/chat.handler';
 import { ChatDispatcher } from '../dispatchers/chat.dispatcher';
+import { ChatInternalService } from '../services/chat-internal.service';
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway({
@@ -35,10 +32,11 @@ import { ChatDispatcher } from '../dispatchers/chat.dispatcher';
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  private server: Server;
+  public server: Server;
 
   constructor(
     private readonly jwtService: JwtTokenService,
+    private readonly chatInternalService: ChatInternalService,
     private readonly chatDispatcher: ChatDispatcher,
   ) {}
 
@@ -68,18 +66,16 @@ export class ChatGateway
 
   handleConnection(client: Socket, ...args: any[]) {}
 
-  handleDisconnect(client: Socket) {}
+  handleDisconnect(client: Socket) {
+    const auth = client.auth;
 
-  @SubscribeMessage('EncodeBuild')
-  handleEncodeBuild(client: Socket, data: any) {
-    const writer = BinaryWriter.createPacket(data.opcode);
-    writer.writeString8(data.streamID);
+    if (!auth) return;
 
-    if (data.message) {
-      writer.writeString8(data.message);
-    }
+    const currentRoom = client.currentRoom;
 
-    return writer.finish().toString('hex');
+    if (!currentRoom) return;
+
+    this.chatInternalService.removeViewer(currentRoom, auth.sub);
   }
 
   @SubscribeMessage('b')

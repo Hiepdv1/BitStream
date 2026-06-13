@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { StreamService } from './services/stream.service';
 import { StreamController } from './controllers/stream.controller';
 
-import { DashPlaylistService } from './services/dash-playlist.service';
+import { ChatModule } from '../chat/chat.module';
+import { SecurityModule } from 'src/infrastructure/security/security.module';
 
 @Module({
-  imports: [],
+  imports: [ChatModule, SecurityModule],
   controllers: [StreamController],
-  providers: [StreamService, DashPlaylistService],
+  providers: [StreamService],
   exports: [StreamService],
 })
 export class StreamModule {}

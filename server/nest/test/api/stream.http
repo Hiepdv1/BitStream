@@ -1,0 +1,28 @@
+### @name create-stream
+POST {{host}}/api/stream
+Content-Type: multipart/form-data; boundary=----MyBoundary
+
+------MyBoundary
+Content-Disposition: form-data; name="title"
+
+Test Stream
+------MyBoundary
+Content-Disposition: form-data; name="description"
+
+Test Stream Description
+------MyBoundary
+Content-Disposition: form-data; name="visibility"
+
+PUBLIC
+------MyBoundary
+Content-Disposition: form-data; name="thumbnail"; filename="hinh-anh-ly-cafe.jpg"
+Content-Type: image/jpeg
+
+< C:/Users/hocla/Downloads/hinh-anh-ly-cafe-den-da-1.jpg
+------MyBoundary--
+
+### @name get-stream-list
+GET {{host}}/api/stream/list?status=ALL
+
+### @name get-stream-key
+GET {{host}}/api/stream/cmp0oi2jh0000i0316ig0l07p/key

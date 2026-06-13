@@ -3,7 +3,7 @@ import { Consumer } from 'kafkajs';
 import { kafka } from 'src/infrastructure/kafka/kafka.config';
 import { validateKafkaPayload } from 'src/common/utils';
 import { KafkaTopic } from 'src/infrastructure/kafka/kafka.topics';
-import { ChatDLQPayload } from 'src/common/kafka-payloads/chat/send-message.payload';
+import { ChatDLQPayload } from 'src/common/kafka-payloads/chat/message.payload';
 
 @Injectable()
 export class ChatDLQConsumer implements OnModuleInit {

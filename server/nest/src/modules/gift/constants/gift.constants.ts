@@ -1,0 +1,5 @@
+export const GIFT_HISTORY_TYPES = {
+  UPDATE: 'GIFT_UPDATE',
+  CREATE: 'GIFT_CREATE',
+  DELETE: 'GIFT_DELETE',
+} as const;
