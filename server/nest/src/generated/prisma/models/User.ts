@@ -20,34 +20,44 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
 
+export type UserAvgAggregateOutputType = {
+  role: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  role: number | null
+}
+
 export type UserMinAggregateOutputType = {
   id: string | null
-  avatar: string | null
   name: string | null
+  bio: string | null
   email: string | null
-  role: $Enums.UserRole | null
+  role: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
   id: string | null
-  avatar: string | null
   name: string | null
+  bio: string | null
   email: string | null
-  role: $Enums.UserRole | null
+  role: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
   id: number
-  avatar: number
   name: number
+  bio: number
   email: number
   role: number
   createdAt: number
@@ -56,10 +66,18 @@ export type UserCountAggregateOutputType = {
 }
 
 
+export type UserAvgAggregateInputType = {
+  role?: true
+}
+
+export type UserSumAggregateInputType = {
+  role?: true
+}
+
 export type UserMinAggregateInputType = {
   id?: true
-  avatar?: true
   name?: true
+  bio?: true
   email?: true
   role?: true
   createdAt?: true
@@ -68,8 +86,8 @@ export type UserMinAggregateInputType = {
 
 export type UserMaxAggregateInputType = {
   id?: true
-  avatar?: true
   name?: true
+  bio?: true
   email?: true
   role?: true
   createdAt?: true
@@ -78,8 +96,8 @@ export type UserMaxAggregateInputType = {
 
 export type UserCountAggregateInputType = {
   id?: true
-  avatar?: true
   name?: true
+  bio?: true
   email?: true
   role?: true
   createdAt?: true
@@ -125,6 +143,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -155,19 +185,23 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
 
 export type UserGroupByOutputType = {
   id: string
-  avatar: string | null
-  name: string | null
+  name: string
+  bio: string | null
   email: string
-  role: $Enums.UserRole
+  role: number
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -192,21 +226,24 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.StringFilter<"User"> | string
-  avatar?: Prisma.StringNullableFilter<"User"> | string | null
-  name?: Prisma.StringNullableFilter<"User"> | string | null
+  name?: Prisma.StringFilter<"User"> | string
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   email?: Prisma.StringFilter<"User"> | string
-  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  role?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   streams?: Prisma.StreamListRelationFilter
+  profileImages?: Prisma.MediaListRelationFilter
+  giftSent?: Prisma.GiftTransactionListRelationFilter
+  giftReceived?: Prisma.GiftTransactionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  avatar?: Prisma.SortOrderInput | Prisma.SortOrder
-  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -214,6 +251,9 @@ export type UserOrderByWithRelationInput = {
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
   streams?: Prisma.StreamOrderByRelationAggregateInput
+  profileImages?: Prisma.MediaOrderByRelationAggregateInput
+  giftSent?: Prisma.GiftTransactionOrderByRelationAggregateInput
+  giftReceived?: Prisma.GiftTransactionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -222,27 +262,32 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  avatar?: Prisma.StringNullableFilter<"User"> | string | null
-  name?: Prisma.StringNullableFilter<"User"> | string | null
-  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  name?: Prisma.StringFilter<"User"> | string
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   streams?: Prisma.StreamListRelationFilter
+  profileImages?: Prisma.MediaListRelationFilter
+  giftSent?: Prisma.GiftTransactionListRelationFilter
+  giftReceived?: Prisma.GiftTransactionListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  avatar?: Prisma.SortOrderInput | Prisma.SortOrder
-  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -250,110 +295,126 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
-  avatar?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  name?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  name?: Prisma.StringWithAggregatesFilter<"User"> | string
+  bio?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
-  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+  role?: Prisma.IntWithAggregatesFilter<"User"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
 
 export type UserCreateInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  avatar?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type UserAvgOrderByAggregateInput = {
+  role?: Prisma.SortOrder
+}
+
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  avatar?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -362,22 +423,26 @@ export type UserMaxOrderByAggregateInput = {
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  avatar?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserSumOrderByAggregateInput = {
+  role?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -388,12 +453,32 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type EnumUserRoleFieldUpdateOperationsInput = {
-  set?: $Enums.UserRole
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedOneWithoutProfileImagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProfileImagesInput, Prisma.UserUncheckedCreateWithoutProfileImagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProfileImagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutProfileImagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProfileImagesInput, Prisma.UserUncheckedCreateWithoutProfileImagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProfileImagesInput
+  upsert?: Prisma.UserUpsertWithoutProfileImagesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProfileImagesInput, Prisma.UserUpdateWithoutProfileImagesInput>, Prisma.UserUncheckedUpdateWithoutProfileImagesInput>
 }
 
 export type UserCreateNestedOneWithoutAccountsInput = {
@@ -440,28 +525,138 @@ export type UserUpdateOneWithoutChatMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.UserUpdateWithoutChatMessagesInput>, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
 }
 
+export type UserCreateNestedOneWithoutGiftSentInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGiftSentInput, Prisma.UserUncheckedCreateWithoutGiftSentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftSentInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutGiftReceivedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGiftReceivedInput, Prisma.UserUncheckedCreateWithoutGiftReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutGiftSentNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGiftSentInput, Prisma.UserUncheckedCreateWithoutGiftSentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftSentInput
+  upsert?: Prisma.UserUpsertWithoutGiftSentInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGiftSentInput, Prisma.UserUpdateWithoutGiftSentInput>, Prisma.UserUncheckedUpdateWithoutGiftSentInput>
+}
+
+export type UserUpdateOneRequiredWithoutGiftReceivedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGiftReceivedInput, Prisma.UserUncheckedCreateWithoutGiftReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftReceivedInput
+  upsert?: Prisma.UserUpsertWithoutGiftReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGiftReceivedInput, Prisma.UserUpdateWithoutGiftReceivedInput>, Prisma.UserUncheckedUpdateWithoutGiftReceivedInput>
+}
+
+export type UserCreateWithoutProfileImagesInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
+}
+
+export type UserUncheckedCreateWithoutProfileImagesInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
+}
+
+export type UserCreateOrConnectWithoutProfileImagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProfileImagesInput, Prisma.UserUncheckedCreateWithoutProfileImagesInput>
+}
+
+export type UserUpsertWithoutProfileImagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProfileImagesInput, Prisma.UserUncheckedUpdateWithoutProfileImagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProfileImagesInput, Prisma.UserUncheckedCreateWithoutProfileImagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProfileImagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProfileImagesInput, Prisma.UserUncheckedUpdateWithoutProfileImagesInput>
+}
+
+export type UserUpdateWithoutProfileImagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProfileImagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -482,50 +677,62 @@ export type UserUpdateToOneWithWhereWithoutAccountsInput = {
 
 export type UserUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserCreateWithoutStreamsInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
 }
 
 export type UserUncheckedCreateWithoutStreamsInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
 }
 
 export type UserCreateOrConnectWithoutStreamsInput = {
@@ -546,50 +753,62 @@ export type UserUpdateToOneWithWhereWithoutStreamsInput = {
 
 export type UserUpdateWithoutStreamsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStreamsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserCreateWithoutChatMessagesInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
 }
 
 export type UserUncheckedCreateWithoutChatMessagesInput = {
   id?: string
-  avatar?: string | null
-  name?: string | null
+  name?: string
+  bio?: string | null
   email: string
-  role?: $Enums.UserRole
+  role?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
 }
 
 export type UserCreateOrConnectWithoutChatMessagesInput = {
@@ -610,26 +829,184 @@ export type UserUpdateToOneWithWhereWithoutChatMessagesInput = {
 
 export type UserUpdateWithoutChatMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  role?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
+}
+
+export type UserCreateWithoutGiftSentInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftReceived?: Prisma.GiftTransactionCreateNestedManyWithoutReceiverInput
+}
+
+export type UserUncheckedCreateWithoutGiftSentInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftReceived?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutReceiverInput
+}
+
+export type UserCreateOrConnectWithoutGiftSentInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGiftSentInput, Prisma.UserUncheckedCreateWithoutGiftSentInput>
+}
+
+export type UserCreateWithoutGiftReceivedInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutGiftReceivedInput = {
+  id?: string
+  name?: string
+  bio?: string | null
+  email: string
+  role?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
+  streams?: Prisma.StreamUncheckedCreateNestedManyWithoutUserInput
+  profileImages?: Prisma.MediaUncheckedCreateNestedManyWithoutUserInput
+  giftSent?: Prisma.GiftTransactionUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutGiftReceivedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGiftReceivedInput, Prisma.UserUncheckedCreateWithoutGiftReceivedInput>
+}
+
+export type UserUpsertWithoutGiftSentInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGiftSentInput, Prisma.UserUncheckedUpdateWithoutGiftSentInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGiftSentInput, Prisma.UserUncheckedCreateWithoutGiftSentInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGiftSentInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGiftSentInput, Prisma.UserUncheckedUpdateWithoutGiftSentInput>
+}
+
+export type UserUpdateWithoutGiftSentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftReceived?: Prisma.GiftTransactionUpdateManyWithoutReceiverNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGiftSentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftReceived?: Prisma.GiftTransactionUncheckedUpdateManyWithoutReceiverNestedInput
+}
+
+export type UserUpsertWithoutGiftReceivedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGiftReceivedInput, Prisma.UserUncheckedUpdateWithoutGiftReceivedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGiftReceivedInput, Prisma.UserUncheckedCreateWithoutGiftReceivedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGiftReceivedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGiftReceivedInput, Prisma.UserUncheckedUpdateWithoutGiftReceivedInput>
+}
+
+export type UserUpdateWithoutGiftReceivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGiftReceivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+  streams?: Prisma.StreamUncheckedUpdateManyWithoutUserNestedInput
+  profileImages?: Prisma.MediaUncheckedUpdateManyWithoutUserNestedInput
+  giftSent?: Prisma.GiftTransactionUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 
@@ -641,12 +1018,18 @@ export type UserCountOutputType = {
   accounts: number
   chatMessages: number
   streams: number
+  profileImages: number
+  giftSent: number
+  giftReceived: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
   streams?: boolean | UserCountOutputTypeCountStreamsArgs
+  profileImages?: boolean | UserCountOutputTypeCountProfileImagesArgs
+  giftSent?: boolean | UserCountOutputTypeCountGiftSentArgs
+  giftReceived?: boolean | UserCountOutputTypeCountGiftReceivedArgs
 }
 
 /**
@@ -680,11 +1063,32 @@ export type UserCountOutputTypeCountStreamsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.StreamWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProfileImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MediaWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGiftSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GiftTransactionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGiftReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GiftTransactionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  avatar?: boolean
   name?: boolean
+  bio?: boolean
   email?: boolean
   role?: boolean
   createdAt?: boolean
@@ -692,13 +1096,16 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
   streams?: boolean | Prisma.User$streamsArgs<ExtArgs>
+  profileImages?: boolean | Prisma.User$profileImagesArgs<ExtArgs>
+  giftSent?: boolean | Prisma.User$giftSentArgs<ExtArgs>
+  giftReceived?: boolean | Prisma.User$giftReceivedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  avatar?: boolean
   name?: boolean
+  bio?: boolean
   email?: boolean
   role?: boolean
   createdAt?: boolean
@@ -707,8 +1114,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  avatar?: boolean
   name?: boolean
+  bio?: boolean
   email?: boolean
   role?: boolean
   createdAt?: boolean
@@ -717,19 +1124,22 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectScalar = {
   id?: boolean
-  avatar?: boolean
   name?: boolean
+  bio?: boolean
   email?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar" | "name" | "email" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "bio" | "email" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
   streams?: boolean | Prisma.User$streamsArgs<ExtArgs>
+  profileImages?: boolean | Prisma.User$profileImagesArgs<ExtArgs>
+  giftSent?: boolean | Prisma.User$giftSentArgs<ExtArgs>
+  giftReceived?: boolean | Prisma.User$giftReceivedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -741,13 +1151,16 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
     streams: Prisma.$StreamPayload<ExtArgs>[]
+    profileImages: Prisma.$MediaPayload<ExtArgs>[]
+    giftSent: Prisma.$GiftTransactionPayload<ExtArgs>[]
+    giftReceived: Prisma.$GiftTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    avatar: string | null
-    name: string | null
+    name: string
+    bio: string | null
     email: string
-    role: $Enums.UserRole
+    role: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1147,6 +1560,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatMessages<T extends Prisma.User$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   streams<T extends Prisma.User$streamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$streamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StreamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  profileImages<T extends Prisma.User$profileImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$profileImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  giftSent<T extends Prisma.User$giftSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$giftSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GiftTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  giftReceived<T extends Prisma.User$giftReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$giftReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GiftTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1177,10 +1593,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
-  readonly avatar: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
+  readonly bio: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
-  readonly role: Prisma.FieldRef<"User", 'UserRole'>
+  readonly role: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1640,6 +2056,78 @@ export type User$streamsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.StreamScalarFieldEnum | Prisma.StreamScalarFieldEnum[]
+}
+
+/**
+ * User.profileImages
+ */
+export type User$profileImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Media
+   */
+  select?: Prisma.MediaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Media
+   */
+  omit?: Prisma.MediaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaInclude<ExtArgs> | null
+  where?: Prisma.MediaWhereInput
+  orderBy?: Prisma.MediaOrderByWithRelationInput | Prisma.MediaOrderByWithRelationInput[]
+  cursor?: Prisma.MediaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MediaScalarFieldEnum | Prisma.MediaScalarFieldEnum[]
+}
+
+/**
+ * User.giftSent
+ */
+export type User$giftSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GiftTransaction
+   */
+  select?: Prisma.GiftTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GiftTransaction
+   */
+  omit?: Prisma.GiftTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GiftTransactionInclude<ExtArgs> | null
+  where?: Prisma.GiftTransactionWhereInput
+  orderBy?: Prisma.GiftTransactionOrderByWithRelationInput | Prisma.GiftTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.GiftTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GiftTransactionScalarFieldEnum | Prisma.GiftTransactionScalarFieldEnum[]
+}
+
+/**
+ * User.giftReceived
+ */
+export type User$giftReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GiftTransaction
+   */
+  select?: Prisma.GiftTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GiftTransaction
+   */
+  omit?: Prisma.GiftTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GiftTransactionInclude<ExtArgs> | null
+  where?: Prisma.GiftTransactionWhereInput
+  orderBy?: Prisma.GiftTransactionOrderByWithRelationInput | Prisma.GiftTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.GiftTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GiftTransactionScalarFieldEnum | Prisma.GiftTransactionScalarFieldEnum[]
 }
 
 /**

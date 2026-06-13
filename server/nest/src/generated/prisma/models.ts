@@ -9,12 +9,17 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.js'
+export type * from './models/Media.js'
 export type * from './models/Account.js'
 export type * from './models/Stream.js'
+export type * from './models/Tag.js'
 export type * from './models/StreamMeta.js'
 export type * from './models/StreamKey.js'
 export type * from './models/StreamEvent.js'
 export type * from './models/Recording.js'
 export type * from './models/ViewerSession.js'
 export type * from './models/ChatMessage.js'
+export type * from './models/Gift.js'
+export type * from './models/GiftTransaction.js'
+export type * from './models/History.js'
 export type * from './commonInputTypes.js'

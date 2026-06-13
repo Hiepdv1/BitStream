@@ -10,18 +10,54 @@ datasource db {
 
 model User {
   id           String        @id @default(cuid())
-  avatar       String?
-  name         String?       @default(dbgenerated("('user_'::text || \"substring\"(md5((random())::text), 1, 8))"))
+  name         String        @default(dbgenerated("('user_'::text || \"substring\"(md5((random())::text), 1, 8))"))
+  bio          String?
   email        String        @unique
-  role         UserRole      @default(VIEWER)
+  role         Int           @default(1)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   accounts     Account[]
   chatMessages ChatMessage[]
   streams      Stream[]
 
+  profileImages Media[]          @relation("UserProfile")
+
+  giftSent     GiftTransaction[] @relation("SentGifts")
+  giftReceived GiftTransaction[] @relation("ReceivedGifts")
+
   @@index([role])
 }
+model Media {
+  id           String      @id @default(cuid())
+  storageKey   String      @unique 
+  bucketName   String      
+  originalName String      
+  mimeType     String      
+  size         Int         
+
+  status       MediaStatus @default(PENDING)
+  uploaderId   String 
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?   
+
+  
+  ownerUserId  String? 
+  user         User?       @relation("UserProfile", fields: [ownerUserId], references: [id], onDelete: SetNull)
+
+  streamId     String?
+  stream       Stream?     @relation("StreamThumbnail", fields: [streamId], references: [id], onDelete: SetNull)
+
+  giftId       String?
+  gift         Gift?       @relation("GiftMedias", fields: [giftId], references: [id], onDelete: Cascade)
+  
+  giftAssetType GiftAssetType?
+
+  @@index([status, createdAt]) 
+  @@map("media") 
+}
+
 
 model Account {
   id                String       @id @default(cuid())
@@ -45,6 +81,9 @@ model Stream {
   visibility     StreamVisibility @default(PUBLIC)
   startedAt      DateTime?
   endedAt        DateTime?
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?
+  
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   chatMessages   ChatMessage[]
@@ -54,11 +93,29 @@ model Stream {
   ingestKey      StreamKey?
   meta           StreamMeta?
   viewerSessions ViewerSession[]
+  tags           Tag[]            @relation("StreamToTag")
+
+  thumbnails       Media[]           @relation("StreamThumbnail")
+
+  giftTransactions GiftTransaction[] @relation("StreamGifts")
 
   @@index([userId])
   @@index([isLive])
   @@index([visibility])
   @@index([createdAt])
+  @@index([userId, isDeleted])
+  @@index([isLive, isDeleted])
+  @@index([isDeleted])
+}
+
+model Tag {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  streams Stream[] @relation("StreamToTag")
+
+  createdAt DateTime @default(now())
+
+  @@index([name])
 }
 
 model StreamMeta {
@@ -84,14 +141,16 @@ model StreamMeta {
 }
 
 model StreamKey {
-  id         String    @id @default(cuid())
-  streamId   String    @unique
-  keyHash    String
-  isActive   Boolean   @default(true)
-  expiresAt  DateTime?
-  lastUsedAt DateTime?
-  createdAt  DateTime  @default(now())
-  stream     Stream    @relation(fields: [streamId], references: [id])
+  id           String    @id @default(cuid())
+  streamId     String    @unique
+  encryptedKey String
+  iv           String?
+  algorithm    String    @default("aes-256-cbc")
+  isActive     Boolean   @default(true)
+  expiresAt    DateTime?
+  lastUsedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  stream       Stream    @relation(fields: [streamId], references: [id])
 
   @@index([streamId])
   @@index([isActive])
@@ -145,7 +204,7 @@ model ChatMessage {
   content       String
   type          ChatMesssageType @default(TEXT)
   metaData      Json?
-  offsetMs      Int?
+  offsetMs      Int
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @default(now())
   isDeleted     Boolean          @default(false)
@@ -156,16 +215,112 @@ model ChatMessage {
   stream        Stream           @relation(fields: [streamId], references: [id], onDelete: Cascade)
   user          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  giftTransactions GiftTransaction? @relation("GiftMessages")
+
   @@index([streamId])
   @@index([streamId, offsetMs])
   @@index([userId])
   @@index([createdAt])
 }
 
-enum UserRole {
-  ADMIN
-  STREAMER
-  VIEWER
+model Gift {
+  id            String      @id @default(cuid())
+  name          String
+  price         Int
+  duration      Int
+  tier          GiftTier
+  shake_level   ShakeLevel
+  is_active     Boolean     @default(true)
+  is_chatMode   Boolean     @default(false)
+  is_streamMode Boolean     @default(false)
+
+  medias        Media[]           @relation("GiftMedias")
+
+  transactions  GiftTransaction[] @relation("GiftTransactions")
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([is_active])
+  @@index([tier])
+  @@index([price(sort: Desc)])
+  @@index([is_active, price(sort: Desc)])
+  @@map("gifts")
+}
+model GiftTransaction {
+  id          String @id @default(cuid())
+  sender_id   String
+  receiver_id String
+  stream_id   String
+  gift_id     String
+  msg_id      String @unique
+
+  amount Int
+
+  price_at_buy Int
+
+  sender   User @relation("SentGifts", fields: [sender_id], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedGifts", fields: [receiver_id], references: [id], onDelete: Cascade)
+
+  message ChatMessage @relation("GiftMessages", fields: [msg_id], references: [id], onDelete: Cascade)
+  stream  Stream      @relation("StreamGifts", fields: [stream_id], references: [id], onDelete: Cascade)
+  gift    Gift        @relation("GiftTransactions", fields: [gift_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+
+  @@index([stream_id, created_at])
+  @@index([sender_id, created_at])
+  @@index([receiver_id, created_at])
+  @@index([gift_id])
+}
+
+model History {
+  id String @id @default(cuid())
+
+  type   String
+  action HistoryAction
+
+  entity_id         String
+  entity_name       String
+  service           String
+  is_entity_deleted Boolean @default(false)
+
+  data   Json
+  status HistoryStatus @default(PENDING)
+
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+
+  @@index([is_entity_deleted, type])
+  @@index([entity_id])
+}
+
+enum HistoryAction {
+  ROLLBACK
+  RESTORE
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum HistoryStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
+enum ShakeLevel {
+  NONE
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum GiftTier {
+  BASIC
+  RARE
+  EPIC
+  LEGENDARY
 }
 
 enum StreamVisibility {
@@ -193,4 +348,17 @@ enum ChatMesssageType {
   SYSTEM
   DONATION
   MEMBER
+}
+
+enum MediaStatus {
+  PENDING       
+  ACTIVE        
+  SOFT_DELETED  
+  HARD_DELETED  
+}
+
+enum GiftAssetType {
+  IMAGE
+  EFFECT
+  SOUND
 }

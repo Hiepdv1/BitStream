@@ -27,7 +27,9 @@ export type AggregateStreamKey = {
 export type StreamKeyMinAggregateOutputType = {
   id: string | null
   streamId: string | null
-  keyHash: string | null
+  encryptedKey: string | null
+  iv: string | null
+  algorithm: string | null
   isActive: boolean | null
   expiresAt: Date | null
   lastUsedAt: Date | null
@@ -37,7 +39,9 @@ export type StreamKeyMinAggregateOutputType = {
 export type StreamKeyMaxAggregateOutputType = {
   id: string | null
   streamId: string | null
-  keyHash: string | null
+  encryptedKey: string | null
+  iv: string | null
+  algorithm: string | null
   isActive: boolean | null
   expiresAt: Date | null
   lastUsedAt: Date | null
@@ -47,7 +51,9 @@ export type StreamKeyMaxAggregateOutputType = {
 export type StreamKeyCountAggregateOutputType = {
   id: number
   streamId: number
-  keyHash: number
+  encryptedKey: number
+  iv: number
+  algorithm: number
   isActive: number
   expiresAt: number
   lastUsedAt: number
@@ -59,7 +65,9 @@ export type StreamKeyCountAggregateOutputType = {
 export type StreamKeyMinAggregateInputType = {
   id?: true
   streamId?: true
-  keyHash?: true
+  encryptedKey?: true
+  iv?: true
+  algorithm?: true
   isActive?: true
   expiresAt?: true
   lastUsedAt?: true
@@ -69,7 +77,9 @@ export type StreamKeyMinAggregateInputType = {
 export type StreamKeyMaxAggregateInputType = {
   id?: true
   streamId?: true
-  keyHash?: true
+  encryptedKey?: true
+  iv?: true
+  algorithm?: true
   isActive?: true
   expiresAt?: true
   lastUsedAt?: true
@@ -79,7 +89,9 @@ export type StreamKeyMaxAggregateInputType = {
 export type StreamKeyCountAggregateInputType = {
   id?: true
   streamId?: true
-  keyHash?: true
+  encryptedKey?: true
+  iv?: true
+  algorithm?: true
   isActive?: true
   expiresAt?: true
   lastUsedAt?: true
@@ -162,7 +174,9 @@ export type StreamKeyGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type StreamKeyGroupByOutputType = {
   id: string
   streamId: string
-  keyHash: string
+  encryptedKey: string
+  iv: string | null
+  algorithm: string
   isActive: boolean
   expiresAt: Date | null
   lastUsedAt: Date | null
@@ -193,7 +207,9 @@ export type StreamKeyWhereInput = {
   NOT?: Prisma.StreamKeyWhereInput | Prisma.StreamKeyWhereInput[]
   id?: Prisma.StringFilter<"StreamKey"> | string
   streamId?: Prisma.StringFilter<"StreamKey"> | string
-  keyHash?: Prisma.StringFilter<"StreamKey"> | string
+  encryptedKey?: Prisma.StringFilter<"StreamKey"> | string
+  iv?: Prisma.StringNullableFilter<"StreamKey"> | string | null
+  algorithm?: Prisma.StringFilter<"StreamKey"> | string
   isActive?: Prisma.BoolFilter<"StreamKey"> | boolean
   expiresAt?: Prisma.DateTimeNullableFilter<"StreamKey"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"StreamKey"> | Date | string | null
@@ -204,7 +220,9 @@ export type StreamKeyWhereInput = {
 export type StreamKeyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   streamId?: Prisma.SortOrder
-  keyHash?: Prisma.SortOrder
+  encryptedKey?: Prisma.SortOrder
+  iv?: Prisma.SortOrderInput | Prisma.SortOrder
+  algorithm?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -218,7 +236,9 @@ export type StreamKeyWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.StreamKeyWhereInput | Prisma.StreamKeyWhereInput[]
   OR?: Prisma.StreamKeyWhereInput[]
   NOT?: Prisma.StreamKeyWhereInput | Prisma.StreamKeyWhereInput[]
-  keyHash?: Prisma.StringFilter<"StreamKey"> | string
+  encryptedKey?: Prisma.StringFilter<"StreamKey"> | string
+  iv?: Prisma.StringNullableFilter<"StreamKey"> | string | null
+  algorithm?: Prisma.StringFilter<"StreamKey"> | string
   isActive?: Prisma.BoolFilter<"StreamKey"> | boolean
   expiresAt?: Prisma.DateTimeNullableFilter<"StreamKey"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"StreamKey"> | Date | string | null
@@ -229,7 +249,9 @@ export type StreamKeyWhereUniqueInput = Prisma.AtLeast<{
 export type StreamKeyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   streamId?: Prisma.SortOrder
-  keyHash?: Prisma.SortOrder
+  encryptedKey?: Prisma.SortOrder
+  iv?: Prisma.SortOrderInput | Prisma.SortOrder
+  algorithm?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -245,7 +267,9 @@ export type StreamKeyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.StreamKeyScalarWhereWithAggregatesInput | Prisma.StreamKeyScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"StreamKey"> | string
   streamId?: Prisma.StringWithAggregatesFilter<"StreamKey"> | string
-  keyHash?: Prisma.StringWithAggregatesFilter<"StreamKey"> | string
+  encryptedKey?: Prisma.StringWithAggregatesFilter<"StreamKey"> | string
+  iv?: Prisma.StringNullableWithAggregatesFilter<"StreamKey"> | string | null
+  algorithm?: Prisma.StringWithAggregatesFilter<"StreamKey"> | string
   isActive?: Prisma.BoolWithAggregatesFilter<"StreamKey"> | boolean
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"StreamKey"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"StreamKey"> | Date | string | null
@@ -254,7 +278,9 @@ export type StreamKeyScalarWhereWithAggregatesInput = {
 
 export type StreamKeyCreateInput = {
   id?: string
-  keyHash: string
+  encryptedKey: string
+  iv?: string | null
+  algorithm?: string
   isActive?: boolean
   expiresAt?: Date | string | null
   lastUsedAt?: Date | string | null
@@ -265,7 +291,9 @@ export type StreamKeyCreateInput = {
 export type StreamKeyUncheckedCreateInput = {
   id?: string
   streamId: string
-  keyHash: string
+  encryptedKey: string
+  iv?: string | null
+  algorithm?: string
   isActive?: boolean
   expiresAt?: Date | string | null
   lastUsedAt?: Date | string | null
@@ -274,7 +302,9 @@ export type StreamKeyUncheckedCreateInput = {
 
 export type StreamKeyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -285,7 +315,9 @@ export type StreamKeyUpdateInput = {
 export type StreamKeyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   streamId?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -295,7 +327,9 @@ export type StreamKeyUncheckedUpdateInput = {
 export type StreamKeyCreateManyInput = {
   id?: string
   streamId: string
-  keyHash: string
+  encryptedKey: string
+  iv?: string | null
+  algorithm?: string
   isActive?: boolean
   expiresAt?: Date | string | null
   lastUsedAt?: Date | string | null
@@ -304,7 +338,9 @@ export type StreamKeyCreateManyInput = {
 
 export type StreamKeyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -314,7 +350,9 @@ export type StreamKeyUpdateManyMutationInput = {
 export type StreamKeyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   streamId?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -329,7 +367,9 @@ export type StreamKeyNullableScalarRelationFilter = {
 export type StreamKeyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   streamId?: Prisma.SortOrder
-  keyHash?: Prisma.SortOrder
+  encryptedKey?: Prisma.SortOrder
+  iv?: Prisma.SortOrder
+  algorithm?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
@@ -339,7 +379,9 @@ export type StreamKeyCountOrderByAggregateInput = {
 export type StreamKeyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   streamId?: Prisma.SortOrder
-  keyHash?: Prisma.SortOrder
+  encryptedKey?: Prisma.SortOrder
+  iv?: Prisma.SortOrder
+  algorithm?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
@@ -349,7 +391,9 @@ export type StreamKeyMaxOrderByAggregateInput = {
 export type StreamKeyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   streamId?: Prisma.SortOrder
-  keyHash?: Prisma.SortOrder
+  encryptedKey?: Prisma.SortOrder
+  iv?: Prisma.SortOrder
+  algorithm?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
@@ -390,7 +434,9 @@ export type StreamKeyUncheckedUpdateOneWithoutStreamNestedInput = {
 
 export type StreamKeyCreateWithoutStreamInput = {
   id?: string
-  keyHash: string
+  encryptedKey: string
+  iv?: string | null
+  algorithm?: string
   isActive?: boolean
   expiresAt?: Date | string | null
   lastUsedAt?: Date | string | null
@@ -399,7 +445,9 @@ export type StreamKeyCreateWithoutStreamInput = {
 
 export type StreamKeyUncheckedCreateWithoutStreamInput = {
   id?: string
-  keyHash: string
+  encryptedKey: string
+  iv?: string | null
+  algorithm?: string
   isActive?: boolean
   expiresAt?: Date | string | null
   lastUsedAt?: Date | string | null
@@ -424,7 +472,9 @@ export type StreamKeyUpdateToOneWithWhereWithoutStreamInput = {
 
 export type StreamKeyUpdateWithoutStreamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -433,7 +483,9 @@ export type StreamKeyUpdateWithoutStreamInput = {
 
 export type StreamKeyUncheckedUpdateWithoutStreamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedKey?: Prisma.StringFieldUpdateOperationsInput | string
+  iv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  algorithm?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -445,7 +497,9 @@ export type StreamKeyUncheckedUpdateWithoutStreamInput = {
 export type StreamKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   streamId?: boolean
-  keyHash?: boolean
+  encryptedKey?: boolean
+  iv?: boolean
+  algorithm?: boolean
   isActive?: boolean
   expiresAt?: boolean
   lastUsedAt?: boolean
@@ -456,7 +510,9 @@ export type StreamKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type StreamKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   streamId?: boolean
-  keyHash?: boolean
+  encryptedKey?: boolean
+  iv?: boolean
+  algorithm?: boolean
   isActive?: boolean
   expiresAt?: boolean
   lastUsedAt?: boolean
@@ -467,7 +523,9 @@ export type StreamKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type StreamKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   streamId?: boolean
-  keyHash?: boolean
+  encryptedKey?: boolean
+  iv?: boolean
+  algorithm?: boolean
   isActive?: boolean
   expiresAt?: boolean
   lastUsedAt?: boolean
@@ -478,14 +536,16 @@ export type StreamKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type StreamKeySelectScalar = {
   id?: boolean
   streamId?: boolean
-  keyHash?: boolean
+  encryptedKey?: boolean
+  iv?: boolean
+  algorithm?: boolean
   isActive?: boolean
   expiresAt?: boolean
   lastUsedAt?: boolean
   createdAt?: boolean
 }
 
-export type StreamKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "streamId" | "keyHash" | "isActive" | "expiresAt" | "lastUsedAt" | "createdAt", ExtArgs["result"]["streamKey"]>
+export type StreamKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "streamId" | "encryptedKey" | "iv" | "algorithm" | "isActive" | "expiresAt" | "lastUsedAt" | "createdAt", ExtArgs["result"]["streamKey"]>
 export type StreamKeyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
 }
@@ -504,7 +564,9 @@ export type $StreamKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     streamId: string
-    keyHash: string
+    encryptedKey: string
+    iv: string | null
+    algorithm: string
     isActive: boolean
     expiresAt: Date | null
     lastUsedAt: Date | null
@@ -935,7 +997,9 @@ export interface Prisma__StreamKeyClient<T, Null = never, ExtArgs extends runtim
 export interface StreamKeyFieldRefs {
   readonly id: Prisma.FieldRef<"StreamKey", 'String'>
   readonly streamId: Prisma.FieldRef<"StreamKey", 'String'>
-  readonly keyHash: Prisma.FieldRef<"StreamKey", 'String'>
+  readonly encryptedKey: Prisma.FieldRef<"StreamKey", 'String'>
+  readonly iv: Prisma.FieldRef<"StreamKey", 'String'>
+  readonly algorithm: Prisma.FieldRef<"StreamKey", 'String'>
   readonly isActive: Prisma.FieldRef<"StreamKey", 'Boolean'>
   readonly expiresAt: Prisma.FieldRef<"StreamKey", 'DateTime'>
   readonly lastUsedAt: Prisma.FieldRef<"StreamKey", 'DateTime'>

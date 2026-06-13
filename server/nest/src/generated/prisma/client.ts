@@ -43,6 +43,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model Media
+ * 
+ */
+export type Media = Prisma.MediaModel
+/**
  * Model Account
  * 
  */
@@ -52,6 +57,11 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Stream = Prisma.StreamModel
+/**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
 /**
  * Model StreamMeta
  * 
@@ -82,3 +92,18 @@ export type ViewerSession = Prisma.ViewerSessionModel
  * 
  */
 export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model Gift
+ * 
+ */
+export type Gift = Prisma.GiftModel
+/**
+ * Model GiftTransaction
+ * 
+ */
+export type GiftTransaction = Prisma.GiftTransactionModel
+/**
+ * Model History
+ * 
+ */
+export type History = Prisma.HistoryModel

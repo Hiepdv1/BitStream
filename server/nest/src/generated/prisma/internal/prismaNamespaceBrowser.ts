@@ -52,14 +52,19 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Media: 'Media',
   Account: 'Account',
   Stream: 'Stream',
+  Tag: 'Tag',
   StreamMeta: 'StreamMeta',
   StreamKey: 'StreamKey',
   StreamEvent: 'StreamEvent',
   Recording: 'Recording',
   ViewerSession: 'ViewerSession',
-  ChatMessage: 'ChatMessage'
+  ChatMessage: 'ChatMessage',
+  Gift: 'Gift',
+  GiftTransaction: 'GiftTransaction',
+  History: 'History'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -80,8 +85,8 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  avatar: 'avatar',
   name: 'name',
+  bio: 'bio',
   email: 'email',
   role: 'role',
   createdAt: 'createdAt',
@@ -89,6 +94,27 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const MediaScalarFieldEnum = {
+  id: 'id',
+  storageKey: 'storageKey',
+  bucketName: 'bucketName',
+  originalName: 'originalName',
+  mimeType: 'mimeType',
+  size: 'size',
+  status: 'status',
+  uploaderId: 'uploaderId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  ownerUserId: 'ownerUserId',
+  streamId: 'streamId',
+  giftId: 'giftId',
+  giftAssetType: 'giftAssetType'
+} as const
+
+export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
 
 
 export const AccountScalarFieldEnum = {
@@ -112,11 +138,22 @@ export const StreamScalarFieldEnum = {
   visibility: 'visibility',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type StreamScalarFieldEnum = (typeof StreamScalarFieldEnum)[keyof typeof StreamScalarFieldEnum]
+
+
+export const TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt'
+} as const
+
+export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
 
 
 export const StreamMetaScalarFieldEnum = {
@@ -144,7 +181,9 @@ export type StreamMetaScalarFieldEnum = (typeof StreamMetaScalarFieldEnum)[keyof
 export const StreamKeyScalarFieldEnum = {
   id: 'id',
   streamId: 'streamId',
-  keyHash: 'keyHash',
+  encryptedKey: 'encryptedKey',
+  iv: 'iv',
+  algorithm: 'algorithm',
   isActive: 'isActive',
   expiresAt: 'expiresAt',
   lastUsedAt: 'lastUsedAt',
@@ -210,6 +249,55 @@ export const ChatMessageScalarFieldEnum = {
 export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
+export const GiftScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  duration: 'duration',
+  tier: 'tier',
+  shake_level: 'shake_level',
+  is_active: 'is_active',
+  is_chatMode: 'is_chatMode',
+  is_streamMode: 'is_streamMode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GiftScalarFieldEnum = (typeof GiftScalarFieldEnum)[keyof typeof GiftScalarFieldEnum]
+
+
+export const GiftTransactionScalarFieldEnum = {
+  id: 'id',
+  sender_id: 'sender_id',
+  receiver_id: 'receiver_id',
+  stream_id: 'stream_id',
+  gift_id: 'gift_id',
+  msg_id: 'msg_id',
+  amount: 'amount',
+  price_at_buy: 'price_at_buy',
+  created_at: 'created_at'
+} as const
+
+export type GiftTransactionScalarFieldEnum = (typeof GiftTransactionScalarFieldEnum)[keyof typeof GiftTransactionScalarFieldEnum]
+
+
+export const HistoryScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  action: 'action',
+  entity_id: 'entity_id',
+  entity_name: 'entity_name',
+  service: 'service',
+  is_entity_deleted: 'is_entity_deleted',
+  data: 'data',
+  status: 'status',
+  created_at: 'created_at',
+  deleted_at: 'deleted_at'
+} as const
+
+export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -224,6 +312,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

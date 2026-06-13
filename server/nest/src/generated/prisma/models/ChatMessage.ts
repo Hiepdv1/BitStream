@@ -247,7 +247,7 @@ export type ChatMessageGroupByOutputType = {
   content: string
   type: $Enums.ChatMesssageType
   metaData: runtime.JsonValue | null
-  offsetMs: number | null
+  offsetMs: number
   createdAt: Date
   updatedAt: Date
   isDeleted: boolean
@@ -288,7 +288,7 @@ export type ChatMessageWhereInput = {
   content?: Prisma.StringFilter<"ChatMessage"> | string
   type?: Prisma.EnumChatMesssageTypeFilter<"ChatMessage"> | $Enums.ChatMesssageType
   metaData?: Prisma.JsonNullableFilter<"ChatMessage">
-  offsetMs?: Prisma.IntNullableFilter<"ChatMessage"> | number | null
+  offsetMs?: Prisma.IntFilter<"ChatMessage"> | number
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   isDeleted?: Prisma.BoolFilter<"ChatMessage"> | boolean
@@ -298,6 +298,7 @@ export type ChatMessageWhereInput = {
   isPinned?: Prisma.BoolFilter<"ChatMessage"> | boolean
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  giftTransactions?: Prisma.XOR<Prisma.GiftTransactionNullableScalarRelationFilter, Prisma.GiftTransactionWhereInput> | null
 }
 
 export type ChatMessageOrderByWithRelationInput = {
@@ -308,7 +309,7 @@ export type ChatMessageOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   type?: Prisma.SortOrder
   metaData?: Prisma.SortOrderInput | Prisma.SortOrder
-  offsetMs?: Prisma.SortOrderInput | Prisma.SortOrder
+  offsetMs?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
@@ -318,6 +319,7 @@ export type ChatMessageOrderByWithRelationInput = {
   isPinned?: Prisma.SortOrder
   stream?: Prisma.StreamOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  giftTransactions?: Prisma.GiftTransactionOrderByWithRelationInput
 }
 
 export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
@@ -331,7 +333,7 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"ChatMessage"> | string
   type?: Prisma.EnumChatMesssageTypeFilter<"ChatMessage"> | $Enums.ChatMesssageType
   metaData?: Prisma.JsonNullableFilter<"ChatMessage">
-  offsetMs?: Prisma.IntNullableFilter<"ChatMessage"> | number | null
+  offsetMs?: Prisma.IntFilter<"ChatMessage"> | number
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   isDeleted?: Prisma.BoolFilter<"ChatMessage"> | boolean
@@ -341,6 +343,7 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
   isPinned?: Prisma.BoolFilter<"ChatMessage"> | boolean
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  giftTransactions?: Prisma.XOR<Prisma.GiftTransactionNullableScalarRelationFilter, Prisma.GiftTransactionWhereInput> | null
 }, "id">
 
 export type ChatMessageOrderByWithAggregationInput = {
@@ -351,7 +354,7 @@ export type ChatMessageOrderByWithAggregationInput = {
   content?: Prisma.SortOrder
   type?: Prisma.SortOrder
   metaData?: Prisma.SortOrderInput | Prisma.SortOrder
-  offsetMs?: Prisma.SortOrderInput | Prisma.SortOrder
+  offsetMs?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
@@ -377,7 +380,7 @@ export type ChatMessageScalarWhereWithAggregatesInput = {
   content?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
   type?: Prisma.EnumChatMesssageTypeWithAggregatesFilter<"ChatMessage"> | $Enums.ChatMesssageType
   metaData?: Prisma.JsonNullableWithAggregatesFilter<"ChatMessage">
-  offsetMs?: Prisma.IntNullableWithAggregatesFilter<"ChatMessage"> | number | null
+  offsetMs?: Prisma.IntWithAggregatesFilter<"ChatMessage"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ChatMessage"> | Date | string
   isDeleted?: Prisma.BoolWithAggregatesFilter<"ChatMessage"> | boolean
@@ -393,7 +396,7 @@ export type ChatMessageCreateInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -403,6 +406,7 @@ export type ChatMessageCreateInput = {
   isPinned?: boolean
   stream: Prisma.StreamCreateNestedOneWithoutChatMessagesInput
   user?: Prisma.UserCreateNestedOneWithoutChatMessagesInput
+  giftTransactions?: Prisma.GiftTransactionCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageUncheckedCreateInput = {
@@ -413,7 +417,7 @@ export type ChatMessageUncheckedCreateInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -421,6 +425,7 @@ export type ChatMessageUncheckedCreateInput = {
   deletedBy?: string | null
   deletedReason?: string | null
   isPinned?: boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageUpdateInput = {
@@ -429,7 +434,7 @@ export type ChatMessageUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -439,6 +444,7 @@ export type ChatMessageUpdateInput = {
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stream?: Prisma.StreamUpdateOneRequiredWithoutChatMessagesNestedInput
   user?: Prisma.UserUpdateOneWithoutChatMessagesNestedInput
+  giftTransactions?: Prisma.GiftTransactionUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateInput = {
@@ -449,7 +455,7 @@ export type ChatMessageUncheckedUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -457,6 +463,7 @@ export type ChatMessageUncheckedUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageCreateManyInput = {
@@ -467,7 +474,7 @@ export type ChatMessageCreateManyInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -483,7 +490,7 @@ export type ChatMessageUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -501,7 +508,7 @@ export type ChatMessageUncheckedUpdateManyInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -581,6 +588,11 @@ export type ChatMessageMinOrderByAggregateInput = {
 export type ChatMessageSumOrderByAggregateInput = {
   opcode?: Prisma.SortOrder
   offsetMs?: Prisma.SortOrder
+}
+
+export type ChatMessageScalarRelationFilter = {
+  is?: Prisma.ChatMessageWhereInput
+  isNot?: Prisma.ChatMessageWhereInput
 }
 
 export type ChatMessageCreateNestedManyWithoutUserInput = {
@@ -671,13 +683,27 @@ export type EnumChatMesssageTypeFieldUpdateOperationsInput = {
   set?: $Enums.ChatMesssageType
 }
 
+export type ChatMessageCreateNestedOneWithoutGiftTransactionsInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedCreateWithoutGiftTransactionsInput>
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutGiftTransactionsInput
+  connect?: Prisma.ChatMessageWhereUniqueInput
+}
+
+export type ChatMessageUpdateOneRequiredWithoutGiftTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedCreateWithoutGiftTransactionsInput>
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutGiftTransactionsInput
+  upsert?: Prisma.ChatMessageUpsertWithoutGiftTransactionsInput
+  connect?: Prisma.ChatMessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatMessageUpdateToOneWithWhereWithoutGiftTransactionsInput, Prisma.ChatMessageUpdateWithoutGiftTransactionsInput>, Prisma.ChatMessageUncheckedUpdateWithoutGiftTransactionsInput>
+}
+
 export type ChatMessageCreateWithoutUserInput = {
   id: string
   opcode: number
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -686,6 +712,7 @@ export type ChatMessageCreateWithoutUserInput = {
   deletedReason?: string | null
   isPinned?: boolean
   stream: Prisma.StreamCreateNestedOneWithoutChatMessagesInput
+  giftTransactions?: Prisma.GiftTransactionCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageUncheckedCreateWithoutUserInput = {
@@ -695,7 +722,7 @@ export type ChatMessageUncheckedCreateWithoutUserInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -703,6 +730,7 @@ export type ChatMessageUncheckedCreateWithoutUserInput = {
   deletedBy?: string | null
   deletedReason?: string | null
   isPinned?: boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageCreateOrConnectWithoutUserInput = {
@@ -742,7 +770,7 @@ export type ChatMessageScalarWhereInput = {
   content?: Prisma.StringFilter<"ChatMessage"> | string
   type?: Prisma.EnumChatMesssageTypeFilter<"ChatMessage"> | $Enums.ChatMesssageType
   metaData?: Prisma.JsonNullableFilter<"ChatMessage">
-  offsetMs?: Prisma.IntNullableFilter<"ChatMessage"> | number | null
+  offsetMs?: Prisma.IntFilter<"ChatMessage"> | number
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   isDeleted?: Prisma.BoolFilter<"ChatMessage"> | boolean
@@ -758,7 +786,7 @@ export type ChatMessageCreateWithoutStreamInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -767,6 +795,7 @@ export type ChatMessageCreateWithoutStreamInput = {
   deletedReason?: string | null
   isPinned?: boolean
   user?: Prisma.UserCreateNestedOneWithoutChatMessagesInput
+  giftTransactions?: Prisma.GiftTransactionCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageUncheckedCreateWithoutStreamInput = {
@@ -776,7 +805,7 @@ export type ChatMessageUncheckedCreateWithoutStreamInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -784,6 +813,7 @@ export type ChatMessageUncheckedCreateWithoutStreamInput = {
   deletedBy?: string | null
   deletedReason?: string | null
   isPinned?: boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedCreateNestedOneWithoutMessageInput
 }
 
 export type ChatMessageCreateOrConnectWithoutStreamInput = {
@@ -812,6 +842,94 @@ export type ChatMessageUpdateManyWithWhereWithoutStreamInput = {
   data: Prisma.XOR<Prisma.ChatMessageUpdateManyMutationInput, Prisma.ChatMessageUncheckedUpdateManyWithoutStreamInput>
 }
 
+export type ChatMessageCreateWithoutGiftTransactionsInput = {
+  id: string
+  opcode: number
+  content: string
+  type?: $Enums.ChatMesssageType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  offsetMs: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  deletedBy?: string | null
+  deletedReason?: string | null
+  isPinned?: boolean
+  stream: Prisma.StreamCreateNestedOneWithoutChatMessagesInput
+  user?: Prisma.UserCreateNestedOneWithoutChatMessagesInput
+}
+
+export type ChatMessageUncheckedCreateWithoutGiftTransactionsInput = {
+  id: string
+  opcode: number
+  streamId: string
+  userId?: string | null
+  content: string
+  type?: $Enums.ChatMesssageType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  offsetMs: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  deletedBy?: string | null
+  deletedReason?: string | null
+  isPinned?: boolean
+}
+
+export type ChatMessageCreateOrConnectWithoutGiftTransactionsInput = {
+  where: Prisma.ChatMessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatMessageCreateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedCreateWithoutGiftTransactionsInput>
+}
+
+export type ChatMessageUpsertWithoutGiftTransactionsInput = {
+  update: Prisma.XOR<Prisma.ChatMessageUpdateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedUpdateWithoutGiftTransactionsInput>
+  create: Prisma.XOR<Prisma.ChatMessageCreateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedCreateWithoutGiftTransactionsInput>
+  where?: Prisma.ChatMessageWhereInput
+}
+
+export type ChatMessageUpdateToOneWithWhereWithoutGiftTransactionsInput = {
+  where?: Prisma.ChatMessageWhereInput
+  data: Prisma.XOR<Prisma.ChatMessageUpdateWithoutGiftTransactionsInput, Prisma.ChatMessageUncheckedUpdateWithoutGiftTransactionsInput>
+}
+
+export type ChatMessageUpdateWithoutGiftTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  opcode?: Prisma.IntFieldUpdateOperationsInput | number
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stream?: Prisma.StreamUpdateOneRequiredWithoutChatMessagesNestedInput
+  user?: Prisma.UserUpdateOneWithoutChatMessagesNestedInput
+}
+
+export type ChatMessageUncheckedUpdateWithoutGiftTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  opcode?: Prisma.IntFieldUpdateOperationsInput | number
+  streamId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
 export type ChatMessageCreateManyUserInput = {
   id: string
   opcode: number
@@ -819,7 +937,7 @@ export type ChatMessageCreateManyUserInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -835,7 +953,7 @@ export type ChatMessageUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -844,6 +962,7 @@ export type ChatMessageUpdateWithoutUserInput = {
   deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stream?: Prisma.StreamUpdateOneRequiredWithoutChatMessagesNestedInput
+  giftTransactions?: Prisma.GiftTransactionUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateWithoutUserInput = {
@@ -853,7 +972,7 @@ export type ChatMessageUncheckedUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -861,6 +980,7 @@ export type ChatMessageUncheckedUpdateWithoutUserInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateManyWithoutUserInput = {
@@ -870,7 +990,7 @@ export type ChatMessageUncheckedUpdateManyWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -887,7 +1007,7 @@ export type ChatMessageCreateManyStreamInput = {
   content: string
   type?: $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: number | null
+  offsetMs: number
   createdAt?: Date | string
   updatedAt?: Date | string
   isDeleted?: boolean
@@ -903,7 +1023,7 @@ export type ChatMessageUpdateWithoutStreamInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -912,6 +1032,7 @@ export type ChatMessageUpdateWithoutStreamInput = {
   deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneWithoutChatMessagesNestedInput
+  giftTransactions?: Prisma.GiftTransactionUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateWithoutStreamInput = {
@@ -921,7 +1042,7 @@ export type ChatMessageUncheckedUpdateWithoutStreamInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -929,6 +1050,7 @@ export type ChatMessageUncheckedUpdateWithoutStreamInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  giftTransactions?: Prisma.GiftTransactionUncheckedUpdateOneWithoutMessageNestedInput
 }
 
 export type ChatMessageUncheckedUpdateManyWithoutStreamInput = {
@@ -938,7 +1060,7 @@ export type ChatMessageUncheckedUpdateManyWithoutStreamInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChatMesssageTypeFieldUpdateOperationsInput | $Enums.ChatMesssageType
   metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  offsetMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  offsetMs?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -968,6 +1090,7 @@ export type ChatMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   isPinned?: boolean
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
   user?: boolean | Prisma.ChatMessage$userArgs<ExtArgs>
+  giftTransactions?: boolean | Prisma.ChatMessage$giftTransactionsArgs<ExtArgs>
 }, ExtArgs["result"]["chatMessage"]>
 
 export type ChatMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1032,6 +1155,7 @@ export type ChatMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type ChatMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
   user?: boolean | Prisma.ChatMessage$userArgs<ExtArgs>
+  giftTransactions?: boolean | Prisma.ChatMessage$giftTransactionsArgs<ExtArgs>
 }
 export type ChatMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stream?: boolean | Prisma.StreamDefaultArgs<ExtArgs>
@@ -1047,6 +1171,7 @@ export type $ChatMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     stream: Prisma.$StreamPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs> | null
+    giftTransactions: Prisma.$GiftTransactionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1056,7 +1181,7 @@ export type $ChatMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     content: string
     type: $Enums.ChatMesssageType
     metaData: runtime.JsonValue | null
-    offsetMs: number | null
+    offsetMs: number
     createdAt: Date
     updatedAt: Date
     isDeleted: boolean
@@ -1460,6 +1585,7 @@ export interface Prisma__ChatMessageClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   stream<T extends Prisma.StreamDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StreamDefaultArgs<ExtArgs>>): Prisma.Prisma__StreamClient<runtime.Types.Result.GetResult<Prisma.$StreamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.ChatMessage$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  giftTransactions<T extends Prisma.ChatMessage$giftTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$giftTransactionsArgs<ExtArgs>>): Prisma.Prisma__GiftTransactionClient<runtime.Types.Result.GetResult<Prisma.$GiftTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1916,6 +2042,25 @@ export type ChatMessage$userArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * ChatMessage.giftTransactions
+ */
+export type ChatMessage$giftTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GiftTransaction
+   */
+  select?: Prisma.GiftTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GiftTransaction
+   */
+  omit?: Prisma.GiftTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GiftTransactionInclude<ExtArgs> | null
+  where?: Prisma.GiftTransactionWhereInput
 }
 
 /**

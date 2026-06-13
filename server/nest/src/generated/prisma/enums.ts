@@ -9,13 +9,44 @@
 * 🟢 You can import this file directly.
 */
 
-export const UserRole = {
-  ADMIN: 'ADMIN',
-  STREAMER: 'STREAMER',
-  VIEWER: 'VIEWER'
+export const HistoryAction = {
+  ROLLBACK: 'ROLLBACK',
+  RESTORE: 'RESTORE',
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE'
 } as const
 
-export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+export type HistoryAction = (typeof HistoryAction)[keyof typeof HistoryAction]
+
+
+export const HistoryStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  PENDING: 'PENDING'
+} as const
+
+export type HistoryStatus = (typeof HistoryStatus)[keyof typeof HistoryStatus]
+
+
+export const ShakeLevel = {
+  NONE: 'NONE',
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const
+
+export type ShakeLevel = (typeof ShakeLevel)[keyof typeof ShakeLevel]
+
+
+export const GiftTier = {
+  BASIC: 'BASIC',
+  RARE: 'RARE',
+  EPIC: 'EPIC',
+  LEGENDARY: 'LEGENDARY'
+} as const
+
+export type GiftTier = (typeof GiftTier)[keyof typeof GiftTier]
 
 
 export const StreamVisibility = {
@@ -55,3 +86,22 @@ export const ChatMesssageType = {
 } as const
 
 export type ChatMesssageType = (typeof ChatMesssageType)[keyof typeof ChatMesssageType]
+
+
+export const MediaStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  SOFT_DELETED: 'SOFT_DELETED',
+  HARD_DELETED: 'HARD_DELETED'
+} as const
+
+export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
+
+
+export const GiftAssetType = {
+  IMAGE: 'IMAGE',
+  EFFECT: 'EFFECT',
+  SOUND: 'SOUND'
+} as const
+
+export type GiftAssetType = (typeof GiftAssetType)[keyof typeof GiftAssetType]
