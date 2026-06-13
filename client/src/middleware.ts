@@ -1,35 +1,19 @@
-import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
+import { handleRouting, refreshSession } from "./lib/middlewares";
 
-const AUTH_ROUTES = [/^\/sign-in(\/.*)?$/, /^\/sign-up(\/.*)?$/];
+export default async function middleware(req: NextRequest) {
+  let res = NextResponse.next();
 
-const PROTECTED_ROUTES = [
-  /^\/dashboard(\/.*)?$/,
-  /^\/stream(\/.*)?$/,
-  /^\/settings(\/.*)?$/,
-  /^\/verify-email(\/.*)?$/,
-];
+  const { hasSession, updatedResponse } = await refreshSession(req, res);
 
-function matchRoute(req: NextRequest, patterns: RegExp[]) {
-  const pathname = new URL(req.url).pathname;
-  return patterns.some((p) => p.test(pathname));
+  const redirectRes = handleRouting(req, hasSession);
+  if (redirectRes) {
+    return redirectRes;
+  }
+
+  return updatedResponse;
 }
 
-export default auth(async (req) => {
-  const isLoggedIn = !!req.auth;
-  const authExp = req.cookies.get("auth_session_exp")?.value;
-
-  if (matchRoute(req, PROTECTED_ROUTES) && !isLoggedIn && !authExp) {
-    return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
-  }
-
-  if (matchRoute(req, AUTH_ROUTES) && (isLoggedIn || authExp)) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
-
-  return NextResponse.next();
-});
-
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.[\\w]+$).*)"],
 };

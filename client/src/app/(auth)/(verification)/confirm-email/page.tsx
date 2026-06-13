@@ -2,7 +2,6 @@
 
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEmailVerification } from "@/features/auth/hooks/useAuth";
 import { Loading } from "@/components/ui/Loading";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 import { extractApiError } from "@/lib/http/extractApiError";
@@ -10,13 +9,16 @@ import {
   AlreadyVerified,
   VerificationSuccess,
 } from "@/features/auth/components";
+import { setAuthExpiries } from "@/lib/auth/tokenUtils";
+import { useEmailVerification } from "@/features/auth/hooks/useVerification";
+import { useAppQueryClient } from "@/hooks";
 
 export default function ConfirmEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center w-full py-12">
-          <Loading size="lg" className="text-white" />
+        <div className="flex items-center justify-center w-full min-h-[400px]">
+          <Loading size="lg" className="text-brand dark:text-white" />
         </div>
       }
     >
@@ -29,6 +31,7 @@ function ConfirmEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("v");
+  const { removeQueryProfile } = useAppQueryClient();
 
   const {
     mutate: verifyEmail,
@@ -41,17 +44,25 @@ function ConfirmEmailContent() {
 
   useEffect(() => {
     if (token) {
-      verifyEmail(token);
+      verifyEmail(token, {
+        onSuccess: (data) => {
+          removeQueryProfile();
+          setAuthExpiries(
+            data.accessTokenExpiresAt,
+            data.refreshTokenExpiresAt,
+          );
+        },
+      });
     }
   }, [token, verifyEmail]);
 
   if (isPending || (token && !isSuccess && !isError)) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center w-full min-h-[400px]">
         <Loading
           size="lg"
           text="Verifying your email..."
-          className="text-white"
+          className="text-brand dark:text-white"
         />
       </div>
     );
@@ -96,8 +107,6 @@ function ConfirmEmailContent() {
       </div>
     );
   }
-
-  console.log("data: ", data);
 
   if (isSuccess) {
     return (

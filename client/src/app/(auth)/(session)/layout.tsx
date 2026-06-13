@@ -36,7 +36,7 @@ export default function SessionLayout({
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 relative cinema-bg">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 relative bg-surface">
         <div className="cinema-content w-full max-w-md space-y-8">
           {children}
         </div>

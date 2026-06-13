@@ -8,8 +8,9 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/rtmp.conf:/etc/nginx/rtmp.conf
-      - ./dash:/var/www/media
+      - ram-disk:/var/www/media
       - ./nginx-cache:/var/cache/nginx
+      - ./nginx-cache:/var/cache/nginx/gift_assets
     env_file:
       - ./nginx/.env
     extra_hosts:
@@ -73,6 +74,12 @@ services:
     container_name: stream-redis
     ports:
       - "6379:6379"
+    command: >
+      redis-server 
+      --save "" 
+      --appendonly no 
+      --maxmemory 512mb 
+      --maxmemory-policy allkeys-lru
     restart: unless-stopped
 
   minio:
@@ -109,31 +116,31 @@ services:
       - minio
     volumes:
       - ./hls:/var/www/hls
-      - ./dash:/var/www/media
+      - ram-disk:/var/www/media
       - ./storage/recovery:/app/storage/recovery
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     command: ["node", "dist/main.js"]
 
-  mail-worker:
-    build:
-      context: ./nest
-      dockerfile: Dockerfile
-    container_name: mail-worker
-    environment:
-      TZ: UTC
-    env_file:
-      - ./nest/.env.docker
-    depends_on:
-      - kafka
-      - redis
-    volumes:
-      - ./storage/recovery:/app/storage/recovery
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: unless-stopped
-    command: ["node", "dist/workers/mail/main.js"]
+  # mail-worker:
+  #   build:
+  #     context: ./nest
+  #     dockerfile: Dockerfile
+  #   container_name: mail-worker
+  #   environment:
+  #     TZ: UTC
+  #   env_file:
+  #     - ./nest/.env.docker
+  #   depends_on:
+  #     - kafka
+  #     - redis
+  #   volumes:
+  #     - ./storage/recovery:/app/storage/recovery
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   restart: unless-stopped
+  #   command: ["node", "dist/workers/mail/main.js"]
 
   golang-worker:
     build: ./golang-worker
@@ -143,10 +150,12 @@ services:
       - minio
       - postgres
     environment:
+      STREAM_VIDEO_PRESET: ultrafast
+      STREAM_VIDEO_CODEC: libx264
       APP_CONFIG: /app/configs/app.docker.yaml
       TZ: UTC
     volumes:
-      - ./dash:/var/www/media
+      - ram-disk:/var/www/media
       - ./golang-worker/configs:/app/configs:ro
       - golang-worker-logs:/app/logs
     extra_hosts:
@@ -157,3 +166,9 @@ volumes:
   minio-data:
   golang-worker-logs:
   postgres-data:
+  ram-disk:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: size=2G,mode=1777
