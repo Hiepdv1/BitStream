@@ -6,7 +6,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/5 bg-black/60 backdrop-blur-xl mt-auto relative overflow-hidden">
+    <footer className="border-t border-white/5 bg-surface backdrop-blur-xl mt-auto relative overflow-hidden">
       {/* Background Gradient Blob */}
       <div className="absolute -top-20 -left-20 w-96 h-96 bg-brand/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -72,7 +72,7 @@ export function Footer() {
             },
           ].map((column) => (
             <div key={column.title}>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase mb-6">
+              <h3 className="text-sm font-semibold dark:text-white text-zinc-700 tracking-wider uppercase mb-6">
                 {column.title}
               </h3>
               <ul className="space-y-4">

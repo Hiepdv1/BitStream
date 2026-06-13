@@ -1,50 +1,60 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+export const buttonVariants = cva("btn group", {
+  variants: {
+    variant: {
+      primary: "btn-primary",
+      secondary: "btn-secondary",
+      outline: "btn-outline",
+      ghost: "btn-ghost",
+      danger: "btn-danger",
+    },
+    size: {
+      xs: "btn-xs",
+      sm: "btn-sm",
+      md: "btn-md",
+      lg: "btn-lg",
+    },
+    fullWidth: {
+      true: "btn-full",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "md",
+    fullWidth: false,
+  },
+});
+
+export interface ButtonProps
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
-  fullWidth?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      className = "",
+      className,
       variant = "primary",
-      isLoading = false,
+      size = "md",
       fullWidth = false,
+      isLoading = false,
       children,
       disabled,
+      type = "button",
       ...props
     },
-    ref
+    ref,
   ) => {
-    let btnClass = "btn btn-md group";
-
-    if (fullWidth) btnClass += " btn-full";
-
-    switch (variant) {
-      case "primary":
-        btnClass += " btn-primary";
-        break;
-      case "secondary":
-        btnClass += " btn-secondary";
-        break;
-      case "outline":
-        btnClass += " btn-outline";
-        break;
-      case "ghost":
-        btnClass += " btn-ghost";
-        break;
-      case "danger":
-        btnClass += " btn-danger";
-        break;
-    }
-
     return (
       <button
         ref={ref}
-        className={`${btnClass} ${className}`}
+        type={type}
+        className={cn(buttonVariants({ variant, size, fullWidth }), className)}
         disabled={isLoading || disabled}
         {...props}
       >
@@ -73,9 +83,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
 
         <span
-          className={`flex items-center gap-2 ${
-            isLoading ? "opacity-0" : "opacity-100"
-          }`}
+          className={cn(
+            "flex items-center",
+            isLoading ? "opacity-0" : "opacity-100",
+          )}
         >
           {children}
         </span>
@@ -85,7 +96,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

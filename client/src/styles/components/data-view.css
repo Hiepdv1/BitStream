@@ -1,0 +1,90 @@
+@layer components {
+  /* ══════════════════════════════════════════
+     DataView – Shared Responsive Table / Card
+     ══════════════════════════════════════════ */
+
+  /* ── Table View (visible ≥ md) ── */
+  .data-view-table-wrapper {
+    @apply rounded-2xl border border-border bg-surface/30 block w-full overflow-x-auto;
+  }
+
+  .data-view-table {
+    @apply w-full;
+  }
+
+  .data-view-table thead {
+    @apply border-b border-border;
+  }
+
+  .data-view-table th {
+    @apply px-4 py-4 text-center font-semibold text-xs uppercase tracking-widest text-zinc-800 dark:text-zinc-200 whitespace-nowrap;
+  }
+
+  .data-view-table tbody tr {
+    @apply border-b border-border/50 transition-colors duration-200;
+  }
+
+  .data-view-table tbody tr:hover {
+    background: var(--color-surface-hover);
+  }
+
+  .data-view-table tbody tr:last-child {
+    @apply border-b-0;
+  }
+
+  .data-view-table td {
+    @apply px-4 py-4 text-sm;
+  }
+
+  /* ── Card View (visible < md) ── */
+  .data-view-card-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .data-view-card {
+    @apply rounded-xl border border-border bg-surface p-4 transition-all duration-200;
+  }
+
+  .data-view-card:active {
+    @apply scale-[0.99];
+  }
+
+  .data-view-card-grid {
+    @apply grid grid-cols-2 gap-x-4 gap-y-3;
+  }
+
+  .data-view-card-field {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .data-view-card-field--full {
+    @apply col-span-2;
+  }
+
+  .data-view-card-label {
+    @apply text-[10px] uppercase tracking-widest font-semibold text-text-muted;
+  }
+
+  .data-view-card-value {
+    @apply text-sm text-text-main;
+  }
+
+  /* ── Empty State ── */
+  .data-view-empty {
+    @apply flex flex-col items-center justify-center py-16 text-center;
+  }
+
+  .data-view-empty-icon {
+    @apply w-16 h-16 rounded-2xl flex items-center justify-center mb-4 opacity-40;
+    background: rgba(255, 92, 0, 0.1);
+    color: var(--color-brand);
+  }
+
+  .data-view-empty-title {
+    @apply text-lg font-bold text-text-main mb-1 tracking-wide font-heading;
+  }
+
+  .data-view-empty-desc {
+    @apply text-sm text-text-muted;
+  }
+}

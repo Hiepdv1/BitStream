@@ -1,11 +1,86 @@
 "use client";
 
-import { InputHTMLAttributes, forwardRef, useState } from "react";
+import { InputHTMLAttributes, forwardRef, useState, useRef, useEffect } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import { HASHTAG_REGEX } from "@/constants/regex";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+const highlightHashtags = (text: string) => {
+  if (!text) return null;
+  const parts = text.split(HASHTAG_REGEX).filter(Boolean);
+  return parts.map((part, i) => {
+    if (part.startsWith("#")) {
+      return (
+        <span key={`${part}-${i}`} className="text-brand font-bold underline">
+          {part}
+        </span>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
+
+export const inputVariants = cva(
+  "!caret-current !dark:caret-white w-full outline-none transition-all duration-200 font-medium text-text-main text-sm rounded-xl border-2 border-border",
+  {
+    variants: {
+      variant: {
+        default: "input-field peer",
+        surface: "h-11 px-4 bg-surface",
+        admin: "admin-gift-form-input",
+        ghost: "bg-transparent border-transparent focus:bg-surface/50",
+      },
+      hasError: {
+        true: "",
+        false: "",
+      },
+      isNumber: {
+        true: "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+      },
+    },
+    compoundVariants: [
+      {
+        variant: "default",
+        hasError: true,
+        class: "input-field-error",
+      },
+      {
+        variant: "default",
+        hasError: false,
+        class: "not-placeholder-shown:border-brand",
+      },
+      {
+        variant: "surface",
+        hasError: true,
+        class: "border-error focus:border-error",
+      },
+      {
+        variant: "surface",
+        hasError: false,
+        class:
+          "focus:border-brand focus:ring-4 focus:ring-brand/20 hover:border-text-muted/30",
+      },
+      {
+        variant: "admin",
+        hasError: true,
+        class: "admin-gift-form-input--error",
+      },
+    ],
+    defaultVariants: {
+      variant: "default",
+      hasError: false,
+    },
+  },
+);
+
+export interface InputProps
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof inputVariants> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
+  enableHashtags?: boolean;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -19,9 +94,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       className,
       icon,
+      enableHashtags,
+      variant = "default",
+      onChange,
+      onScroll,
+      onBlur,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -32,29 +112,137 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       setShowPassword((prev) => !prev);
     };
 
+    const [internalValue, setInternalValue] = useState(
+      (props.value as string) || (props.defaultValue as string) || "",
+    );
+
+    useEffect(() => {
+      if (props.value !== undefined) {
+        setInternalValue(props.value as string);
+      }
+    }, [props.value]);
+
+    const overlayRef = useRef<HTMLDivElement>(null);
+    const internalRef = useRef<HTMLInputElement>(null);
+    const scrollPosRef = useRef(0);
+    const isBlurring = useRef(false);
+
+    const handleScroll = (e: React.UIEvent<HTMLInputElement>) => {
+      if (isBlurring.current) {
+        if (e.currentTarget.scrollLeft !== scrollPosRef.current) {
+          e.currentTarget.scrollLeft = scrollPosRef.current;
+          if (overlayRef.current) {
+            overlayRef.current.scrollLeft = scrollPosRef.current;
+          }
+        }
+        return;
+      }
+      scrollPosRef.current = e.currentTarget.scrollLeft;
+      if (overlayRef.current) {
+        overlayRef.current.scrollLeft = e.currentTarget.scrollLeft;
+      }
+      onScroll?.(e);
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      if (enableHashtags) {
+        isBlurring.current = true;
+        setTimeout(() => {
+          isBlurring.current = false;
+        }, 100);
+      }
+      onBlur?.(e);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInternalValue(e.target.value);
+      onChange?.(e);
+    };
+
+    const uniqueTags =
+      enableHashtags && internalValue
+        ? Array.from(new Set(internalValue.match(/#\w+/g) || []))
+        : [];
+
     return (
-      <div className={`input-group ${className ?? ""}`}>
+      <div className="relative">
         <div className="relative">
+          {enableHashtags && (
+            <div
+              className={cn(
+                inputVariants({
+                  variant,
+                  hasError: !!error,
+                  isNumber: type === "number",
+                }),
+                "absolute inset-0 z-0 pointer-events-none flex items-center border-transparent text-transparent! bg-transparent!",
+              )}
+              aria-hidden="true"
+            >
+              <div
+                ref={overlayRef}
+                className="w-full overflow-hidden whitespace-pre text-zinc-900 dark:text-zinc-100"
+              >
+                {internalValue ? (
+                  highlightHashtags(internalValue)
+                ) : (
+                  <span
+                    className={cn(
+                      "font-normal",
+                      variant === "default"
+                        ? "text-transparent"
+                        : "text-text-muted/50",
+                    )}
+                  >
+                    {placeholder ||
+                      (variant === "default" && label ? " " : undefined)}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
           <input
-            ref={ref}
+            ref={(node) => {
+              internalRef.current = node;
+              if (typeof ref === "function") {
+                ref(node);
+              } else if (ref) {
+                (
+                  ref as React.MutableRefObject<HTMLInputElement | null>
+                ).current = node;
+              }
+            }}
             id={id}
             type={inputType}
-            placeholder={placeholder || " "}
+            placeholder={
+              placeholder || (variant === "default" && label ? " " : undefined)
+            }
             required={required}
-            className={`input-field  peer ${
-              error ? "input-field-error" : "not-placeholder-shown:border-brand"
-            }`}
+            className={cn(
+              inputVariants({
+                variant,
+                hasError: !!error,
+                isNumber: type === "number",
+              }),
+              enableHashtags &&
+                "bg-transparent! text-transparent! placeholder-transparent! caret-zinc-900! dark:caret-white relative z-10",
+              className,
+            )}
             {...props}
+            onChange={handleChange}
+            onScroll={handleScroll}
+            onBlur={handleBlur}
           />
 
-          {label && (
+          {label && variant === "default" && (
             <label
               htmlFor={id}
-              className={`${
+              className={cn(
+                "input-label rounded-xl bg-none bg-transparent peer-focus:top-0 peer-[:not(:placeholder-shown)]:top-0 peer-focus:text-xs top-1/2 -translate-y-1/2 peer-placeholder-shown:text-base text-xs px-2 font-semibold peer-placeholder-shown:text-text-muted",
                 error
                   ? "peer-focus:bg-error peer-[:not(:placeholder-shown)]:bg-error text-white peer-focus:text-white"
-                  : "peer-focus:text-brand text-brand peer-focus:bg-black/90 peer-[:not(:placeholder-shown)]:bg-black/90"
-              } input-label rounded-xl bg-none bg-transparent peer-focus:top-0 peer-[:not(:placeholder-shown)]:top-0 peer-focus:text-xs top-1/2 -translate-y-1/2 peer-placeholder-shown:text-base text-xs px-2 font-semibold peer-placeholder-shown:text-text-muted`}
+                  : "peer-focus:text-brand text-brand peer-focus:bg-black/90 peer-[:not(:placeholder-shown)]:bg-black/90",
+              )}
             >
               {label}
               {required && <span className="input-label-required">*</span>}
@@ -114,6 +302,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
+        {uniqueTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-1.5">
+            {uniqueTags.map((tag, i) => (
+              <span
+                key={i}
+                className="text-xs font-semibold text-brand bg-brand/10 px-2 py-0.5 rounded-md"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
         {error && (
           <div className="input-error-msg">
             <svg
@@ -127,12 +328,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 clipRule="evenodd"
               />
             </svg>
-            <p>{error}</p>
+            <p className="font-medium">{error}</p>
           </div>
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

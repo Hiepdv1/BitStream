@@ -1,34 +1,59 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 @import "./base/variables.css";
 @import "./base/animations.css";
 
 @import "./components/button.css";
 @import "./components/input.css";
+@import "./components/video-player.css";
 @import "./components/loading.css";
 @import "./components/error.css";
-@import "./components/cinema-background.css";
-
+@import "./components/toggle.css";
+@import "./components/data-view.css";
 @import "../features/auth/styles/index.css";
+@import "../features/home/styles/index.css";
+@import "../features/create-stream/styles/index.css";
+@import "../features/watch/styles/index.css";
+@import "../features/profile/styles/index.css";
+@import "../features/admin/gifts/styles/index.css";
+@import "../features/setup-stream/styles/index.css";
 
 @layer base {
-  :root {
-    --font-sans: var(--font-roboto);
-    --font-display: var(--font-bebas);
-  }
-
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-display);
-    letter-spacing: 0.05em;
+    @apply font-bold tracking-tight font-heading;
   }
 
   body {
-    font-family: var(--font-sans);
-    @apply bg-background text-text-main antialiased selection:bg-brand selection:text-white;
+    @apply antialiased selection:bg-brand text-text-main bg-background selection:text-white;
+  }
+
+  /* ── Global Custom Scrollbar ── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full transition-colors duration-200;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/20;
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
   }
 }

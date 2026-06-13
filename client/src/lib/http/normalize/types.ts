@@ -8,7 +8,9 @@ export interface NormalizedResponse<T = any> {
 }
 
 export interface PaginationMeta {
-  page: number;
+  page: number | null;
   limit: number;
   total: number;
+  nextOffsetMs?: number;
+  hasMore?: boolean;
 }

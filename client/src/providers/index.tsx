@@ -1,10 +1,7 @@
-"use client";
-
-import { SessionProvider } from "next-auth/react";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { queryClient } from "@/lib/react-query";
 import { ThemeProvider } from "./theme-provider";
+import ReactQueryProvider from "./react-query";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -14,12 +11,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </SessionProvider>
+      <ReactQueryProvider>
+        {children}
+        <ConfirmDialog />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ReactQueryProvider>
     </ThemeProvider>
   );
 }

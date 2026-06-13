@@ -1,30 +1,20 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import { FC, Suspense } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { cn } from "@/lib/utils";
+import HeaderSkeleton from "./HeaderSkeleton";
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  showFooter?: boolean;
-  className?: string;
 }
 
-export function MainLayout({
-  children,
-  showFooter = true,
-  className,
-}: MainLayoutProps) {
-  const pathname = usePathname();
-
+export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-background relative selection:bg-brand/30 selection:text-white">
-      <Header />
-      <main className={cn("flex-1 flex flex-col w-full", className)}>
-        {children}
-      </main>
-      {showFooter && <Footer />}
+    <div className="flex flex-col min-h-screen bg-white dark:bg-background text-text-main transition-colors duration-300">
+      <Suspense fallback={<HeaderSkeleton />}>
+        <Header />
+      </Suspense>
+      <main className="flex-1 w-full relative z-10">{children}</main>
+      <Footer />
     </div>
   );
-}
+};

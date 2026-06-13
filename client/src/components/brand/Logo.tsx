@@ -14,7 +14,7 @@ export function Logo({
   return (
     <div className="flex items-center gap-2.5 select-none focus:outline-none group">
       <div className={`relative ${className} flex items-center justify-center`}>
-        <div className="absolute inset-0 bg-blue-500/40 blur-lg rounded-full animate-pulse-slow group-hover:bg-purple-500/50 transition-colors duration-500"></div>
+        <div className="absolute inset-0 bg-[#FF5C00]/40 blur-lg rounded-full animate-pulse-slow group-hover:bg-[#FF5C00]/50 transition-colors duration-500"></div>
 
         <svg
           viewBox="0 0 40 40"
@@ -31,8 +31,8 @@ export function Logo({
               y2="0"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset="0%" stopColor="#3b82f6" />
-              <stop offset="100%" stopColor="#a855f7" />
+              <stop offset="0%" stopColor="#e65200" />
+              <stop offset="100%" stopColor="#FF5C00" />
             </linearGradient>
           </defs>
 
@@ -57,7 +57,7 @@ export function Logo({
             width="4"
             height="4"
             rx="1"
-            fill="#60a5fa"
+            fill="#ffffff"
             className="animate-pulse"
           />
         </svg>
@@ -67,8 +67,8 @@ export function Logo({
         <span
           className={`font-bold tracking-tight transition-colors duration-300 ${
             useGradientText
-              ? "bg-clip-text text-transparent bg-linear-to-r from-blue-400 via-purple-400 to-pink-400"
-              : "text-white"
+              ? "bg-clip-text text-transparent bg-linear-to-r from-[#FF5C00] to-orange-400"
+              : "text-brand"
           } ${textClassName}`}
         >
           BitStream

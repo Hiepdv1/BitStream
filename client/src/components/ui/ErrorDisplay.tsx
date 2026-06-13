@@ -81,7 +81,7 @@ export function ErrorDisplay({
 
       <div
         className={`
-          relative flex items-center gap-4
+          relative flex items-center justify-center gap-4
           ${
             fullScreen
               ? "max-w-2xl w-full mx-4 flex-col text-center"
@@ -96,7 +96,7 @@ export function ErrorDisplay({
           </div>
         </div>
 
-        <div className={`flex-1 ${fullScreen ? "text-center" : "text-left"}`}>
+        <div className={`${fullScreen ? "text-center" : "text-left"}`}>
           <h2 className={`text-xl font-semibold ${styles.titleColor} mb-1`}>
             {title}
           </h2>
